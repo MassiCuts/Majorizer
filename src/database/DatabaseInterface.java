@@ -71,6 +71,14 @@ public interface DatabaseInterface {
 			tableString += "|";
 		}
 		
+		for(int i = 0; i < columns.length; i++) {
+			if(i == 0) tableString += "\n-";
+			int cellLength = stringLengths[i];
+			for(int j = 0; j < cellLength; j++)
+				tableString += "-";
+			tableString += "-";
+		}
+		
 		for(int i = 0; i < entries.size(); i++) {
 			Map<String, Object> entry = entries.get(i);
 			for(int j = 0; j < columns.length; j++) {
