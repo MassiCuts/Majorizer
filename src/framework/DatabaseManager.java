@@ -91,7 +91,11 @@ public class DatabaseManager {
 		System.out.println(DATABASE.tableToString(table));
 	}
 	
-	public void makeAccount(String name, String username, String password, int ID, boolean userIsStudent) {
+	public static void makeAdvisorAccount(String name, String username, String password, int ID) {
+		
+	}
+	
+	public static void makeStudentAccount(String name, String username, String password, int ID, boolean studentIsNew) {
 		
 	}
 }
