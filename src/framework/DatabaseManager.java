@@ -2,6 +2,7 @@ package framework;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import database.DatabaseColumn;
 import database.DatabaseColumn.ColumnType;
@@ -17,8 +18,11 @@ public class DatabaseManager {
 	private static final DatabaseInterface DATABASE = new JSONDatabase();
 	
 	public static final DatabaseTable USERS_TABLE    = new DatabaseTable("Users");
-	public static final DatabaseTable ADVISORS_TABLE = new DatabaseTable("Users", "Advisors");
-	public static final DatabaseTable STUDENTS_TABLE = new DatabaseTable("Users", "Students");
+	public static final DatabaseTable ADVISORS_TABLE = USERS_TABLE.subTable("Advisors");
+	public static final DatabaseTable STUDENTS_TABLE = USERS_TABLE.subTable("Students");
+
+	public static final DatabaseTable ADVISORS_PROFILES = ADVISORS_TABLE.subTable("Profiles");
+	public static final DatabaseTable STUDENTS_PROFILES = STUDENTS_TABLE.subTable("Profiles");
 	
 	public static final DatabaseTable COURSES_TABLE 		= new DatabaseTable("Courses");
 	public static final DatabaseTable REQUESTS_TABLE 		= new DatabaseTable("Requests");
@@ -91,11 +95,71 @@ public class DatabaseManager {
 		System.out.println(DATABASE.tableToString(table));
 	}
 	
-	public static void makeAdvisorAccount(String name, String username, String password, int ID) {
+	public static void makeAdvisorAccount(String name, String username, String password, int id) {
+		DATABASE.queryEntry(USERS_TABLE, (m) -> {
+			if(m.get("username").equals(username))
+				throw new UsernameNotUniqueException(username);
+			if((int) m.get("id") == id)
+				throw new EntryNotUniqueException("The user id \"" + id + "\" is already taken");
+			return false;
+		});
 		
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("name", name);
+		map.put("username", username);
+		map.put("password", password);
+		map.put("id", id);
+		map.put("userIsStudent", false);
+		DATABASE.addEntry(USERS_TABLE, 0, map);
+		
+		map.clear();
+		map.put("id", id);
+		DATABASE.addEntry(ADVISORS_TABLE, 0, map);
+		
+		DatabaseTable advisorProfile = ADVISORS_PROFILES.subTable(Integer.toHexString(id));
+		
+		DATABASE.createTable(advisorProfile);
 	}
 	
-	public static void makeStudentAccount(String name, String username, String password, int ID, boolean studentIsNew) {
+	public static void makeStudentAccount(String name, String username, String password, int id, boolean studentIsNew) {
+		DATABASE.queryEntry(USERS_TABLE, (m) -> {
+			if(m.get("username").equals(username))
+				throw new UsernameNotUniqueException(username);
+			if((int) m.get("id") == id)
+				throw new EntryNotUniqueException("The user id \"" + id + "\" is already taken");
+			return false;
+		});
 		
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("name", name);
+		map.put("username", username);
+		map.put("password", password);
+		map.put("id", id);
+		map.put("userIsStudent", true);
+		DATABASE.addEntry(USERS_TABLE, 0, map);
+		
+		map.clear();
+		map.put("id", id);
+		map.put("isNewStudent", studentIsNew);
+		DATABASE.addEntry(STUDENTS_TABLE, 0, map);
+		
+		DatabaseTable advisorProfile = STUDENTS_PROFILES.subTable(Integer.toHexString(id));
+		
+		DATABASE.createTable(advisorProfile);
+	}
+	
+	
+	@SuppressWarnings("serial")
+	public static class EntryNotUniqueException extends RuntimeException {
+		private EntryNotUniqueException(String message) {
+			super(message);
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	public static class UsernameNotUniqueException extends EntryNotUniqueException {
+		private UsernameNotUniqueException(String username) {
+			super("Username \"" + username + "\" is already taken.");
+		}
 	}
 }

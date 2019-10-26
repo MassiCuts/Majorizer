@@ -10,6 +10,16 @@ public class DatabaseTable {
 		this.subTableNames = subTableNames;
 	}
 	
+	public DatabaseTable subTable(String subTableName, String ... subSubTableNames) {
+		String[] newSubTableNames = new String[subSubTableNames.length + subTableNames.length + 1];
+		for(int i = 0; i < subTableNames.length; i++)
+			newSubTableNames[i] = subTableNames[i];
+		newSubTableNames[subTableNames.length] = subTableName;
+		for(int i = subTableNames.length + 1; i < newSubTableNames.length; i++)
+			newSubTableNames[i] = subTableNames[i];
+		return new DatabaseTable(rootTableName, newSubTableNames);
+	}
+	
 	public String getRootTableName() {
 		return rootTableName;
 	}
