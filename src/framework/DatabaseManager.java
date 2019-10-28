@@ -73,7 +73,6 @@ public class DatabaseManager {
 				new DatabaseColumn("minorID", 		ColumnType.INT),
 				new DatabaseColumn("isAdd", 		ColumnType.BOOLEAN));
 		
-		
 		DATABASE.createTable(COURSES_TABLE);
 		DATABASE.addColumns(COURSES_TABLE, 
 				new DatabaseColumn("courseID", 		ColumnType.STRING),
@@ -143,9 +142,9 @@ public class DatabaseManager {
 		map.put("isNewStudent", studentIsNew);
 		DATABASE.addEntry(STUDENTS_TABLE, 0, map);
 		
-		DatabaseTable advisorProfile = STUDENTS_PROFILES.subTable(Integer.toHexString(id));
+		DatabaseTable studentProfile = STUDENTS_PROFILES.subTable(Integer.toHexString(id));
 		
-		DATABASE.createTable(advisorProfile);
+		DATABASE.createTable(studentProfile);
 	}
 	
 	
