@@ -15,7 +15,7 @@ import framework.DatabaseManager.UsernameNotUniqueException;
 
 public class DatabaseManager {
 	
-	public static final String DATABASE_LOCATOR = "file:/home/massimiliano/Desktop/database";
+	public static final String DATABASE_LOCATOR = "";//"file:/home/massimiliano/Desktop/database";
 	
 	private static final DatabaseInterface DATABASE = new JSONDatabase();
 	

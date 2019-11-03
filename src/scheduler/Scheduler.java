@@ -1,4 +1,4 @@
-package framework;
+package scheduler;
 
 public class Scheduler {
 	
