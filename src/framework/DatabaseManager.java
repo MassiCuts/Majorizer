@@ -30,9 +30,13 @@ public class DatabaseManager {
 	public static final DatabaseTable MINORS_TABLE 			= new DatabaseTable("Minors");
 	
 	public static void connect() {
+		connect(DATABASE_LOCATOR);
+	}
+	
+	public static void connect(String database_locator) {
 		URI uri;
 		try {
-			uri = new URI(DATABASE_LOCATOR);
+			uri = new URI(database_locator);
 			DATABASE.connect(uri);
 		} catch (URISyntaxException | JSON_DatabaseConnectionException e) {
 			System.err.println("Could not connect to database!");

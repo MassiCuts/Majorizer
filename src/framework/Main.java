@@ -1,17 +1,33 @@
 package framework;
 
+import database.DatabaseInterface;
+import database.JSONDatabase;
+
 public class Main {
 	
 	public static void main(String args[]) {
-		DatabaseManager.connect();
-//		DatabaseManager.initializeDatabase();
+		// Describe the command line args
+		System.out.println("Main [database_file [create_database]]\n"
+				+ "Enter arguments on the command line or using Run->Run Configurations->Arguments\n"
+				+ "database_file : string, optional. The location of the database folder\n"
+				+ "create_database : string, optional. If equal to 'create' a new database will be created");
+		// Initialize the database based on the args
+		if(args.length >= 1) {
+			DatabaseManager.connect(args[0]);
+			if(args.length >= 2 && args[1].equals("create")) {
+					// create the database
+					DatabaseManager.initializeDatabase();
+					DatabaseManager.makeAdvisorAccount("Sean Banerjee", "seanBanerjee", "lovesColor", 0);
+					DatabaseManager.makeAdvisorAccount("Alexis Maciel", "alexisMaciel", "loveAutomata", 1);
+					DatabaseManager.makeStudentAccount("Massimiliano Cutuno", "cutugnma", "12346", 668364, false);
+					DatabaseManager.makeStudentAccount("Heet Dave", "heetd", "password", 120, false);
+			}
+		} else {
+			DatabaseManager.connect();
+			System.out.println("Using the default database location");		
+		}
 		
-//		DatabaseManager.makeAdvisorAccount("Sean Banerjee", "seanBanerjee", "lovesColor", 0);
-//		DatabaseManager.makeAdvisorAccount("Alexis Maciel", "alexisMaciel", "loveAutomata", 1);
-
-//		DatabaseManager.makeStudentAccount("Massimiliano Cutuno", "cutugnma", "12346", 668364, false);
-//		DatabaseManager.makeStudentAccount("Heet Dave", "heetd", "password", 120, false);
-		
+		// Print the database contents
 		DatabaseManager.printTable(DatabaseManager.ADVISORS_TABLE);
 		DatabaseManager.printTable(DatabaseManager.COURSES_TABLE);
 		DatabaseManager.printTable(DatabaseManager.MAJORS_TABLE);
@@ -19,5 +35,7 @@ public class Main {
 		DatabaseManager.printTable(DatabaseManager.REQUESTS_TABLE);
 		DatabaseManager.printTable(DatabaseManager.STUDENTS_TABLE);
 		DatabaseManager.printTable(DatabaseManager.USERS_TABLE);
+		
+		Scheduler scheduler = new Scheduler(3);
 	}
 }
