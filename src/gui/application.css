@@ -1,0 +1,41 @@
+.graytheme	{
+	-fx-background-color: #858585;
+	-fx-text-fill: white;
+}
+
+.lightgraytheme	{
+	-fx-background-color: #EEEEEE;
+}
+
+.greentheme	{
+	-fx-background-color: #468847;
+	-fx-text-fill: white;
+}
+
+.greenfont	{
+	-fx-text-fill: #468847
+}
+
+.goldgradient	{
+	-fx-background-color: linear-gradient(to bottom, #FFF000, #FFC000);
+}
+
+.saveblue	{
+	-fx-background-color: #4488FF;
+}
+
+.standardfont	{
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-size: 36;
+}
+
+.savebuttontheme	{
+	-fx-background-color: #4488FF;
+	-fx-background-radius: 20;
+	-fx-min-width: 32;
+	-fx-min-height: 32;
+	-fx-max-width: 32;
+	-fx-max-height: 32;
+}
+
