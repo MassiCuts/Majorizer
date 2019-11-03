@@ -125,13 +125,39 @@ public class JSONDatabase implements DatabaseInterface {
 	}
 	
 	private File createTableFile(DatabaseTable table, File parentDirectory, int subTableIndex) {
-		String tableName;
 		String[] subTableNames = table.getSubTableNames();
 		int totalNumNames = subTableNames.length + 1;
-		if(subTableIndex >= totalNumNames)
+		
+		if(subTableIndex >= totalNumNames) {
+			File[] files = parentDirectory.listFiles((f) -> {
+				return f.isFile() && f.getName().equals(CONTENTS_FILENAME);
+			});
+			
+			if(files.length != 0) {
+				throw new JSONDatabaseException("A table exists at " + table.getFullString("."));
+			} else {
+				File contentFile = new File(parentDirectory, CONTENTS_FILENAME);
+				if(contentFile.isDirectory())
+					contentFile.delete();
+				JSONObject obj = new JSONObject();
+				obj.put(COLUMN_DATA, new JSONObject());
+				obj.put(ENTRY_DATA, new JSONArray());
+				
+				try {
+					FileWriter fw = new FileWriter(contentFile);
+					fw.write(obj.toString());
+					fw.flush();
+					fw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new JSONDatabaseException("Not able to create \"" + CONTENTS_FILENAME + "\" for "  + table.getFullString("."));
+				}
+			}
 			return parentDirectory;
+		}
 		
-		
+
+		String tableName;
 		if(subTableIndex == 0)
 			tableName = table.getRootTableName();
 		else
@@ -153,30 +179,6 @@ public class JSONDatabase implements DatabaseInterface {
 			tableFolder.mkdir();
 		} else {
 			tableFolder = files[0];
-		}
-		
-		files = tableFolder.listFiles((f) -> {
-			return f.isFile() && f.getName().equals(CONTENTS_FILENAME);
-		});
-		
-		
-		if(files.length == 0) {
-			File contentFile = new File(tableFolder, CONTENTS_FILENAME);
-			if(contentFile.isDirectory())
-				contentFile.delete();
-			JSONObject obj = new JSONObject();
-			obj.put(COLUMN_DATA, new JSONObject());
-			obj.put(ENTRY_DATA, new JSONArray());
-			
-			try {
-				FileWriter fw = new FileWriter(contentFile);
-				fw.write(obj.toString());
-				fw.flush();
-				fw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new JSONDatabaseException("Not able to create \"" + CONTENTS_FILENAME + "\" for "  + table.getFullString("."));
-			}
 		}
 		
 		return createTableFile(table, tableFolder, subTableIndex + 1);

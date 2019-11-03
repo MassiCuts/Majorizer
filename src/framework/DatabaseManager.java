@@ -17,14 +17,15 @@ public class DatabaseManager {
 	
 	private static final DatabaseInterface DATABASE = new JSONDatabase();
 	
-	public static final DatabaseTable USERS_TABLE    = new DatabaseTable("Users");
-	public static final DatabaseTable ADVISORS_TABLE = USERS_TABLE.subTable("Advisors");
-	public static final DatabaseTable STUDENTS_TABLE = USERS_TABLE.subTable("Students");
+	public static final DatabaseTable USERS_TABLE    		= new DatabaseTable("Users");
+	public static final DatabaseTable ADVISORS_TABLE 		= USERS_TABLE.subTable("Advisors");
+	public static final DatabaseTable STUDENTS_TABLE 		= USERS_TABLE.subTable("Students");
 
-	public static final DatabaseTable ADVISORS_PROFILES = ADVISORS_TABLE.subTable("Profiles");
-	public static final DatabaseTable STUDENTS_PROFILES = STUDENTS_TABLE.subTable("Profiles");
+	public static final DatabaseTable ADVISORS_PROFILES 	= ADVISORS_TABLE.subTable("Profiles");
+	public static final DatabaseTable STUDENTS_PROFILES 	= STUDENTS_TABLE.subTable("Profiles");
 	
 	public static final DatabaseTable COURSES_TABLE 		= new DatabaseTable("Courses");
+	public static final DatabaseTable COURSES_PREREC_TABLE 	= COURSES_TABLE.subTable("PreRecs");
 	public static final DatabaseTable REQUESTS_TABLE 		= new DatabaseTable("Requests");
 	public static final DatabaseTable MAJORS_TABLE 			= new DatabaseTable("Majors");
 	public static final DatabaseTable MINORS_TABLE 			= new DatabaseTable("Minors");
@@ -61,7 +62,7 @@ public class DatabaseManager {
 		DATABASE.createTable(STUDENTS_TABLE);
 		DATABASE.addColumns(STUDENTS_TABLE,
 				new DatabaseColumn("id", 			ColumnType.INT), // to link to user
-				new DatabaseColumn("isNewStudent", ColumnType.BOOLEAN));
+				new DatabaseColumn("isNewStudent", 	ColumnType.BOOLEAN));
 		
 		DATABASE.createTable(REQUESTS_TABLE);
 		DATABASE.addColumns(REQUESTS_TABLE, 
@@ -76,18 +77,23 @@ public class DatabaseManager {
 		DATABASE.createTable(COURSES_TABLE);
 		DATABASE.addColumns(COURSES_TABLE, 
 				new DatabaseColumn("courseID", 		ColumnType.STRING),
-				new DatabaseColumn("courseName", 	ColumnType.STRING),
-				new DatabaseColumn("requestID", 	ColumnType.INT));
+				new DatabaseColumn("courseName", 	ColumnType.STRING));
 		
 		DATABASE.createTable(MAJORS_TABLE);
 		DATABASE.addColumns(MAJORS_TABLE, 
 				new DatabaseColumn("majorID", 		ColumnType.INT),
-				new DatabaseColumn("name", 		ColumnType.STRING));
+				new DatabaseColumn("name", 			ColumnType.STRING));
 		
 		DATABASE.createTable(MINORS_TABLE);
 		DATABASE.addColumns(MINORS_TABLE, 
 				new DatabaseColumn("minorID", 		ColumnType.INT),
-				new DatabaseColumn("name", 		ColumnType.STRING));
+				new DatabaseColumn("name", 			ColumnType.STRING));
+		
+		DATABASE.createTable(COURSES_PREREC_TABLE);
+		DATABASE.addColumns(COURSES_PREREC_TABLE,
+				new DatabaseColumn("courseID", 			ColumnType.STRING),
+				new DatabaseColumn("preRecCourseID", 	ColumnType.STRING));
+		
 	}
 	
 	public static DatabaseTable[] listTables() {
