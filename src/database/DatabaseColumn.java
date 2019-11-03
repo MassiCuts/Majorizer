@@ -3,15 +3,19 @@ package database;
 public final class DatabaseColumn {
 	
 	public enum ColumnType {
-		INT,BOOLEAN,STRING;
+		INT,FLOAT,BOOLEAN,STRING,CHAR;
 		
 		public static boolean checkType(String type, Object object) {
 			if(INT.name().equals(type)) {
 				return object instanceof Integer;
+			} else if(FLOAT.name().equals(type)) {
+				return object instanceof Float;
 			} else if (BOOLEAN.name().equals(type)) {
 				return object instanceof Boolean;
 			} else if (STRING.name().equals(type)) {
 				return object instanceof String;
+			} else if(CHAR.name().equals(type)) {
+				return object instanceof Character;
 			} else {
 				return false;
 			}
@@ -34,6 +38,12 @@ public final class DatabaseColumn {
 			return object instanceof Integer;
 		case STRING:
 			return object instanceof String;
+		case CHAR:
+			return object instanceof Character;
+		case FLOAT:
+			return object instanceof Float;
+		default:
+			break;
 		}
 		return false;
 	}

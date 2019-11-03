@@ -1,1 +1,6 @@
-java is dumb
+package framework;
+
+public class Scheduler {
+	
+}
+

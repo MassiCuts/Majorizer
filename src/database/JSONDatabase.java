@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -31,15 +31,16 @@ public class JSONDatabase implements DatabaseInterface {
 	private static final String CONTENTS_FILENAME = "tableContents." + JSON_EXT;
 	private static final String COLUMN_DATA = "columnData";
 	private static final String ENTRY_DATA = "entryData";
+	private static final int INDENT_FACTOR = 1;
 	
 	@Override
-	public void connect(URI uri, Object ... args) throws JSON_DatabaseConnectionException {
+	public void connect(URI uri, Object ... args) throws JSONDatabaseConnectionException {
 		File f = new File(uri);
 		if(f.exists() && f.isDirectory() && f.canRead() && f.canWrite()) {
 			databaseRoot = f;
 			connected = true;
 		} else {
-			throw new JSON_DatabaseConnectionException(uri);
+			throw new JSONDatabaseConnectionException(uri);
 		}
 	}
 
@@ -50,11 +51,11 @@ public class JSONDatabase implements DatabaseInterface {
 	
 	private File getTableDirectory(DatabaseTable table) {
 		if(!connected)
-			throw new JSON_DatabaseException("Cannot perform task; Not connected to a database");
+			throw new JSONDatabaseException("Cannot perform task; Not connected to a database");
 		return getTableDirectory(table, databaseRoot, 0);
 	}
 	
-	private JSONObject getJSON_Table(DatabaseTable table) {
+	private JSONObject getJSONTable(DatabaseTable table) {
 		File contentsFile = getTableContentsFile(table);
 		try {
 			Reader reader = new FileReader(contentsFile);
@@ -63,26 +64,26 @@ public class JSONDatabase implements DatabaseInterface {
 			return jsonTable;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			throw new JSON_DatabaseException("Could not retreive JSON object at " + table.getFullString("."));
+			throw new JSONDatabaseException("Could not retreive JSON object at " + table.getFullString("."));
 		}
 	}
 	
-	private void saveJSON_Table(DatabaseTable table, JSONObject jsonTable) {
+	private void saveJSONTable(DatabaseTable table, JSONObject jsonTable) {
 		File contentsFile = getTableContentsFile(table);
 		try {
 			Writer writer = new FileWriter(contentsFile);
-			writer.write(jsonTable.toString());
+			writer.write(jsonTable.toString(INDENT_FACTOR));
 			writer.flush();
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new JSON_DatabaseException("Could not save JSON object at " + table.getFullString("."));
+			throw new JSONDatabaseException("Could not save JSON object at " + table.getFullString("."));
 		}
 	}
 	
 	private File getTableContentsFile(DatabaseTable table) {
 		if(!connected)
-			throw new JSON_DatabaseException("Cannot perform task; Not connected to a database");
+			throw new JSONDatabaseException("Cannot perform task; Not connected to a database");
 		File directory = getTableDirectory(table);
 		
 		File[] files = directory.listFiles((f) -> {
@@ -90,7 +91,7 @@ public class JSONDatabase implements DatabaseInterface {
 		});
 		
 		if(files.length == 0)
-			throw new JSON_DatabaseException("Cannot find \"" + CONTENTS_FILENAME +"\" for " + table.getFullString("."));
+			throw new JSONDatabaseException("Cannot find \"" + CONTENTS_FILENAME +"\" for " + table.getFullString("."));
 		return files[0];
 	}
 	
@@ -105,7 +106,7 @@ public class JSONDatabase implements DatabaseInterface {
 			tableName = subTableNames[subTableIndex - 1];
 		
 		if(tableName.endsWith("." + JSON_EXT))
-			throw new JSON_DatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString("."));
+			throw new JSONDatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString("."));
 		
 		File[] files = parentDirectory.listFiles((f) -> {
 			return f.isDirectory() && f.getName().equals(tableName);
@@ -113,7 +114,7 @@ public class JSONDatabase implements DatabaseInterface {
 		
 		File tableFile;
 		if(files.length == 0)
-			throw new JSON_DatabaseException("No table exists at " + table.getFullString("."));
+			throw new JSONDatabaseException("No table exists at " + table.getFullString("."));
 		else
 			tableFile = files[0];
 		
@@ -137,7 +138,7 @@ public class JSONDatabase implements DatabaseInterface {
 			tableName = subTableNames[subTableIndex - 1];
 		
 		if(tableName.endsWith("." + JSON_EXT))
-			throw new JSON_DatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString("."));
+			throw new JSONDatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString("."));
 		
 		
 		File[] files = parentDirectory.listFiles((f) -> {
@@ -164,6 +165,9 @@ public class JSONDatabase implements DatabaseInterface {
 			if(contentFile.isDirectory())
 				contentFile.delete();
 			JSONObject obj = new JSONObject();
+			obj.put(COLUMN_DATA, new JSONObject());
+			obj.put(ENTRY_DATA, new JSONArray());
+			
 			try {
 				FileWriter fw = new FileWriter(contentFile);
 				fw.write(obj.toString());
@@ -171,7 +175,7 @@ public class JSONDatabase implements DatabaseInterface {
 				fw.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new JSON_DatabaseException("Not able to create \"" + CONTENTS_FILENAME + "\" for "  + table.getFullString("."));
+				throw new JSONDatabaseException("Not able to create \"" + CONTENTS_FILENAME + "\" for "  + table.getFullString("."));
 			}
 		}
 		
@@ -181,7 +185,7 @@ public class JSONDatabase implements DatabaseInterface {
 	@Override
 	public void createTable(DatabaseTable table) {
 		if(!connected)
-			throw new JSON_DatabaseException("Cannot perform task; Not connected to a database");
+			throw new JSONDatabaseException("Cannot perform task; Not connected to a database");
 		createTableFile(table, databaseRoot, 0);
 	}
 	
@@ -194,8 +198,35 @@ public class JSONDatabase implements DatabaseInterface {
 	}
 
 	@Override
+	public DatabaseTable[] listTables() {
+		if(!connected)
+			throw new JSONDatabaseException("Cannot perform task; Not connected to a database");
+
+		LinkedList<DatabaseTable> tables = new LinkedList<>();
+		listTables(databaseRoot, null, tables);
+		
+		DatabaseTable[] list = new DatabaseTable[tables.size()];
+		tables.toArray(list);
+		return list;
+	}
+	
+	private void listTables(File parentFile, DatabaseTable parent, LinkedList<DatabaseTable> tables) {
+		parentFile.listFiles((f) -> {
+			if(f.isFile() && f.getName().equals(CONTENTS_FILENAME)) {
+				if(parent != null)
+					tables.add(parent);
+			} else if (f.isDirectory()){
+				String fileName = f.getName();
+				DatabaseTable child = parent == null? new DatabaseTable(fileName) : parent.subTable(fileName);
+				listTables(f, child, tables);
+			}
+			return false;
+		});
+	}
+	
+	@Override
 	public void addColumns(DatabaseTable table, DatabaseColumn... columns) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		
 		JSONObject columnData;
 		if(jsonTable.has(COLUMN_DATA)) {
@@ -208,7 +239,7 @@ public class JSONDatabase implements DatabaseInterface {
 		// check if columns already exist
 		for(DatabaseColumn column : columns)
 			if(columnData.has(column.getName()))
-				throw new JSON_DatabaseException("Column \"" + column.getName() + "\" already exists");
+				throw new JSONDatabaseException("Column \"" + column.getName() + "\" already exists");
 		
 		JSONArray entryData;
 		if(jsonTable.has(ENTRY_DATA)) {
@@ -232,16 +263,24 @@ public class JSONDatabase implements DatabaseInterface {
 				case STRING:
 					jsonEntry.put(column.getName(), "");
 					break;
+				case CHAR:
+					jsonEntry.put(column.getName(), '\0');
+					break;
+				case FLOAT:
+					jsonEntry.put(column.getName(), 0f);
+					break;
+				default:
+					break;
 				}
 			});
 		}
 		
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
 	public void removeColumns(DatabaseTable table, String ... names) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		
 		JSONObject columnData;
 		if(jsonTable.has(COLUMN_DATA)) {
@@ -254,7 +293,7 @@ public class JSONDatabase implements DatabaseInterface {
 		// check if columns already exist
 		for(String columnName : names)
 			if(!columnData.has(columnName))
-				throw new JSON_DatabaseException("Column \"" + columnName + "\" does not exists");
+				throw new JSONDatabaseException("Column \"" + columnName + "\" does not exists");
 		
 		JSONArray entryData;
 		if(jsonTable.has(ENTRY_DATA)) {
@@ -272,14 +311,16 @@ public class JSONDatabase implements DatabaseInterface {
 			});
 		}
 		
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
-	public DatabaseColumn[] getDatabaseColumns(DatabaseTable table) {
-		JSONObject jsonTable = getJSON_Table(table);
+	public DatabaseColumn[] listColumns(DatabaseTable table) {
+		JSONObject jsonTable = getJSONTable(table);
 		JSONObject columnData = jsonTable.getJSONObject(COLUMN_DATA);
 		String[] names = JSONObject.getNames(columnData);
+		if(names == null)
+			names = new String[0];
 		
 		DatabaseColumn[] databaseColumns = new DatabaseColumn[names.length];
 		
@@ -301,7 +342,7 @@ public class JSONDatabase implements DatabaseInterface {
 			Object value = cells.get(name);
 			
 			if(!ColumnType.checkType(typeName, value))
-				throw new JSON_DatabaseException("The type " + typeName + " of " + name + " was not used");
+				throw new JSONDatabaseException("The type " + typeName + " of " + name + " was not used");
 		}
 		
 		Set<String> cellColumns = cells.keySet();
@@ -320,6 +361,14 @@ public class JSONDatabase implements DatabaseInterface {
 			case STRING:
 				entry.put(name, (String) value);
 				break;
+			case CHAR:
+				entry.put(name, (char) value);
+				break;
+			case FLOAT:
+				entry.put(name, (float) value);
+				break;
+			default:
+				break;
 			}
 		}
 		columnData.toMap().forEach((n, t) -> {
@@ -334,6 +383,14 @@ public class JSONDatabase implements DatabaseInterface {
 				case STRING:
 					entry.put(n, "");
 					break;
+				case CHAR:
+					entry.put(n, '\0');
+					break;
+				case FLOAT:
+					entry.put(n, 0f);
+					break;
+				default:
+					break;
 				}
 			}
 		});
@@ -343,81 +400,81 @@ public class JSONDatabase implements DatabaseInterface {
 	
 	@Override
 	public void addEntry(DatabaseTable table, int entryIndex, Map<String, Object> cells) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONObject columnData = jsonTable.getJSONObject(COLUMN_DATA);
 	
 		JSONObject entry = createEntry(columnData, cells);
 		
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		entryData.put(entry);
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
 	public void setEntry(DatabaseTable table, int entryIndex, Map<String, Object> cells) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONObject columnData = jsonTable.getJSONObject(COLUMN_DATA);
 	
 		JSONObject entry = createEntry(columnData, cells);
 		
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		if(entryIndex > entryData.length() || entryIndex < 0)
-			throw new JSON_DatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
+			throw new JSONDatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
 		entryData.put(entryIndex, entry);
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
 	public void removeEntry(DatabaseTable table, int entryIndex) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		if(entryIndex >= entryData.length() || entryIndex < 0)
-			throw new JSON_DatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
+			throw new JSONDatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
 		entryData.remove(entryIndex);
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
 	public void setCell(DatabaseTable table, int entryIndex, String column, Object element) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		if(entryIndex > entryData.length() || entryIndex < 0)
-			throw new JSON_DatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
+			throw new JSONDatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
 
 		JSONObject entry = entryData.getJSONObject(entryIndex);
 		if(!entry.has(column))
-			throw new JSON_DatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString("."));
+			throw new JSONDatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString("."));
 		entry.put(column, element);
 		entryData.put(entryIndex, entry);
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
 	public Object getCell(DatabaseTable table, int entryIndex, String column) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		if(entryIndex > entryData.length() || entryIndex < 0)
-			throw new JSON_DatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
+			throw new JSONDatabaseException("Entry index \"" + entryIndex + "\" is out of bounds");
 
 		JSONObject entry = entryData.getJSONObject(entryIndex);
 		if(!entry.has(column))
-			throw new JSON_DatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString("."));
+			throw new JSONDatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString("."));
 		
 		return entry.get(column);
 	}
 
 	@Override
 	public int getNumberOfEntries(DatabaseTable table) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		return entryData.length();
 	}
 
 	@Override
 	public ArrayList<Map<String, Object>> queryEntry(DatabaseTable table, Predicate<Map<String, Object>> predicate) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		ArrayList<Map<String, Object>> entriesArray = new ArrayList<>();
 		
@@ -434,7 +491,7 @@ public class JSONDatabase implements DatabaseInterface {
 
 	@Override
 	public Object[] queryColumn(DatabaseTable table, String column, Predicate<Object> predicate) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		ArrayList<Object> entriesArray = new ArrayList<>();
 		
@@ -454,7 +511,7 @@ public class JSONDatabase implements DatabaseInterface {
 
 	@Override
 	public void setEntry(DatabaseTable table, UnaryOperator<Map<String, Object>> operator) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONObject columnData = jsonTable.getJSONObject(COLUMN_DATA);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		
@@ -478,17 +535,25 @@ public class JSONDatabase implements DatabaseInterface {
 					case STRING:
 						entry.put(name, (String) value);
 						break;
+					case CHAR:
+						entry.put(name, (char) value);
+						break;
+					case FLOAT:
+						entry.put(name, (float) value);
+						break;
+					default:
+						break;
 					}
 				}
 				entryData.put(i, entry);
 			}
 		}
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 
 	@Override
 	public void removeEntries(DatabaseTable table, Predicate<Map<String, Object>> predicate) {
-		JSONObject jsonTable = getJSON_Table(table);
+		JSONObject jsonTable = getJSONTable(table);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		
 		int size = entryData.length();
@@ -498,19 +563,19 @@ public class JSONDatabase implements DatabaseInterface {
 			if(predicate.test(map))
 				entryData.remove(i);
 		}
-		saveJSON_Table(table, jsonTable);
+		saveJSONTable(table, jsonTable);
 	}
 	
 	@SuppressWarnings("serial")
-	public class JSON_DatabaseConnectionException extends RuntimeException {
-		private JSON_DatabaseConnectionException(URI uri) {
+	public class JSONDatabaseConnectionException extends RuntimeException {
+		private JSONDatabaseConnectionException(URI uri) {
 			super("Could not connect to: " + uri.toString());
 		}
 	}
 	
 	@SuppressWarnings("serial")
-	public class JSON_DatabaseException extends RuntimeException {
-		private JSON_DatabaseException(String message) {
+	public class JSONDatabaseException extends RuntimeException {
+		private JSONDatabaseException(String message) {
 			super(message);
 		}
 	}

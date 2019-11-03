@@ -9,11 +9,11 @@ import database.DatabaseColumn.ColumnType;
 import database.DatabaseInterface;
 import database.DatabaseTable;
 import database.JSONDatabase;
-import database.JSONDatabase.JSON_DatabaseConnectionException;
+import database.JSONDatabase.JSONDatabaseConnectionException;
 
 public class DatabaseManager {
 	
-	public static final String DATABASE_LOCATOR = "file:/C:/Users/Massimiliano%20Cutugno/Desktop/database";
+	public static final String DATABASE_LOCATOR = "file:/home/massimiliano/Desktop/database";
 	
 	private static final DatabaseInterface DATABASE = new JSONDatabase();
 	
@@ -34,7 +34,7 @@ public class DatabaseManager {
 		try {
 			uri = new URI(DATABASE_LOCATOR);
 			DATABASE.connect(uri);
-		} catch (URISyntaxException | JSON_DatabaseConnectionException e) {
+		} catch (URISyntaxException | JSONDatabaseConnectionException e) {
 			System.err.println("Could not connect to database!");
 			e.printStackTrace();
 			System.exit(0);
@@ -88,6 +88,10 @@ public class DatabaseManager {
 		DATABASE.addColumns(MINORS_TABLE, 
 				new DatabaseColumn("minorID", 		ColumnType.INT),
 				new DatabaseColumn("name", 		ColumnType.STRING));
+	}
+	
+	public static DatabaseTable[] listTables() {
+		return DATABASE.listTables();
 	}
 	
 	public static void printTable(DatabaseTable table) {

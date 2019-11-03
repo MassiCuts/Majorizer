@@ -12,10 +12,11 @@ public interface DatabaseInterface {
 	
 	public void createTable(DatabaseTable table);
 	public void removeTable(DatabaseTable table);
+	public DatabaseTable[] listTables();
 	
 	public void addColumns(DatabaseTable table, DatabaseColumn ... columns);
 	public void removeColumns(DatabaseTable table, String ... names);
-	public DatabaseColumn[] getDatabaseColumns(DatabaseTable table);
+	public DatabaseColumn[] listColumns(DatabaseTable table);
 	
 	public void addEntry(DatabaseTable table, int entryIndex, Map<String, Object> cells);
 	public void setEntry(DatabaseTable table, int entryIndex, Map<String, Object> cells);
@@ -37,7 +38,7 @@ public interface DatabaseInterface {
 	}
 	
 	public default String tableToString(DatabaseTable table) {
-		DatabaseColumn[] columns = getDatabaseColumns(table);
+		DatabaseColumn[] columns = listColumns(table);
 		int[] stringLengths = new int[columns.length];
 		for(int i = 0; i < columns.length; i++)
 			stringLengths[i] = columns[i].getName().length();
