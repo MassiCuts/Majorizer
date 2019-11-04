@@ -10,12 +10,8 @@ import database.DatabaseInterface;
 import database.DatabaseTable;
 import database.JSONDatabase;
 import database.JSONDatabase.JSONDatabaseConnectionException;
-import framework.DatabaseManager.EntryNotUniqueException;
-import framework.DatabaseManager.UsernameNotUniqueException;
 
 public class DatabaseManager {
-	
-	public static final String DATABASE_LOCATOR = "";//"file:/home/massimiliano/Desktop/database";
 	
 	private static final DatabaseInterface DATABASE = new JSONDatabase();
 	
@@ -31,10 +27,6 @@ public class DatabaseManager {
 	public static final DatabaseTable REQUESTS_TABLE 		= new DatabaseTable("Requests");
 	public static final DatabaseTable MAJORS_TABLE 			= new DatabaseTable("Majors");
 	public static final DatabaseTable MINORS_TABLE 			= new DatabaseTable("Minors");
-	
-	public static void connect() {
-		connect(DATABASE_LOCATOR);
-	}
 	
 	public static void connect(String database_locator) {
 		URI uri;

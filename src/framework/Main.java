@@ -24,8 +24,7 @@ public class Main {
 					DatabaseManager.makeStudentAccount("Heet Dave", "heetd", "password", 120, false);
 			}
 		} else {
-			DatabaseManager.connect();
-			System.out.println("Using the default database location");		
+			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
 		// Print the database contents
