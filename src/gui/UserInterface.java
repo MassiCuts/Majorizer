@@ -1,4 +1,4 @@
-package main;
+package gui;
 
 import javafx.stage.*;
 import javafx.application.Application;
@@ -17,7 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.*;
 
 public class UserInterface extends Application{
 	@Override
@@ -27,14 +27,14 @@ public class UserInterface extends Application{
 			root.getStyleClass().add("goldgradient");
 			
 			VBox login = new VBox();
-			login.getStyleClass().add("lightgraytheme");
+			login.getStyleClass().add("roundedRect");
+			
 			login.setMaxSize(400, 300);
 			
 			VBox titleBox = new VBox();
 			Label title = new Label("Majorizer");
 			titleBox.getChildren().add(title);
 			title.getStyleClass().add("standardfont");
-			titleBox.getStyleClass().add("lightgraytheme");
 			titleBox.setAlignment(Pos.CENTER);
 			titleBox.setPadding(new Insets(10, 50, 10, 50));
 			
@@ -51,7 +51,12 @@ public class UserInterface extends Application{
 			
 			Button loginButton = new Button();
 			loginButton.setShape(new Circle(2));
+			ImageView loginButtonMark = new ImageView();
+			Polyline check = new Polyline();
+			check.getPoints().addAll(new Double[]	{200.0, 50.0, 400.0, 50.0});
+			loginButton.setGraphic(loginButtonMark);
 			loginButton.getStyleClass().add("savebuttontheme");
+			loginButton.setDefaultButton(true);
 			
 			VBox buttonBox = new VBox();
 			buttonBox.getChildren().add(loginButton);
