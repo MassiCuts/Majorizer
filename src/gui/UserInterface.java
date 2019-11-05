@@ -34,7 +34,7 @@ public class UserInterface extends Application{
 			VBox titleBox = new VBox();
 			Label title = new Label("Majorizer");
 			titleBox.getChildren().add(title);
-			title.getStyleClass().add("standardfont");
+			title.getStyleClass().add("titlefont");
 			titleBox.setAlignment(Pos.CENTER);
 			titleBox.setPadding(new Insets(10, 50, 10, 50));
 			
@@ -43,10 +43,16 @@ public class UserInterface extends Application{
 			TextField username = new TextField();
 			username.setPromptText("Username");
 			username.getStyleClass().add("lightgraytheme");
-			username.getStyleClass().add("fx-border-color: #000000");		//some sort of border??
+			username.getStyleClass().add("boxoutline");		//some sort of border??
 			TextField password = new PasswordField();
 			password.setPromptText("Password");
 			password.getStyleClass().add("lightgraytheme");
+			password.getStyleClass().add("boxoutline");
+			Label ulabel = new Label("Username");
+			Label plabel = new Label("Password");
+			ulabel.getStyleClass().add("lightgraytheme");
+			plabel.getStyleClass().add("lightgraytheme");
+			
 			
 			
 			Button loginButton = new Button();
@@ -63,15 +69,16 @@ public class UserInterface extends Application{
 			buttonBox.setAlignment(Pos.CENTER_RIGHT);
 			buttonBox.setPadding(new Insets(5));
 			
-			loginGrid.add(new Label("Username"), 0, 1);
+			loginGrid.add(ulabel, 0, 1);
 			loginGrid.add(username, 1, 1);
-			loginGrid.add(new Label("Password"), 0, 2);
+			loginGrid.add(plabel, 0, 2);
 			loginGrid.add(password, 1, 2);
 			loginGrid.add(buttonBox, 1, 3);
 			loginGrid.setAlignment(Pos.CENTER);
 			
 			loginGrid.setPadding(new Insets(20, 20, 20, 20));
 			loginGrid.setHgap(5);
+			loginGrid.setVgap(1);
 			
 			login.getChildren().add(titleBox);
 			login.getChildren().add(loginGrid);
