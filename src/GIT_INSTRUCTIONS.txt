@@ -1,0 +1,9 @@
+git add -u //adds all of the previous files that were changed from the previous version to the next version to be commited
+
+git add * (for new files)
+
+git commit -m "message for changes"
+
+git push (push changes)
+
+git pull (get changes)
