@@ -18,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.*;
 import javafx.stage.Stage;
+import utils.ResourceLoader;
 
 public class UserInterface extends Application{
 	@Override
@@ -107,6 +108,9 @@ public class UserInterface extends Application{
 	    	logoBox.setMaxHeight(100);
 	    	logoBox.setPadding(new Insets(20));
 	    	
+	    	
+	    	//for images in res
+	    	// Image logo = ResourceLoader.getImage("image.png");
 	    	
 			root.setCenter(login);
 			root.setTop(logoBox);
