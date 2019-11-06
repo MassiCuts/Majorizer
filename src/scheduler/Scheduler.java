@@ -7,7 +7,7 @@ public class Scheduler {
 	
 	private int num_courses=6;
 	private int num_semesters=8;
-	private SchedulerGraph graph = new SchedulerGraph();
+	private SchedulerGraph graph;
 	private Random rand = new Random();
 	static int MAX_ATTEMPTS = 100;
 	
@@ -22,42 +22,45 @@ public class Scheduler {
 	}
 	
 	public Vector<Vector<String>> schedule(){
+		SchedulerCourse course;
 		Vector<Vector<String>> sched = new Vector<Vector<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
 			sched.add(new Vector<String>());
 			for(int j = 0; j < this.num_courses; ++j) {
-				SchedulerCourse course = new SchedulerCourse();
 				SchedulerNode node = this.graph.top;
+				SchedulerNode next_node = this.graph.top;
 				int attempt = 0;
-				while (!node.child.satisfied());
-					if (node.isgate()) {
+				do {
+					node = next_node;
+					if (node.isGate()) {
 						//Select which path to take (Longest path of the k shortest plausible paths)
-						SchedulerGate gate = SchedulerGate(node);
-						Vector<Float> scores = gate.pathscores;
-						Vector<Float> prices = gate.pricescores;
+						SchedulerGate gate = (SchedulerGate) node;
+						Vector<Float> scores = gate.getPathScores();
+						Vector<Float> prices = gate.getPriceScores();
 						int n = gate.options;
 						int k = gate.required;
 						int index = 0;
 						Vector<Integer> choices = getChoices(scores,prices,k,attempt);
-						index = getLongestChoice(choices,attempt);
-						node = gate.getchild(index);
+						index = getLongestChoice(scores, choices, attempt, this.num_semesters-i);
+						next_node = gate.getChild(index);
 					} else {
 						//since we know the child isn't satisfied due to the while condition, move to child node
-						node = node.child
+						course = (SchedulerCourse) node;
+						next_node = course.getChild();
 					}
 					if (!course.available()){
 						++attempt;
-						node = this.graph.top;
+						next_node = this.graph.top;
 						if (attempt > MAX_ATTEMPTS) {
 							throw Exception("Your stupid program cant find a feasible schedule you dumb fuck");
 						}
 					}
-					
-				course = node;
+				} while (!next_node.isSatisfied());
+				course = (SchedulerCourse) node;
 				sched.get(i).add(course.name);
 			}
 		}
-		if (!graph.top.satisfied()) {
+		if (!graph.top.isSatisfied()) {
 			throw Exception("could not graduate in the required semester and credit hours per semester restraints");
 		}
 		return sched;
