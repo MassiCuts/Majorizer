@@ -6,9 +6,23 @@ public class SchedulerGate extends SchedulerNode {
 	public int options;
 	public int required;
 	
-	public Vector<Float> getPathScores() {}
-	public float getSinglePathScore() {}
-	public Vector<Float> getPriceScores() {}
-	public float getSinglePriceScore() {}
-	public SchedulerNode getChild(int index) {}
+	public Vector<Float> getPathScores() {
+		return null;
+	}
+	
+	public float getSinglePathScore() {
+		return 0f;
+	}
+	
+	public Vector<Float> getPriceScores() {
+		return null;
+	}
+	
+	public float getSinglePriceScore() {
+		return 0f;
+	}
+	
+	public SchedulerNode getChild(int index) {
+		return null;
+	}
 }
