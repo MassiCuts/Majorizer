@@ -39,6 +39,7 @@ public class SchedulerGate extends SchedulerNode {
 		 */
 		assert(selfcheck());
 	}
+	
 	public SchedulerNode getChild(int index) {}
 	
 	private boolean selfcheck() {

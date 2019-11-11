@@ -1,11 +1,9 @@
 package scheduler;
-import framework.Course;
 
 public class SchedulerCourse extends SchedulerNode {
 	protected int available, taken, scheduled, added, dropped;
 	
 	public SchedulerCourse(SchedulerNode node) {
-		SchedulerNode
 		this.name = node.name;
 		this.available = node.courseinfo.get(CourseInfo.AVAILABILITY);
 		this.taken = node.courseinfo.get(CourseInfo.TAKEN);
@@ -41,6 +39,6 @@ public class SchedulerCourse extends SchedulerNode {
 		}
 	}
 	public SchedulerNode getChild() {
-		return this.children.get(0);	//Only one child because this is a course
+		return this.children.get(0);	//Only one child because this is a cours
 	}
 }
