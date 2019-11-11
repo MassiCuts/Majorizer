@@ -2,11 +2,13 @@ package scheduler;
 import java.util.Vector;
 import java.util.Random;
 import java.lang.IllegalArgumentException;
+import framework.Course;
 
 public class Scheduler {
 	
 	private int num_courses=6;
 	private int num_semesters=8;
+	private int current_semester=0;
 	private SchedulerGraph graph;
 	private Random rand = new Random();
 	static int MAX_ATTEMPTS = 100;
@@ -21,12 +23,17 @@ public class Scheduler {
 		this.graph = graph;
 	}
 	
-	public Vector<Vector<String>> schedule(){
+	public Vector<Vector<String>> schedule(Vector<Course> requested_courses, Vector<Course> requested_dropped_courses){
 		SchedulerCourse course;
 		Vector<Vector<String>> sched = new Vector<Vector<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
 			sched.add(new Vector<String>());
-			for(int j = 0; j < this.num_courses; ++j) {
+			if (i < current_semester) {
+				//Add all the classes taken during this semester then skip
+			}
+			int added_this_semester;
+			//Go through added courses to see if any were added this semester
+			for(int j = 0; j < this.num_courses-added_this_semester; ++j) {
 				SchedulerNode node = this.graph.top;
 				SchedulerNode next_node = this.graph.top;
 				int attempt = 0;
@@ -56,8 +63,8 @@ public class Scheduler {
 						}
 					}
 				} while (!next_node.isSatisfied());
-				course = (SchedulerCourse) node;
-				sched.get(i).add(course.name);
+				node.courseinfo.put(CourseInfo.SCHEDULED, i);
+				sched.get(i).add(node.name);
 			}
 		}
 		if (!graph.top.isSatisfied()) {
