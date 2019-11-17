@@ -1,3 +1,9 @@
+/* clarksonGreen	#004F42 */
+
+.test	{
+	-fx-background-color: red;
+}
+
 .graytheme	{
 	-fx-background-color: #858585;
 	-fx-text-fill: white;
@@ -30,10 +36,17 @@
 	-fx-background-color: #4499FF;
 }
 
-.titlefont	{
+.font	{
 	-fx-font-family: helvetica;
 	-fx-font-style: italic;
+}
+
+.font.title	{
 	-fx-font-size: 36;
+}
+
+.font.body	{
+	-fx-font-size: 24;
 }
 
 .savebuttontheme	{

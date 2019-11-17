@@ -24,6 +24,16 @@ import javafx.stage.Stage;
 import utils.ResourceLoader;
 
 public class UserInterface extends Application{
+
+	//TESTING ONLY
+	public String getName()	{
+		return "Lorenzo Villani";
+	}
+	//TESTING ONLY
+	public String getStudentID()	{
+		return "0755050";
+	}
+	
 	public BorderPane loginScreen()	{
 		BorderPane root = new BorderPane();
 		try	{
@@ -37,7 +47,7 @@ public class UserInterface extends Application{
 			VBox titleBox = new VBox();
 			Label title = new Label("Majorizer");
 			titleBox.getChildren().add(title);
-			title.getStyleClass().add("titlefont");
+			title.getStyleClass().add("font title");
 			titleBox.setAlignment(Pos.CENTER);
 			titleBox.setPadding(new Insets(10, 50, 10, 50));
 			
@@ -116,7 +126,7 @@ public class UserInterface extends Application{
 			root.setTop(logoBox);
 			
 			
-			root.setMargin(login, new Insets(150));
+			root.setMargin(login, new Insets(100));
 			
 		}	catch( IOException ioe)	{
 			ioe.printStackTrace();
@@ -129,7 +139,29 @@ public class UserInterface extends Application{
 		try	{
 			root.getStyleClass().add("lightgraytheme");
 			
+			//Pane for Organization
+			GridPane orgPane = new GridPane();
 			
+			//Top Pane
+			GridPane topPane = new GridPane();
+			//Name
+			Label name = new Label();
+			name.setText(getName());				//This will get the name from Majorizer eventually
+			name.getStyleClass().add("font.title");
+			//Student ID
+			Label studentID = new Label();
+			studentID.setText(getStudentID()); 		//Likewise ^^
+			studentID.getStyleClass().add("font body");
+			//Integrate
+			topPane.add(name, 0, 0);
+			topPane.add(studentID, 0, 1);
+			
+			
+
+			orgPane.add(topPane, 0, 0);
+			
+			root.setTop(orgPane);
+
 		}	catch( Exception e )	{
 			e.printStackTrace();
 		}
@@ -145,7 +177,7 @@ public class UserInterface extends Application{
 //			root = loginScreen();
 			
 			//Student View
-//			root = studentView();
+			root = studentView();
 			
 			Scene scene = new Scene(root, 1000, 800);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
