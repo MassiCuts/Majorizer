@@ -68,3 +68,29 @@
 .transparentFill	{
 	opacity: 0.0;
 }
+
+.semester	{
+	margin-top: -1px;
+	margin-left: -1px;
+}
+
+.pastSem	{
+	-fx-background-color: green;
+	-fx-border-color: #000000;
+	/*margin-top: 1px;
+	margin-left: 1px;*/
+}
+
+.currentSem	{
+	-fx-background-color: yellow;
+	-fx-border-color: #000000;
+	outline: 1px;
+	outline: solid;
+}
+
+.futureSem	{
+	-fx-background-color: red;
+	-fx-border-color: #000000;
+	outline: 1px;
+	outline: solid;
+}

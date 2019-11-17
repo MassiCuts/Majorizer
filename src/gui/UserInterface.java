@@ -33,6 +33,10 @@ public class UserInterface extends Application{
 	public String getStudentID()	{
 		return "0755050";
 	}
+	//TESTING ONLY
+	public int getCurrentSem()	{
+		return 4;
+	}
 	
 	public BorderPane loginScreen()	{
 		BorderPane root = new BorderPane();
@@ -156,9 +160,39 @@ public class UserInterface extends Application{
 			topPane.add(name, 0, 0);
 			topPane.add(studentID, 0, 1);
 			
+			//Schedule Pane
+			GridPane schedulePane = new GridPane();
+			
+			schedulePane.add(new Label("Course Schedule"), 0, 0);
+			
+			GridPane semester[] = new GridPane[8];
+			for(int i = 0; i <= 7; ++i)	{
+				semester[i] = new GridPane();
+				if(i < getCurrentSem())
+					semester[i].getStyleClass().add("pastSem");
+				else if(i == getCurrentSem())
+					semester[i].getStyleClass().add("currentSem");
+				else if(i > getCurrentSem())
+					semester[i].getStyleClass().add("futureSem");
+				
+				semester[i].setMinSize(100, 180);
+			}
+						
+			
+			for(int i = 0; i <= 7; ++i)	{
+				schedulePane.add(semester[i], i, 1);
+			}
+						
+			
+			//Action Pane
+			GridPane actionPane = new GridPane();
 			
 
 			orgPane.add(topPane, 0, 0);
+			orgPane.add(schedulePane, 0, 1);
+			orgPane.add(actionPane, 0, 2);
+			
+			
 			
 			root.setTop(orgPane);
 
