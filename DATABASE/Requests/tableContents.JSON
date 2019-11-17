@@ -1,0 +1,12 @@
+{
+ "columnData": {
+  "studentID": "INT",
+  "advisorID": "INT",
+  "majorID": "INT",
+  "requestID": "INT",
+  "minorID": "INT",
+  "description": "STRING",
+  "isAdd": "BOOLEAN"
+ },
+ "entryData": []
+}

@@ -51,7 +51,7 @@ public class UserInterface extends Application{
 			VBox titleBox = new VBox();
 			Label title = new Label("Majorizer");
 			titleBox.getChildren().add(title);
-			title.getStyleClass().add("font title");
+			title.getStyleClass().add("fonttitle");
 			titleBox.setAlignment(Pos.CENTER);
 			titleBox.setPadding(new Insets(10, 50, 10, 50));
 			
@@ -159,6 +159,22 @@ public class UserInterface extends Application{
 			//Integrate
 			topPane.add(name, 0, 0);
 			topPane.add(studentID, 0, 1);
+			
+			//Logout Button
+			Button logoutButton = new Button();
+			logoutButton.setShape(new Rectangle());
+			//ImageView logoutButtonMark = new ImageView(ResourceLoader.getImage("logoutMark.png"));
+			//logoutButton.setGraphic(logoutButtonMark);
+			logoutButton.setText("Logout");
+			logoutButton.getStyleClass().add("logoutbuttontheme");
+			//logoutButton.setDefaultButton(true);
+			
+			VBox logoutButtonBox = new VBox();
+			logoutButtonBox.getChildren().add(logoutButton);
+			logoutButtonBox.setAlignment(Pos.TOP_RIGHT);
+			logoutButtonBox.setPadding(new Insets(5));
+						
+			topPane.add(logoutButtonBox, 1, 3);
 			
 			//Schedule Pane
 			GridPane schedulePane = new GridPane();

@@ -1,0 +1,7 @@
+{
+ "columnData": {
+  "majorID": "INT",
+  "name": "STRING"
+ },
+ "entryData": []
+}

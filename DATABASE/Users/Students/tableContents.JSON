@@ -1,0 +1,16 @@
+{
+ "columnData": {
+  "isNewStudent": "BOOLEAN",
+  "id": "INT"
+ },
+ "entryData": [
+  {
+   "isNewStudent": false,
+   "id": 668364
+  },
+  {
+   "isNewStudent": false,
+   "id": 120
+  }
+ ]
+}

@@ -13,6 +13,8 @@
 	-fx-background-color: #DDDDDD;
 	-fx-font-family: helvetica;
 	-fx-font-style: italic;
+	-fx-font-size: 18;
+	-fx-font-weight: bold;
 }
 
 .boxoutline	{
@@ -41,7 +43,7 @@
 	-fx-font-style: italic;
 }
 
-.font.title	{
+.fonttitle	{
 	-fx-font-size: 36;
 }
 
@@ -56,6 +58,16 @@
 	-fx-min-height: 32;
 	-fx-max-width: 32;
 	-fx-max-height: 32;
+}
+
+.logoutbuttontheme	{
+	-fx-background-color: #ff4e4e;
+	-fx-border-radius: 6 6 6 6;
+	-fx-border-radius: 6 6 6 6;
+	-fx-font-size : 17;
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-weight: bold;
 }
 
 .roundedRect	{
