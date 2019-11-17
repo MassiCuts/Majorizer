@@ -24,5 +24,6 @@ public class SchedulerNode {
 		 * If it is a course and was already taken or scheduled
 		 * If it is a null node
 		 */
+		return false;
 	}
 }

@@ -1,7 +1,6 @@
 package scheduler;
-import java.util.Vector;
 import java.util.Random;
-import java.lang.IllegalArgumentException;
+import java.util.Vector;
 
 public class Scheduler {
 	
@@ -21,8 +20,8 @@ public class Scheduler {
 		this.graph = graph;
 	}
 	
-	public Vector<Vector<String>> schedule(){
-		SchedulerCourse course;
+	public Vector<Vector<String>> schedule() throws Exception {
+		SchedulerCourse course = null;
 		Vector<Vector<String>> sched = new Vector<Vector<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
 			sched.add(new Vector<String>());
@@ -52,7 +51,7 @@ public class Scheduler {
 						++attempt;
 						next_node = this.graph.top;
 						if (attempt > MAX_ATTEMPTS) {
-							throw Exception("Your stupid program cant find a feasible schedule you dumb fuck");
+							throw new Exception("Your stupid program cant find a feasible schedule you dumb fuck");
 						}
 					}
 				} while (!next_node.isSatisfied());
@@ -61,7 +60,7 @@ public class Scheduler {
 			}
 		}
 		if (!graph.top.isSatisfied()) {
-			throw Exception("could not graduate in the required semester and credit hours per semester restraints");
+			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
 		}
 		return sched;
 	}

@@ -34,6 +34,6 @@ public class Main {
 			System.out.println();
 		}
 		
-		Scheduler scheduler = new Scheduler(3);
+//		Scheduler scheduler = new Scheduler(3);
 	}
 }
