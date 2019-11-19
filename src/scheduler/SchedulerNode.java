@@ -76,4 +76,41 @@ public class SchedulerNode {
 	public boolean isNull() {
 		return (this.name==null && !isGate());
 	}
-}
+	
+	public float getPathLength() {
+		if (isNull()) {
+			return 0;
+		} else if (isGate()) {
+			return 1 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE).getPathLength();
+		} else {
+			return 1 + ((SchedulerCourse) this).getChild().getPathLength();
+		}
+		
+	}
+	
+	public float getCost() {
+		//TODO: Overlap calculation
+		float overlap = this.getOverlapScore();
+		if (isNull()) {
+			return 0;
+		}else if(isGate()) {
+			SchedulerGate gate = (SchedulerGate) this;
+			float cost = 0;
+			for (int idx : gate.getChoices(Integer.MAX_VALUE)) {
+				cost += gate.getChild(idx).getCost();
+			}
+			return cost / overlap;
+		} else {
+			return 1 + ((SchedulerCourse) this).getChild().getCost();
+		}
+	}
+	
+	private float getOverlapScore() {
+		this.getDepth();
+		return this.parents.size();
+	}
+	
+	private float getDepth() {
+		return 0;
+	}
+};

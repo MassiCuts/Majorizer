@@ -1,4 +1,5 @@
 package scheduler;
+import framework.Course;
 
 public class SchedulerCourse extends SchedulerNode {
 	protected int available, taken, scheduled, added, dropped;
@@ -19,26 +20,9 @@ public class SchedulerCourse extends SchedulerNode {
 	}
 	
 	public boolean available() { return this.available == 1;}
-	public float getPathScore() {
-		if (isNull()) {
-			return 0;
-		} else if (isGate()) {
-			return 1 + ((SchedulerGate) getChild()).getSinglePathScore();
-		} else {
-			return 1 + ((SchedulerCourse) getChild()).getPathScore();
-		}
-		
-	}
-	public float getPriceScore() {
-		if (isNull()) {
-			return 0;
-		}else if(isGate()) {
-			return 1 + ((SchedulerGate) getChild()).getSinglePriceScore();
-		} else {
-			return 1 + ((SchedulerCourse)getChild()).getPriceScore();
-		}
-	}
+	
+	
 	public SchedulerNode getChild() {
 		return this.children.get(0);	//Only one child because this is a cours
 	}
-}
+};
