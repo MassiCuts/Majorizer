@@ -157,7 +157,7 @@ public class UserInterface extends Application{
 			//Student ID
 			Label studentID = new Label();
 			studentID.setText(getStudentID()); 		//Likewise ^^
-			studentID.getStyleClass().add("fontbody");
+			studentID.getStyleClass().add("IDfont");
 			//Integrate
 			topPane.add(name, 0, 0);
 			topPane.add(studentID, 0, 1);
@@ -179,28 +179,13 @@ public class UserInterface extends Application{
 						
 			preTopPane.add(logoutButtonBox, 100, 0);
 			
-			//Check Button
-			Button checkButton = new Button();
-			checkButton.setShape(new Circle(2));
-			ImageView checkButtonMark = new ImageView(ResourceLoader.getImage("checkmark30.png"));
-			checkButton.setGraphic(checkButtonMark);
-			checkButtonMark.setFitWidth(25);
-			checkButtonMark.setFitHeight(25);
-			checkButton.getStyleClass().add("checkbuttontheme");
-			checkButton.setDefaultButton(true);
-			
-			VBox checkButtonBox = new VBox();
-			checkButtonBox.getChildren().add(checkButton);
-			checkButtonBox.setAlignment(Pos.CENTER_RIGHT);
-			checkButtonBox.setPadding(new Insets(5));
-			
 			//Schedule Pane
 			GridPane schedulePane = new GridPane();
 			
 			//Header label for Schedule Pane
 			Label header = new Label();
 			header.setText("Course Schedule");
-			header.getStyleClass().add("fontbody");
+			header.getStyleClass().add("fonttitle");
 			schedulePane.add(header, 0, 0);
 			
 			GridPane semester[] = new GridPane[8];
@@ -224,11 +209,120 @@ public class UserInterface extends Application{
 			//Action Pane
 			GridPane actionPane = new GridPane();
 			
+			//Left Arrow
+			Button leftArrowButton = new Button();
+			leftArrowButton.setShape(new Circle(2));
+			ImageView leftArrowMark = new ImageView(ResourceLoader.getImage("leftArrow.png"));
+			leftArrowButton.setGraphic(leftArrowMark);
+			leftArrowMark.setFitWidth(20);
+			leftArrowMark.setFitHeight(20);
+			leftArrowButton.getStyleClass().add("arrowbuttontheme");
+			
+			VBox leftArrowButtonBox = new VBox();
+			leftArrowButtonBox.getChildren().add(leftArrowButton);
+			leftArrowButtonBox.setAlignment(Pos.CENTER_LEFT);
+			leftArrowButtonBox.setPadding(new Insets(5));
+			
+			//Adding left arrow to the actionPane
+			actionPane.add(leftArrowButtonBox, 0, 0);
+			
+			//Right Arrow
+			Button rightArrowButton = new Button();
+			rightArrowButton.setShape(new Circle(2));
+			ImageView rightArrowMark = new ImageView(ResourceLoader.getImage("rightArrow.png"));
+			rightArrowButton.setGraphic(rightArrowMark);
+			rightArrowMark.setFitWidth(20);
+			rightArrowMark.setFitHeight(20);
+			rightArrowButton.getStyleClass().add("arrowbuttontheme");
+			
+			VBox rightArrowButtonBox = new VBox();
+			rightArrowButtonBox.getChildren().add(rightArrowButton);
+			rightArrowButtonBox.setAlignment(Pos.CENTER_LEFT);
+			rightArrowButtonBox.setPadding(new Insets(5));
+			
+			//Adding right arrow to the actionPane
+			actionPane.add(rightArrowButtonBox, 1, 0);
+			
+			//Windows Pane
+			GridPane windowsPane = new GridPane();
+			
+			//Majors and Minors Pane
+			GridPane majorsAndMinorsPane = new GridPane();
+			
+			//Header label for Majors and Minors
+			Label headerForMajorsAndMinors = new Label();
+			headerForMajorsAndMinors.setText("Majors and Minors");
+			headerForMajorsAndMinors.getStyleClass().add("fontmed");
+			majorsAndMinorsPane.add(headerForMajorsAndMinors, 0, 0);
+			
+			GridPane majorsAndMinorsTab = new GridPane();
+			majorsAndMinorsTab.getStyleClass().add("windows");
+			majorsAndMinorsTab.setMinSize(180, 260);		
+			
+			majorsAndMinorsPane.add(majorsAndMinorsTab, 0, 1);
+			
+			windowsPane.add(majorsAndMinorsPane, 0, 1);
+		
+			//Current Selected Semester Pane
+			GridPane currentSelectedSemesterPane = new GridPane();
+			
+			//Header label for Majors and Minors
+			Label headerForCurrentSelectedSemester = new Label();
+			headerForCurrentSelectedSemester.setText("Current Selected Semester");
+			headerForCurrentSelectedSemester.getStyleClass().add("fontmed");
+			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
+			
+			GridPane currentSelectedSemesterTab = new GridPane();
+			currentSelectedSemesterTab.getStyleClass().add("windows");
+			currentSelectedSemesterTab.setMinSize(180, 260);
+			
+			currentSelectedSemesterPane.add(currentSelectedSemesterTab, 0, 1);
+
+			windowsPane.add(currentSelectedSemesterPane, 1, 1);
+			
+			//Electives Pane
+			GridPane electivesPane = new GridPane();
+			
+			//Header label for Majors and Minors
+			Label headerForElectives = new Label();
+			headerForElectives.setText("Electives");
+			headerForElectives.getStyleClass().add("fontmed");
+			electivesPane.add(headerForElectives, 0, 0);
+			
+			GridPane electivesTab = new GridPane();
+			electivesTab.getStyleClass().add("windows");
+			electivesTab.setMinSize(180, 260);
+			
+			electivesPane.add(electivesTab, 0, 1);
+
+			windowsPane.add(electivesPane, 2, 1);
+			
+			//Bottom Pane
+			GridPane bottomPane = new GridPane();
+			
+			//Check Button
+			Button checkButton = new Button();
+			checkButton.setShape(new Circle(2));
+			ImageView checkButtonMark = new ImageView(ResourceLoader.getImage("checkmark30.png"));
+			checkButton.setGraphic(checkButtonMark);
+			checkButtonMark.setFitWidth(40);
+			checkButtonMark.setFitHeight(40);
+			checkButton.getStyleClass().add("checkbuttontheme");
+			//checkButton.setDefaultButton(true);
+			
+			VBox checkButtonBox = new VBox();
+			checkButtonBox.getChildren().add(checkButton);
+			checkButtonBox.setAlignment(Pos.CENTER_RIGHT);
+			checkButtonBox.setPadding(new Insets(5));
+			
+			bottomPane.add(checkButtonBox, 0, 100);
+			
 			orgPane.add(preTopPane, 1000, 0);
 			orgPane.add(topPane, 0, 0);
 			orgPane.add(schedulePane, 0, 1);
 			orgPane.add(actionPane, 0, 2);
-			
+			orgPane.add(windowsPane, 0, 10);
+			orgPane.add(bottomPane, 1000, 5000);
 						
 			root.setTop(orgPane);
 

@@ -45,6 +45,13 @@
 	-fx-font-weight: bold;
 }
 
+.fontmed	{
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-size: 20;
+	-fx-font-weight: bold;
+}
+
 .fonttitle	{
 	-fx-font-size: 40;
 }
@@ -53,13 +60,34 @@
 	-fx-font-size: 25;
 }
 
+.IDfont	{
+	-fx-font-size: 25;
+	-fx-text-fill: grey;
+}
+
+.windows	{
+	-fx-background-color: white;
+	-fx-border-color: #000000;
+	outline: 1px;
+	outline: solid;
+}
+
 .checkbuttontheme	{
 	-fx-background-color: #4499FF;
-	-fx-background-radius: 20;
-	-fx-min-width: 32;
-	-fx-min-height: 32;
-	-fx-max-width: 32;
-	-fx-max-height: 32;
+	-fx-background-radius: 60;
+	-fx-min-width: 60;
+	-fx-min-height: 60;
+	-fx-max-width: 60;
+	-fx-max-height: 60;
+}
+
+.arrowbuttontheme	{
+	-fx-background-color: white;
+	-fx-background-radius: 40;
+	-fx-min-width: 40;
+	-fx-min-height: 40;
+	-fx-max-width: 40;
+	-fx-max-height: 40;
 }
 
 .logoutbuttontheme	{
