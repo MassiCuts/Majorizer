@@ -90,6 +90,15 @@
 	-fx-max-height: 40;
 }
 
+.greenbuttontheme	{
+	-fx-background-color: #51e302;
+	-fx-background-radius: 20;
+	-fx-min-width: 20;
+	-fx-min-height: 20;
+	-fx-max-width: 20;
+	-fx-max-height: 20;
+}
+
 .logoutbuttontheme	{
 	-fx-background-color: #ff716a;
 	-fx-font-size : 17;

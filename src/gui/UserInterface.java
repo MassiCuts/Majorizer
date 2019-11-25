@@ -7,12 +7,14 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -243,8 +245,12 @@ public class UserInterface extends Application{
 			//Adding right arrow to the actionPane
 			actionPane.add(rightArrowButtonBox, 1, 0);
 			
+			
+			
 			//Windows Pane
 			GridPane windowsPane = new GridPane();
+			
+			
 			
 			//Majors and Minors Pane
 			GridPane majorsAndMinorsPane = new GridPane();
@@ -255,22 +261,61 @@ public class UserInterface extends Application{
 			headerForMajorsAndMinors.getStyleClass().add("fontmed");
 			majorsAndMinorsPane.add(headerForMajorsAndMinors, 0, 0);
 			
+			//Green Plus Button for Majors and Minors
+			Button greenPlusForMajorsAndMinorsButton = new Button();
+			greenPlusForMajorsAndMinorsButton.setShape(new Circle(2));
+			ImageView greenPlusMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
+			greenPlusForMajorsAndMinorsButton.setGraphic(greenPlusMark);
+			greenPlusMark.setFitWidth(30);
+			greenPlusMark.setFitHeight(20);
+			greenPlusForMajorsAndMinorsButton.getStyleClass().add("greenbuttontheme");
+			
+			VBox greenPlusButtonForMajorsAndMinorsBox = new VBox();
+			greenPlusButtonForMajorsAndMinorsBox.getChildren().add(greenPlusForMajorsAndMinorsButton);
+			greenPlusButtonForMajorsAndMinorsBox.setAlignment(Pos.CENTER_LEFT);
+			greenPlusButtonForMajorsAndMinorsBox.setPadding(new Insets(5));
+			
+			majorsAndMinorsPane.add(greenPlusButtonForMajorsAndMinorsBox, 1, 0);
+			
 			GridPane majorsAndMinorsTab = new GridPane();
 			majorsAndMinorsTab.getStyleClass().add("windows");
 			majorsAndMinorsTab.setMinSize(180, 260);		
 			
 			majorsAndMinorsPane.add(majorsAndMinorsTab, 0, 1);
 			
+			//Slider for Majors And Minors Tab
+			Slider majorsAndMinorsSlider = new Slider();
+			majorsAndMinorsSlider.setOrientation(Orientation.VERTICAL);
+			
+			//WORKING HERE
+			
 			windowsPane.add(majorsAndMinorsPane, 0, 1);
 		
+			
 			//Current Selected Semester Pane
 			GridPane currentSelectedSemesterPane = new GridPane();
 			
-			//Header label for Majors and Minors
+			//Header label for Current Selected Semester
 			Label headerForCurrentSelectedSemester = new Label();
 			headerForCurrentSelectedSemester.setText("Current Selected Semester");
 			headerForCurrentSelectedSemester.getStyleClass().add("fontmed");
 			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
+			
+			//Green Plus Button for Current Selected Semester
+			Button greenPlusForCurrentSelectedSemesterButton = new Button();
+			greenPlusForCurrentSelectedSemesterButton.setShape(new Circle(2));
+			ImageView greenPlusForCSSMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
+			greenPlusForCurrentSelectedSemesterButton.setGraphic(greenPlusForCSSMark);
+			greenPlusForCSSMark.setFitWidth(30);
+			greenPlusForCSSMark.setFitHeight(20);
+			greenPlusForCurrentSelectedSemesterButton.getStyleClass().add("greenbuttontheme");
+			
+			VBox greenPlusButtonForCurrentSelectedSemesterBox = new VBox();
+			greenPlusButtonForCurrentSelectedSemesterBox.getChildren().add(greenPlusForCurrentSelectedSemesterButton);
+			greenPlusButtonForCurrentSelectedSemesterBox.setAlignment(Pos.CENTER_LEFT);
+			greenPlusButtonForCurrentSelectedSemesterBox.setPadding(new Insets(5));
+			
+			currentSelectedSemesterPane.add(greenPlusButtonForCurrentSelectedSemesterBox, 1, 0);
 			
 			GridPane currentSelectedSemesterTab = new GridPane();
 			currentSelectedSemesterTab.getStyleClass().add("windows");
@@ -280,14 +325,17 @@ public class UserInterface extends Application{
 
 			windowsPane.add(currentSelectedSemesterPane, 1, 1);
 			
+			
+			
 			//Electives Pane
 			GridPane electivesPane = new GridPane();
 			
-			//Header label for Majors and Minors
+			//Header label for Electives
 			Label headerForElectives = new Label();
 			headerForElectives.setText("Electives");
 			headerForElectives.getStyleClass().add("fontmed");
 			electivesPane.add(headerForElectives, 0, 0);
+			
 			
 			GridPane electivesTab = new GridPane();
 			electivesTab.getStyleClass().add("windows");
@@ -297,8 +345,12 @@ public class UserInterface extends Application{
 
 			windowsPane.add(electivesPane, 2, 1);
 			
+			
+			
 			//Bottom Pane
 			GridPane bottomPane = new GridPane();
+			
+			
 			
 			//Check Button
 			Button checkButton = new Button();
