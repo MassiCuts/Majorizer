@@ -1,0 +1,39 @@
+{
+ "columnData": {
+  "password": "STRING",
+  "userIsStudent": "BOOLEAN",
+  "name": "STRING",
+  "id": "INT",
+  "username": "STRING"
+ },
+ "entryData": [
+  {
+   "password": "lovesColor",
+   "userIsStudent": false,
+   "name": "Sean Banerjee",
+   "id": 0,
+   "username": "seanBanerjee"
+  },
+  {
+   "password": "loveAutomata",
+   "userIsStudent": false,
+   "name": "Alexis Maciel",
+   "id": 1,
+   "username": "alexisMaciel"
+  },
+  {
+   "password": "12346",
+   "userIsStudent": true,
+   "name": "Massimiliano Cutuno",
+   "id": 668364,
+   "username": "cutugnma"
+  },
+  {
+   "password": "password",
+   "userIsStudent": true,
+   "name": "Heet Dave",
+   "id": 120,
+   "username": "heetd"
+  }
+ ]
+}

@@ -1,0 +1,140 @@
+/* clarksonGreen	#004F42 */
+
+.test	{
+	-fx-background-color: red;
+}
+
+.graytheme	{
+	-fx-background-color: #858585;
+	-fx-text-fill: white;
+}
+
+.lightgraytheme	{
+	-fx-background-color: #DDDDDD;
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-size: 18;
+	-fx-font-weight: bold;
+}
+
+.boxoutline	{
+	-fx-border-color: #000000;
+}
+
+.greentheme	{
+	-fx-background-color: #468847;
+	-fx-text-fill: white;
+}
+
+.greenfont	{
+	-fx-text-fill: #468847
+}
+
+.goldgradient	{
+	-fx-background-color: linear-gradient(to bottom, #FFC000, #FFA000);
+}
+
+.saveblue	{
+	-fx-background-color: #4499FF;
+}
+
+.font	{
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-size: 50;
+	-fx-font-weight: bold;
+}
+
+.fontmed	{
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-size: 20;
+	-fx-font-weight: bold;
+}
+
+.fonttitle	{
+	-fx-font-size: 40;
+}
+
+.fontbody	{
+	-fx-font-size: 25;
+}
+
+.IDfont	{
+	-fx-font-size: 25;
+	-fx-text-fill: grey;
+}
+
+.windows	{
+	-fx-background-color: white;
+	-fx-border-color: #000000;
+	outline: 1px;
+	outline: solid;
+}
+
+.checkbuttontheme	{
+	-fx-background-color: #4499FF;
+	-fx-background-radius: 60;
+	-fx-min-width: 60;
+	-fx-min-height: 60;
+	-fx-max-width: 60;
+	-fx-max-height: 60;
+}
+
+.arrowbuttontheme	{
+	-fx-background-color: white;
+	-fx-background-radius: 40;
+	-fx-min-width: 40;
+	-fx-min-height: 40;
+	-fx-max-width: 40;
+	-fx-max-height: 40;
+}
+
+.logoutbuttontheme	{
+	-fx-background-color: #ff716a;
+	-fx-font-size : 17;
+	-fx-font-family: helvetica;
+	-fx-font-style: italic;
+	-fx-font-weight: bold;
+	-fx-text-fill: white;
+	-fx-border-radius: 16 16 16 16;
+	-fx-background-radius: 16 16 16 16;
+	
+}
+
+.roundedRect	{
+    -fx-background-radius: 18 18 18 18;
+    -fx-border-radius: 18 18 18 18;
+    -fx-background-color: #DDDDDD;
+    -fx-border-color: #000000;
+}
+
+.transparentFill	{
+	opacity: 0.0;
+}
+
+.semester	{
+	margin-top: -1px;
+	margin-left: -1px;
+}
+
+.pastSem	{
+	-fx-background-color: #aae87a;
+	-fx-border-color: #000000;
+	/*margin-top: 1px;
+	margin-left: 1px;*/
+}
+
+.currentSem	{
+	-fx-background-color: #fff597;
+	-fx-border-color: #000000;
+	outline: 1px;
+	outline: solid;
+}
+
+.futureSem	{
+	-fx-background-color: #ff716a;
+	-fx-border-color: #000000;
+	outline: 1px;
+	outline: solid;
+}
