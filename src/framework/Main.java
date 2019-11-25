@@ -18,10 +18,10 @@ public class Main {
 			if(args.length >= 2 && args[1].equals("create")) {
 					// create the database
 					DatabaseManager.initializeDatabase();
-					DatabaseManager.makeAdvisorAccount("Sean Banerjee", "seanBanerjee", "lovesColor", 0);
-					DatabaseManager.makeAdvisorAccount("Alexis Maciel", "alexisMaciel", "loveAutomata", 1);
-					DatabaseManager.makeStudentAccount("Massimiliano Cutuno", "cutugnma", "12346", 668364, false);
-					DatabaseManager.makeStudentAccount("Heet Dave", "heetd", "password", 120, false);
+//					DatabaseManager.makeAdvisorAccount("Sean Banerjee", "seanBanerjee", "lovesColor", 0);
+//					DatabaseManager.makeAdvisorAccount("Alexis Maciel", "alexisMaciel", "loveAutomata", 1);
+//					DatabaseManager.makeStudentAccount("Massimiliano Cutuno", "cutugnma", "12346", 668364, false);
+//					DatabaseManager.makeStudentAccount("Heet Dave", "heetd", "password", 120, false);
 			}
 		} else {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	

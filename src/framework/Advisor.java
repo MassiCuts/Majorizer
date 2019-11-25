@@ -2,8 +2,8 @@ package framework;
 
 public class Advisor extends User {
 
-	public Advisor(String name, String username, String password, int id, boolean userIsStudent) {
-		super(name, username, password, id, userIsStudent);
+	public Advisor(int id, String universityID, String firstName, String lastName, String username, String password) {
+		super(id, universityID, firstName, lastName, username, password);
 	}
 
 }
