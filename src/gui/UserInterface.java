@@ -51,7 +51,7 @@ public class UserInterface extends Application{
 			VBox titleBox = new VBox();
 			Label title = new Label("Majorizer");
 			titleBox.getChildren().add(title);
-			title.getStyleClass().add("fonttitle");
+			title.getStyleClass().add("font");
 			titleBox.setAlignment(Pos.CENTER);
 			titleBox.setPadding(new Insets(10, 50, 10, 50));
 			
@@ -71,26 +71,25 @@ public class UserInterface extends Application{
 			plabel.getStyleClass().add("lightgraytheme");
 			
 			
-			
+			//Login Button
 			Button loginButton = new Button();
-			loginButton.setShape(new Circle(2));
-			ImageView loginButtonMark = new ImageView(ResourceLoader.getImage("checkmark30.png"));
-			loginButton.setGraphic(loginButtonMark);
-			loginButtonMark.setFitWidth(25);
-			loginButtonMark.setFitHeight(25);
-			loginButton.getStyleClass().add("savebuttontheme");
+			loginButton.setShape(new Rectangle());
+			loginButton.setText("Login");
+			loginButton.getStyleClass().add("logoutbuttontheme");
+			
 			loginButton.setDefaultButton(true);
 			
-			VBox buttonBox = new VBox();
-			buttonBox.getChildren().add(loginButton);
-			buttonBox.setAlignment(Pos.CENTER_RIGHT);
-			buttonBox.setPadding(new Insets(5));
+			VBox loginButtonBox = new VBox();
+			loginButtonBox.getChildren().add(loginButton);
+			loginButtonBox.setAlignment(Pos.CENTER_RIGHT);
+			loginButtonBox.setPadding(new Insets(5));
+			loginButtonBox.getStyleClass().add("logoutbuttontheme");
 			
 			loginGrid.add(ulabel, 0, 1);
 			loginGrid.add(username, 1, 1);
 			loginGrid.add(plabel, 0, 2);
 			loginGrid.add(password, 1, 2);
-			loginGrid.add(buttonBox, 1, 3);
+			loginGrid.add(loginButtonBox, 1, 3);
 			loginGrid.setAlignment(Pos.CENTER);
 			
 			loginGrid.setPadding(new Insets(20, 20, 20, 20));
@@ -146,16 +145,19 @@ public class UserInterface extends Application{
 			//Pane for Organization
 			GridPane orgPane = new GridPane();
 			
+			//Pre-Top Pane for Logout
+			GridPane preTopPane = new GridPane();
+			
 			//Top Pane
 			GridPane topPane = new GridPane();
 			//Name
 			Label name = new Label();
 			name.setText(getName());				//This will get the name from Majorizer eventually
-			name.getStyleClass().add("font.title");
+			name.getStyleClass().add("fonttitle");
 			//Student ID
 			Label studentID = new Label();
 			studentID.setText(getStudentID()); 		//Likewise ^^
-			studentID.getStyleClass().add("font body");
+			studentID.getStyleClass().add("fontbody");
 			//Integrate
 			topPane.add(name, 0, 0);
 			topPane.add(studentID, 0, 1);
@@ -173,13 +175,33 @@ public class UserInterface extends Application{
 			logoutButtonBox.getChildren().add(logoutButton);
 			logoutButtonBox.setAlignment(Pos.TOP_RIGHT);
 			logoutButtonBox.setPadding(new Insets(5));
+			logoutButtonBox.getStyleClass().add("logoutbuttontheme");
 						
-			topPane.add(logoutButtonBox, 1, 3);
+			preTopPane.add(logoutButtonBox, 100, 0);
+			
+			//Check Button
+			Button checkButton = new Button();
+			checkButton.setShape(new Circle(2));
+			ImageView checkButtonMark = new ImageView(ResourceLoader.getImage("checkmark30.png"));
+			checkButton.setGraphic(checkButtonMark);
+			checkButtonMark.setFitWidth(25);
+			checkButtonMark.setFitHeight(25);
+			checkButton.getStyleClass().add("checkbuttontheme");
+			checkButton.setDefaultButton(true);
+			
+			VBox checkButtonBox = new VBox();
+			checkButtonBox.getChildren().add(checkButton);
+			checkButtonBox.setAlignment(Pos.CENTER_RIGHT);
+			checkButtonBox.setPadding(new Insets(5));
 			
 			//Schedule Pane
 			GridPane schedulePane = new GridPane();
 			
-			schedulePane.add(new Label("Course Schedule"), 0, 0);
+			//Header label for Schedule Pane
+			Label header = new Label();
+			header.setText("Course Schedule");
+			header.getStyleClass().add("fontbody");
+			schedulePane.add(header, 0, 0);
 			
 			GridPane semester[] = new GridPane[8];
 			for(int i = 0; i <= 7; ++i)	{
@@ -198,18 +220,16 @@ public class UserInterface extends Application{
 			for(int i = 0; i <= 7; ++i)	{
 				schedulePane.add(semester[i], i, 1);
 			}
-						
-			
+									
 			//Action Pane
 			GridPane actionPane = new GridPane();
 			
-
+			orgPane.add(preTopPane, 1000, 0);
 			orgPane.add(topPane, 0, 0);
 			orgPane.add(schedulePane, 0, 1);
 			orgPane.add(actionPane, 0, 2);
 			
-			
-			
+						
 			root.setTop(orgPane);
 
 		}	catch( Exception e )	{
