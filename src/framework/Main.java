@@ -2,6 +2,7 @@ package framework;
 
 import database.DatabaseTable;
 import scheduler.Scheduler;
+import scheduler.SchedulerGraph;
 
 public class Main {
 	
@@ -33,7 +34,7 @@ public class Main {
 			DatabaseManager.printTable(table);
 			System.out.println();
 		}
-		
+		SchedulerGraph schedule = new SchedulerGraph("3.0: 2018-07-22");
 //		Scheduler scheduler = new Scheduler(3);
 	}
 }
