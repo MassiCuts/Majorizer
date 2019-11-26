@@ -283,6 +283,10 @@ public class UserInterface extends Application{
 			
 			majorsAndMinorsPane.add(majorsAndMinorsTab, 0, 1);
 			
+			//SAMPLE DATA
+			majorsAndMinorsTab.add(new Label("Computer Science"), 0, 0);
+			majorsAndMinorsTab.add(new Label("Computer Engineering"), 0, 1);
+			
 			//Slider for Majors And Minors Tab
 			Slider majorsAndMinorsSlider = new Slider();
 			majorsAndMinorsSlider.setOrientation(Orientation.VERTICAL);
@@ -325,6 +329,13 @@ public class UserInterface extends Application{
 
 			windowsPane.add(currentSelectedSemesterPane, 1, 1);
 			
+			//SAMPLE DATA
+			currentSelectedSemesterTab.add(new Label("CS350	Software Design and Development"), 0, 0);
+			currentSelectedSemesterTab.add(new Label("EE262	Introduction to Object Oriented Programming"), 0, 1);
+			currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
+			currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
+			currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
+			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
 			
 			
 			//Electives Pane
