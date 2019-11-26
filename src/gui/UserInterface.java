@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -83,7 +84,7 @@ public class UserInterface extends Application{
 			
 			VBox loginButtonBox = new VBox();
 			loginButtonBox.getChildren().add(loginButton);
-			loginButtonBox.setAlignment(Pos.CENTER_RIGHT);
+			loginButtonBox.setAlignment(Pos.CENTER);
 			loginButtonBox.setPadding(new Insets(5));
 			loginButtonBox.getStyleClass().add("logoutbuttontheme");
 			
@@ -200,7 +201,7 @@ public class UserInterface extends Application{
 				else if(i > getCurrentSem())
 					semester[i].getStyleClass().add("futureSem");
 				
-				semester[i].setMinSize(100, 180);
+				semester[i].setMinSize(100, 170);
 			}
 						
 			
@@ -279,22 +280,53 @@ public class UserInterface extends Application{
 			
 			GridPane majorsAndMinorsTab = new GridPane();
 			majorsAndMinorsTab.getStyleClass().add("windows");
-			majorsAndMinorsTab.setMinSize(180, 260);		
+			majorsAndMinorsTab.setMinSize(180, 200);		
 			
 			majorsAndMinorsPane.add(majorsAndMinorsTab, 0, 1);
 			
 			//SAMPLE DATA
-			majorsAndMinorsTab.add(new Label("Computer Science"), 0, 0);
-			majorsAndMinorsTab.add(new Label("Computer Engineering"), 0, 1);
+			majorsAndMinorsTab.add(new Label("Computer Science Major"), 0, 0);
+			majorsAndMinorsTab.add(new Label("Computer Engineering Major"), 0, 1);
 			
+			//Red Minus Button for Major#1
+			Button redMinusForMajorButton = new Button();
+			redMinusForMajorButton.setShape(new Circle(2));
+			ImageView redMinusMarkForMajor = new ImageView(ResourceLoader.getImage("minus-512.png"));
+			redMinusForMajorButton.setGraphic(redMinusMarkForMajor);
+			redMinusMarkForMajor.setFitWidth(10);
+			redMinusMarkForMajor.setFitHeight(25);
+			redMinusForMajorButton.getStyleClass().add("redbuttontheme");
+			
+			VBox redMinusButtonForMajorBox = new VBox();
+			redMinusButtonForMajorBox.getChildren().add(redMinusForMajorButton);
+			redMinusButtonForMajorBox.setAlignment(Pos.CENTER_RIGHT);
+			redMinusButtonForMajorBox.setPadding(new Insets(5));
+			
+			majorsAndMinorsTab.add(redMinusButtonForMajorBox, 1, 0);
+			
+			//Red Minus Button for Major#2
+			Button redMinusForMajor2Button = new Button();
+			redMinusForMajor2Button.setShape(new Circle(2));
+			ImageView redMinusMarkForMajor2 = new ImageView(ResourceLoader.getImage("minus-512.png"));
+			redMinusForMajor2Button.setGraphic(redMinusMarkForMajor2);
+			redMinusMarkForMajor2.setFitWidth(10);
+			redMinusMarkForMajor2.setFitHeight(25);
+			redMinusForMajor2Button.getStyleClass().add("redbuttontheme");
+			
+			VBox redMinusButtonForMajor2Box = new VBox();
+			redMinusButtonForMajor2Box.getChildren().add(redMinusForMajor2Button);
+			redMinusButtonForMajor2Box.setAlignment(Pos.CENTER_RIGHT);
+			redMinusButtonForMajor2Box.setPadding(new Insets(5));
+			
+			majorsAndMinorsTab.add(redMinusButtonForMajor2Box, 1, 1);
+			
+			//----------------------
 			//Slider for Majors And Minors Tab
 			Slider majorsAndMinorsSlider = new Slider();
 			majorsAndMinorsSlider.setOrientation(Orientation.VERTICAL);
-			
 			//WORKING HERE
 			
 			windowsPane.add(majorsAndMinorsPane, 0, 1);
-		
 			
 			//Current Selected Semester Pane
 			GridPane currentSelectedSemesterPane = new GridPane();
@@ -323,7 +355,7 @@ public class UserInterface extends Application{
 			
 			GridPane currentSelectedSemesterTab = new GridPane();
 			currentSelectedSemesterTab.getStyleClass().add("windows");
-			currentSelectedSemesterTab.setMinSize(180, 260);
+			currentSelectedSemesterTab.setMinSize(180, 200);
 			
 			currentSelectedSemesterPane.add(currentSelectedSemesterTab, 0, 1);
 
@@ -332,10 +364,42 @@ public class UserInterface extends Application{
 			//SAMPLE DATA
 			currentSelectedSemesterTab.add(new Label("CS350	Software Design and Development"), 0, 0);
 			currentSelectedSemesterTab.add(new Label("EE262	Introduction to Object Oriented Programming"), 0, 1);
-			currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
-			currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
-			currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
-			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
+			//currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
+			//currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
+			//currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
+			//currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
+			
+			//Red Minus Button for Course
+			Button redMinusForCourseButton = new Button();
+			redMinusForCourseButton.setShape(new Circle(2));
+			ImageView redMinusMarkForCourse = new ImageView(ResourceLoader.getImage("minus-512.png"));
+			redMinusForCourseButton.setGraphic(redMinusMarkForCourse);
+			redMinusMarkForCourse.setFitWidth(10);
+			redMinusMarkForCourse.setFitHeight(25);
+			redMinusForCourseButton.getStyleClass().add("redbuttontheme");
+			
+			VBox redMinusButtonForCourseBox = new VBox();
+			redMinusButtonForCourseBox.getChildren().add(redMinusForCourseButton);
+			redMinusButtonForCourseBox.setAlignment(Pos.CENTER_RIGHT);
+			redMinusButtonForCourseBox.setPadding(new Insets(5));
+			
+			currentSelectedSemesterTab.add(redMinusButtonForCourseBox, 1, 0);
+			
+			//Red Minus Button for Course2
+			Button redMinusForCourse2Button = new Button();
+			redMinusForCourse2Button.setShape(new Circle(2));
+			ImageView redMinusMarkForCourse2 = new ImageView(ResourceLoader.getImage("minus-512.png"));
+			redMinusForCourse2Button.setGraphic(redMinusMarkForCourse2);
+			redMinusMarkForCourse2.setFitWidth(10);
+			redMinusMarkForCourse2.setFitHeight(25);
+			redMinusForCourse2Button.getStyleClass().add("redbuttontheme");
+			
+			VBox redMinusButtonForCourse2Box = new VBox();
+			redMinusButtonForCourse2Box.getChildren().add(redMinusForCourse2Button);
+			redMinusButtonForCourse2Box.setAlignment(Pos.CENTER_RIGHT);
+			redMinusButtonForCourse2Box.setPadding(new Insets(5));
+			
+			currentSelectedSemesterTab.add(redMinusButtonForCourse2Box, 1, 1);
 			
 			
 			//Electives Pane
@@ -347,20 +411,82 @@ public class UserInterface extends Application{
 			headerForElectives.getStyleClass().add("fontmed");
 			electivesPane.add(headerForElectives, 0, 0);
 			
-			
 			GridPane electivesTab = new GridPane();
 			electivesTab.getStyleClass().add("windows");
-			electivesTab.setMinSize(180, 260);
+			electivesTab.setMinSize(180, 200);
+			
+			electivesTab.add(new Label("CS470	Deep Learning"), 0, 0);
+			
+			//Green Plus Button for ElectiveCourse
+			Button greenPlusForElectiveCourseButton = new Button();
+			greenPlusForElectiveCourseButton.setShape(new Circle(2));
+			ImageView greenPlusForElectiveCourseMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
+			greenPlusForElectiveCourseButton.setGraphic(greenPlusForElectiveCourseMark);
+			greenPlusForElectiveCourseMark.setFitWidth(30);
+			greenPlusForElectiveCourseMark.setFitHeight(20);
+			greenPlusForElectiveCourseButton.getStyleClass().add("greenbuttontheme");
+			
+			VBox greenPlusButtonForElectiveCourseBox = new VBox();
+			greenPlusButtonForElectiveCourseBox.getChildren().add(greenPlusForElectiveCourseButton);
+			greenPlusButtonForElectiveCourseBox.setAlignment(Pos.CENTER_LEFT);
+			greenPlusButtonForElectiveCourseBox.setPadding(new Insets(5));
+			
+			electivesTab.add(greenPlusButtonForElectiveCourseBox, 1, 0);
 			
 			electivesPane.add(electivesTab, 0, 1);
 
 			windowsPane.add(electivesPane, 2, 1);
 			
 			
+			//POST windows Pane for AddCourses and AddMajorOrMinor
+			GridPane postWindowsPane = new GridPane();
+			
+			//Add Courses Pane
+			GridPane addCoursesPane = new GridPane();
+			
+			//Header label for Add Courses
+			Label headerForAddCourses = new Label();
+			headerForAddCourses.setText("Add Courses");
+			headerForAddCourses.getStyleClass().add("fontmed");
+			addCoursesPane.add(headerForAddCourses, 0, 0);
+			
+			//Text box for Searching
+			TextField searchField = new TextField();
+			searchField.setPromptText("Course-ID");
+			searchField.getStyleClass().add("lightgraytheme");
+			//searchField.getStyleClass().add("boxoutline");
+			
+			addCoursesPane.add(searchField, 1, 0);
+			
+			GridPane addCoursesTab = new GridPane();
+			addCoursesTab.getStyleClass().add("windows");
+			addCoursesTab.setMinSize(60, 60);
+			
+			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
+			
+			//Green Plus Button for addCoursesTab
+			Button greenPlusForAddCoursesButton = new Button();
+			greenPlusForAddCoursesButton.setShape(new Circle(2));
+			ImageView greenPlusForAddCoursesMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
+			greenPlusForAddCoursesButton.setGraphic(greenPlusForAddCoursesMark);
+			greenPlusForAddCoursesMark.setFitWidth(30);
+			greenPlusForAddCoursesMark.setFitHeight(20);
+			greenPlusForAddCoursesButton.getStyleClass().add("greenbuttontheme");
+			
+			VBox greenPlusButtonForAddCoursesBox = new VBox();
+			greenPlusButtonForAddCoursesBox.getChildren().add(greenPlusForAddCoursesButton);
+			greenPlusButtonForAddCoursesBox.setAlignment(Pos.CENTER_LEFT);
+			greenPlusButtonForAddCoursesBox.setPadding(new Insets(5));
+			
+			addCoursesTab.add(greenPlusButtonForAddCoursesBox, 1, 0);
+			
+			addCoursesPane.add(addCoursesTab, 0, 1);
+			
+			postWindowsPane.add(addCoursesPane, 0, 0);
+			
 			
 			//Bottom Pane
 			GridPane bottomPane = new GridPane();
-			
 			
 			
 			//Check Button
@@ -380,12 +506,14 @@ public class UserInterface extends Application{
 			
 			bottomPane.add(checkButtonBox, 0, 100);
 			
+			
 			orgPane.add(preTopPane, 1000, 0);
 			orgPane.add(topPane, 0, 0);
 			orgPane.add(schedulePane, 0, 1);
 			orgPane.add(actionPane, 0, 2);
 			orgPane.add(windowsPane, 0, 10);
-			orgPane.add(bottomPane, 1000, 5000);
+			orgPane.add(postWindowsPane, 0, 500);
+			orgPane.add(bottomPane, 1000, 1000);
 						
 			root.setTop(orgPane);
 

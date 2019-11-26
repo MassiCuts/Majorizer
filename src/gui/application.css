@@ -41,7 +41,7 @@
 .font	{
 	-fx-font-family: helvetica;
 	-fx-font-style: italic;
-	-fx-font-size: 50;
+	-fx-font-size: 30;
 	-fx-font-weight: bold;
 }
 
@@ -53,15 +53,15 @@
 }
 
 .fonttitle	{
-	-fx-font-size: 40;
+	-fx-font-size: 35;
 }
 
 .fontbody	{
-	-fx-font-size: 25;
+	-fx-font-size: 20;
 }
 
 .IDfont	{
-	-fx-font-size: 25;
+	-fx-font-size: 20;
 	-fx-text-fill: grey;
 }
 
@@ -92,6 +92,15 @@
 
 .greenbuttontheme	{
 	-fx-background-color: #51e302;
+	-fx-background-radius: 20;
+	-fx-min-width: 20;
+	-fx-min-height: 20;
+	-fx-max-width: 20;
+	-fx-max-height: 20;
+}
+
+.redbuttontheme	{
+	-fx-background-color: #ff2f00;
 	-fx-background-radius: 20;
 	-fx-min-width: 20;
 	-fx-min-height: 20;
