@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 
 import database.DatabaseColumn;
@@ -13,6 +14,10 @@ import database.DatabaseInterface;
 import database.DatabaseTable;
 import database.JSONDatabase;
 import database.JSONDatabase.JSONDatabaseConnectionException;
+import framework.Curriculum.CurriculumType;
+import framework.RequiredCourses.RequiredCourse;
+import framework.RequiredCourses.RequiredCourseGroup;
+import framework.RequiredCourses.RequiredCourseNode;
 
 public class DatabaseManager {
 	
@@ -38,6 +43,14 @@ public class DatabaseManager {
 	public static final DatabaseTable COURSES_PREREC_TABLE 				= COURSES_TABLE.subTable("Courses_PreRecs");
 	public static final DatabaseTable PREREC_TABLE 						= COURSES_PREREC_TABLE.subTable("PreRecs");
 	public static final DatabaseTable PREREC_COURSE_SELECTION_TABLE 	= COURSES_PREREC_TABLE.subTable("PreRecs_Course_Selection");
+	
+	public static final String PRE_REC_TYPE_LIST = "PRE_REC_LIST";
+	public static final String PRE_REC_TYPE_COURSE = "COURSE";
+
+	public static final String CURRICULUM_TYPE_MAJOR = "MAJOR";
+	public static final String CURRICULUM_TYPE_MINOR = "MINOR";
+	public static final String CURRICULUM_TYPE_LIST = "SUB_CURRICULUM";
+	public static final String CURRICULUM_TYPE_COURSE = PRE_REC_TYPE_COURSE;
 	
 	public static void connect(String database_locator) {
 		URI uri;
@@ -101,7 +114,6 @@ public class DatabaseManager {
 		DATABASE.addColumns(REQUESTS_TABLE, 
 				new DatabaseColumn("requestID", 	ColumnType.INT),
 				new DatabaseColumn("studentID", 	ColumnType.INT),
-				new DatabaseColumn("advisorID", 	ColumnType.INT),
 				new DatabaseColumn("curriculumID", 	ColumnType.INT),
 				new DatabaseColumn("isAdding", 		ColumnType.BOOLEAN));
 		
@@ -153,46 +165,46 @@ public class DatabaseManager {
 		
 	}
 	
-	public static void saveAdvisor(Advisor advisor, boolean isNew) {
-		final int userID = advisor.getUserId();
-		String username = advisor.getUsername();
-		
-		if(isNew) {
-			DATABASE.queryEntry(USERS_TABLE, (m) -> {
-				if(m.get("username").equals(username))
-					throw new UsernameNotUniqueException(username);
-				return false;
-			});
-			
-			int newUserID = findUniqueID(USERS_TABLE, "userID");
-			advisor.setUserID(newUserID);
-			
-			Map<String, Object> map = userToMap(advisor);
-			
-			DATABASE.addEntry(USERS_TABLE, 0, map);
-			
-			map.clear();
-			map.put("userID", newUserID);
-			DATABASE.addEntry(ADVISORS_TABLE, 0, map);
-		} else {
-			Map<String, Object> map = userToMap(advisor);
-			
-			DATABASE.setEntry(USERS_TABLE, (m)->{
-				if((int) m.get("userID") == userID)
-					return map;
-				return null;
-			});
-			
-			map.clear();
-			map.put("userID", userID);
-			
-			DATABASE.setEntry(ADVISORS_TABLE, (m)-> {
-				if((int) m.get("userID") == userID)
-					return map;
-				return null;
-			});
-		}
-	}
+//	public static void saveAdvisor(Advisor advisor, boolean isNew) {
+//		final int userID = advisor.getUserID();
+//		String username = advisor.getUsername();
+//		
+//		if(isNew) {
+//			DATABASE.queryEntry(USERS_TABLE, (m) -> {
+//				if(m.get("username").equals(username))
+//					throw new UsernameNotUniqueException(username);
+//				return false;
+//			});
+//			
+//			int newUserID = findUniqueID(USERS_TABLE, "userID");
+//			advisor.setUserID(newUserID);
+//			
+//			Map<String, Object> map = userToMap(advisor);
+//			
+//			DATABASE.addEntry(USERS_TABLE, 0, map);
+//			
+//			map.clear();
+//			map.put("userID", newUserID);
+//			DATABASE.addEntry(ADVISORS_TABLE, 0, map);
+//		} else {
+//			Map<String, Object> map = userToMap(advisor);
+//			
+//			DATABASE.setEntry(USERS_TABLE, (m)->{
+//				if((int) m.get("userID") == userID)
+//					return map;
+//				return null;
+//			});
+//			
+//			map.clear();
+//			map.put("userID", userID);
+//			
+//			DATABASE.setEntry(ADVISORS_TABLE, (m)-> {
+//				if((int) m.get("userID") == userID)
+//					return map;
+//				return null;
+//			});
+//		}
+//	}
 	
 	public static Advisor getAdvisor(String username) {
 		ArrayList<Map<String, Object>> results = DATABASE.queryEntry(USERS_TABLE, (m) -> {
@@ -206,14 +218,45 @@ public class DatabaseManager {
 		
 		Map<String, Object> m = results.get(0);
 		
-		int userID = (int) m.get("userID");
-		String universityID = (String) m.get("universityID");
-		String firstName = (String) m.get("firstName");
-		String lastName = (String) m.get("lastName");
-		String password = (String) m.get("password");
+		return mapToAdvisor(m);
+	}
+	
+	private static Advisor mapToAdvisor(Map<String, Object> userMap) {
+		int userID = (int) userMap.get("userID");
+		String universityID = (String) userMap.get("universityID");
+		String firstName = (String) userMap.get("firstName");
+		String lastName = (String) userMap.get("lastName");
+		String username = (String) userMap.get("username");
+		String password = (String) userMap.get("password");
 		
-		Advisor advisor = new Advisor(userID, universityID, firstName, lastName, username, password);
-		return advisor;
+		ArrayList<Integer> adviseeIDs = new ArrayList<>();
+		ArrayList<Map<String, Object>> adivsorResults = DATABASE.queryEntry(ADVISOR_STUDENTS_TABLE, (m) -> {
+			if(m.get("advisorID").equals(userID))
+				return true;
+			return false;
+		});
+		for(Map<String, Object> entry : adivsorResults) {
+			int studentID = (int) entry.get("studentID");
+			adviseeIDs.add(studentID);
+		}
+		
+		
+		ArrayList<Integer> requestIDs = new ArrayList<>();
+		ArrayList<Map<String, Object>> requestResults = DATABASE.queryEntry(REQUESTS_TABLE, (m) -> {
+			for(int i = 0; i < adviseeIDs.size(); i++) {
+				int studentID = adviseeIDs.get(i);
+				if(m.get("studentID").equals(studentID))
+					return true;
+			}
+			return false;
+		});
+		
+		for(Map<String, Object> entry : requestResults) {
+			int requestID = (int) entry.get("requestID");
+			requestIDs.add(requestID);
+		}
+		
+		return new Advisor(userID, universityID, firstName, lastName, username, password, adviseeIDs, requestIDs);
 	}
 	
 	public static Student getStudent(String username) {
@@ -226,8 +269,17 @@ public class DatabaseManager {
 		if(userResults.size() == 0)
 			return null;
 		
-		Map<String, Object> userResultMap = userResults.get(0);
-		int userID = (int) userResultMap.get("userID");
+		Map<String, Object> userMap = userResults.get(0);
+		return mapToStudent(userMap);
+	}
+	
+	private static Student mapToStudent(Map<String, Object> userMap) {
+		int userID = (int) userMap.get("userID");
+		String universityID = (String) userMap.get("universityID");
+		String firstName = (String) userMap.get("firstName");
+		String lastName = (String) userMap.get("lastName");
+		String username = (String) userMap.get("username");
+		String password = (String) userMap.get("password");
 		
 		ArrayList<Map<String, Object>> studentResults = DATABASE.queryEntry(STUDENTS_TABLE, (m) -> {
 			if(m.get("userID").equals(userID))
@@ -238,94 +290,372 @@ public class DatabaseManager {
 		if(studentResults.size() == 0)
 			return null;
 		
-		Map<String, Object> studentResultMap = studentResults.get(0);
+		Map<String, Object> studentMap = studentResults.get(0);
 		
-		String universityID = (String) userResultMap.get("universityID");
-		String firstName = (String) userResultMap.get("firstName");
-		String lastName = (String) userResultMap.get("lastName");
-		String password = (String) userResultMap.get("password");
+		boolean isNewStudent = (Boolean) studentMap.get("isNewStudent");
+		String startSemester = (String) studentMap.get("startSemester");
+		AcademicPlan academicPlan = getAcademicPlan(userID, startSemester);
 		
-		boolean isNewStudent = (Boolean) studentResultMap.get("isNewStudent");
-		String startSemester = (String) studentResultMap.get("startSemester");
-		
-		Student student = new Student(userID, universityID, firstName, lastName, username, password, startSemester, isNewStudent);
-		return student;
+		return new Student(userID, universityID, firstName, lastName, username, password, isNewStudent, academicPlan);
 	}
 	
-	public static void saveStudent(Student student, boolean isNew) {
-		final int userID = student.getUserId();
-		String username = student.getUsername();
+	private static AcademicPlan getAcademicPlan(int studentID, String startSemester) {
+		ArrayList<Map<String, Object>> curriculumResults;
+		curriculumResults = DATABASE.queryEntry(STUDENTS_CURRICULUMS_TABLE, (m) -> {
+			if(m.get("studentID").equals(studentID))
+				return true;
+			return false;
+		});
 		
-		if(isNew) {
-			DATABASE.queryEntry(USERS_TABLE, (m) -> {
-				if(m.get("username").equals(username))
-					throw new UsernameNotUniqueException(username);
-				return false;
-			});
-			
-			int newUserID = findUniqueID(USERS_TABLE, "userID");
-			student.setUserID(newUserID);
-			
-			Map<String, Object> map = userToMap(student);
-			
-			DATABASE.addEntry(USERS_TABLE, 0, map);
-			
-			map.clear();
-			map.put("userID", newUserID);
-			map.put("isNewStudent", student.isStudentNew());
-			DATABASE.addEntry(STUDENTS_TABLE, 0, map);
-		} else {
-			Map<String, Object> map = userToMap(student);
-			
-			DATABASE.setEntry(USERS_TABLE, (m)->{
-				if((int) m.get("userID") == userID)
-					return map;
-				return null;
-			});
-			
-			map.clear();
-			map.put("userID", userID);
-			map.put("isNewStudent", student.isStudentNew());
-			
-			DATABASE.setEntry(STUDENTS_TABLE, (m)-> {
-				if((int) m.get("userID") == userID)
-					return map;
-				return null;
-			});
+		ArrayList<Integer> degreeIDs = new ArrayList<>();
+		for(Map<String, Object> entry : curriculumResults) {
+			int curriculumID = (int) entry.get("curriculumID");
+			degreeIDs.add(curriculumID);
 		}
+		
+		ArrayList<Map<String, Object>> selectedCourseResults;
+		selectedCourseResults = DATABASE.queryEntry(STUDENT_TAKEN_COURSES_TABLE, (m) -> {
+			if(m.get("studentID").equals(studentID))
+				return true;
+			return false;
+		});
+		
+		Map<String, ArrayList<Integer>> selectedCourseIDs = new Hashtable<>();
+		for(Map<String, Object> entry : selectedCourseResults) {
+			int courseID = (int) entry.get("courseID");
+			String semester = (String) entry.get("semester");
+			
+			ArrayList<Integer> courseList;
+			if(!selectedCourseIDs.containsKey(semester)) {
+				courseList = new ArrayList<>();
+				selectedCourseIDs.put(semester, courseList);
+			} else {
+				courseList = selectedCourseIDs.get(semester);
+			}
+			
+			courseList.add(courseID);
+		}
+		
+		
+		return new AcademicPlan(startSemester, degreeIDs, selectedCourseIDs, null);
 	}
 	
 	
-//	
-//	public static void makeStudentAccount(String name, String username, String password, int id, boolean studentIsNew) {
-//		DATABASE.queryEntry(USERS_TABLE, (m) -> {
-//			if(m.get("username").equals(username))
-//				throw new UsernameNotUniqueException(username);
-//			if((int) m.get("id") == id)
-//				throw new EntryNotUniqueException("The user id \"" + id + "\" is already taken");
-//			return false;
-//		});
+//	public static void saveStudent(Student student, boolean isNew) {
+//		final int userID = student.getUserID();
+//		String username = student.getUsername();
 //		
-//		HashMap<String, Object> map = new HashMap<>();
-//		map.put("name", name);
-//		map.put("username", username);
-//		map.put("password", password);
-//		map.put("id", id);
-//		map.put("userIsStudent", true);
-//		DATABASE.addEntry(USERS_TABLE, 0, map);
-//		
-//		map.clear();
-//		map.put("id", id);
-//		map.put("isNewStudent", studentIsNew);
-//		DATABASE.addEntry(STUDENTS_TABLE, 0, map);
-//		
-//		DatabaseTable studentProfile = STUDENTS_PROFILES.subTable(Integer.toHexString(id));
-//		
-//		DATABASE.createTable(studentProfile);
+//		if(isNew) {
+//			DATABASE.queryEntry(USERS_TABLE, (m) -> {
+//				if(m.get("username").equals(username))
+//					throw new UsernameNotUniqueException(username);
+//				return false;
+//			});
+//			
+//			int newUserID = findUniqueID(USERS_TABLE, "userID");
+//			student.setUserID(newUserID);
+//			
+//			Map<String, Object> map = userToMap(student);
+//			
+//			DATABASE.addEntry(USERS_TABLE, 0, map);
+//			
+//			map.clear();
+//			map.put("userID", newUserID);
+//			map.put("isNewStudent", student.isStudentNew());
+//			DATABASE.addEntry(STUDENTS_TABLE, 0, map);
+//		} else {
+//			Map<String, Object> map = userToMap(student);
+//			
+//			DATABASE.setEntry(USERS_TABLE, (m) -> {
+//				if((int) m.get("userID") == userID)
+//					return map;
+//				return null;
+//			});
+//			
+//			map.clear();
+//			map.put("userID", userID);
+//			map.put("isNewStudent", student.isStudentNew());
+//			
+//			DATABASE.setEntry(STUDENTS_TABLE, (m) -> {
+//				if((int) m.get("userID") == userID)
+//					return map;
+//				return null;
+//			});
+//		}
 //	}
+
+	
+	public static Request getRequest(int requestID) {
+		ArrayList<Map<String, Object>> requestResults;
+		requestResults = DATABASE.queryEntry(REQUESTS_TABLE, (m) -> {
+			if(m.get("requestID").equals(requestID)) return true;
+			return false;
+		});
+		
+		if(requestResults.isEmpty())
+			return null;
+		
+		return mapToRequest(requestResults.get(0));
+	}
+	
+	private static Request mapToRequest(Map<String, Object> requestMap) {
+		int requestID = (int) requestMap.get("requestID");
+		int studentID = (int) requestMap.get("studentID");
+		int curriculumID = (int) requestMap.get("curriculumID");
+		boolean isAdding = (boolean) requestMap.get("isAdding");
+		
+		return new Request(requestID, studentID, isAdding, curriculumID);
+	}
+	
+	public static Curriculum getCurriculum(int curriculumID) {
+		ArrayList<Map<String, Object>> curriculumResults;
+		curriculumResults = DATABASE.queryEntry(CURRICULUMS_TABLE, (m) -> {
+			if(m.get("curriculumID").equals(curriculumID)) return true;
+			return false;
+		});
+		
+		if(curriculumResults.size() == 0)
+			return null;
+		
+		Curriculum curriculum = mapToCurriculum(curriculumResults.get(0));
+		
+		return curriculum;
+	}
+	
+	public static Curriculum getCurriculum(String curriculumName) {
+		ArrayList<Map<String, Object>> curriculumResults;
+		curriculumResults = DATABASE.queryEntry(CURRICULUMS_TABLE, (m) -> {
+			if(m.get("curriculumName").equals(curriculumName)) return true;
+			return false;
+		});
+		
+		if(curriculumResults.size() == 0)
+			return null;
+		
+		Curriculum curriculum = mapToCurriculum(curriculumResults.get(0));
+		
+		return curriculum;
+	}
+	
+	
+	private static Curriculum mapToCurriculum(Map<String, Object> curriculumMap) {
+		int curriculumID = (int) curriculumMap.get("curriculumID");
+		String curriculumName = (String) curriculumMap.get("curriculumName");
+		String type = (String) curriculumMap.get("type");
+		int amtReq = (int) curriculumMap.get("amtReq");
+		
+		CurriculumType curriculumType;
+		
+		if(type.equals(CURRICULUM_TYPE_MAJOR)) {
+			curriculumType = CurriculumType.MAJOR;
+		} else if (type.equals(CURRICULUM_TYPE_MINOR)) {
+			curriculumType = CurriculumType.MINOR;
+		} else {
+			throw new DatabaseFormatException(CURRICULUMS_TABLE, "type", type, CURRICULUM_TYPE_MAJOR, CURRICULUM_TYPE_MINOR);
+		}
+		
+		RequiredCourseNode root = getCurriculumNode(curriculumID, amtReq);
+		RequiredCourses requiredCourses = new RequiredCourses(root);
+		
+		return new Curriculum(curriculumID, curriculumName, curriculumType, requiredCourses);
+	}
+	
+	public static RequiredCourses getCurriculumCourses(int curriculumID) {
+		ArrayList<Map<String, Object>> curriculumResults = DATABASE.queryEntry(CURRICULUMS_TABLE, (m) -> {
+			if(m.get("curriculumID").equals(curriculumID)) return true;
+			return false;
+		});
+		
+		if(curriculumResults.isEmpty())
+			return new RequiredCourses(null);
+		
+		int amtReq = (int) curriculumResults.get(0).get("amtReq");
+		
+		RequiredCourseNode root = getCurriculumNode(curriculumID, amtReq);
+		return  new RequiredCourses(root);
+	}
+	
+	public static RequiredCourses getCurriculumCourses(String curriculumName) {
+		
+		ArrayList<Map<String, Object>> curriculumResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
+			if(m.get("curriculumName").equals(curriculumName)) return true;
+			return false;
+		});
+		
+		if(curriculumResults.isEmpty())
+			return new RequiredCourses(null);
+		
+		int curriculumID = (int) curriculumResults.get(0).get("curriculumID");
+		int amtReq = (int) curriculumResults.get(0).get("amtReq");
+		
+		RequiredCourseNode root = getCurriculumNode(curriculumID, amtReq);
+		return  new RequiredCourses(root);
+	}
+	
+	private static RequiredCourseNode getCurriculumNode(int curriculumID, int amtReq) {
+		ArrayList<Map<String, Object>> curriculumChildResults = DATABASE.queryEntry(CURRICULUM_COURSE_SELECTION_TABLE, (m) -> {
+			if(m.get("curriculumID").equals(curriculumID)) return true;
+			return false;
+		});
+		
+		ArrayList<RequiredCourseNode> nodes = new ArrayList<>();
+		
+		for(Map<String, Object> childMap : curriculumChildResults) {
+			String type = (String) childMap.get("type");
+			int curriculumCourseID = (int) childMap.get("curriculumCourseID");
+			
+			if(type.equals(CURRICULUM_TYPE_LIST)) {
+				RequiredCourseNode child = getCurriculumNode(curriculumCourseID);
+				nodes.add(child);
+			} else if (type.equals(CURRICULUM_TYPE_COURSE)) {
+				RequiredCourse rc = new RequiredCourse(curriculumCourseID);
+				nodes.add(rc);
+			} else {
+				throw new DatabaseFormatException(CURRICULUM_COURSE_SELECTION_TABLE, "type", type, CURRICULUM_TYPE_LIST, CURRICULUM_TYPE_COURSE);
+			}
+		}
+		
+		return new RequiredCourseGroup(amtReq, nodes);
+	}
+	
+	private static RequiredCourseNode getCurriculumNode(int curriculumID) {
+		
+		ArrayList<Map<String, Object>> curriculumResults = DATABASE.queryEntry(CURRICULUMS_TABLE, (m) -> {
+			if(m.get("curriculumID").equals(curriculumID)) return true;
+			return false;
+		});
+		
+		if(curriculumResults.isEmpty())
+			return null;
+		
+		int amtReq = (int) curriculumResults.get(0).get("amtReq");
+		
+		
+		return getCurriculumNode(curriculumID, amtReq);
+	}
+	
+	public static Course getCourse(int courseID) {
+		ArrayList<Map<String, Object>> courseResults;
+		courseResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
+			if(m.get("courseID").equals(courseID)) return true;
+			return false;
+		});
+		
+		if(courseResults.size() == 0)
+			return null;
+		
+		Course c = mapToCourse(courseResults.get(0));
+		return c;
+	}
+	
+	public static Course getCourse(String courseCode) {
+		ArrayList<Map<String, Object>> courseResults;
+		courseResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
+			if(m.get("courseCode").equals(courseCode)) return true;
+			return false;
+		});
+		
+		if(courseResults.size() == 0)
+			return null;
+		
+		Course c = mapToCourse(courseResults.get(0));
+		return c;
+	}
+	
+	private static Course mapToCourse(Map<String, Object> courseMap) {
+		int courseID = (int) courseMap.get("courseID");
+		String courseCode = (String) courseMap.get("courseCode");
+		String courseName = (String) courseMap.get("courseName");
+		
+		ArrayList<Map<String, Object>> availabilityResults;
+		availabilityResults = DATABASE.queryEntry(COURSE_AVAILABLITY_TABLE, (m) -> {
+			if(m.get("courseID").equals(courseID)) return true;
+			return false;
+		});
+		
+		ArrayList<String> timesOffered = new ArrayList<>();
+		for(Map<String, Object> availabilityMap : availabilityResults) {
+			String timeOffered = (String) availabilityMap.get("timeOffered");
+			timesOffered.add(timeOffered);
+		}
+		
+		RequiredCourses requiredCourses = getCoursePreRecs(courseID);
+		
+		return new Course(courseID, courseCode, courseName, timesOffered, requiredCourses);
+	}
+	
+	public static RequiredCourses getCoursePreRecs(int courseID) {
+		ArrayList<Map<String, Object>> preReqResults = DATABASE.queryEntry(COURSES_PREREC_TABLE, (m) -> {
+			if(m.get("courseID").equals(courseID)) return true;
+			return false;
+		});
+		
+		if(preReqResults.isEmpty())
+			return new RequiredCourses(null);
+		
+		int preRecID = (int) preReqResults.get(0).get("preRecID");
+		RequiredCourseNode root = getPreRecCourseNode(preRecID);
+		return new RequiredCourses(root);
+	}
+	
+	public static RequiredCourses getCoursePreRecs(String courseCode) {
+		
+		ArrayList<Map<String, Object>> courseResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
+			if(m.get("courseCode").equals(courseCode)) return true;
+			return false;
+		});
+		
+		if(courseResults.isEmpty())
+			return new RequiredCourses(null);
+		
+		int courseID = (int) courseResults.get(0).get("courseID");
+		
+		return getCoursePreRecs(courseID);
+	}
+	
+	private static RequiredCourseNode getPreRecCourseNode(int preRecID) {
+		
+		ArrayList<Map<String, Object>> preReqResults = DATABASE.queryEntry(PREREC_TABLE, (m) -> {
+			if(m.get("preRecID").equals(preRecID)) return true;
+			return false;
+		});
+		
+		if(preReqResults.isEmpty())
+			return null;
+		
+		int amtReq = (int) preReqResults.get(0).get("amtReq");
+		
+		
+		
+		ArrayList<Map<String, Object>> preReqChildResults = DATABASE.queryEntry(PREREC_COURSE_SELECTION_TABLE, (m) -> {
+			if(m.get("preRecID").equals(preRecID)) return true;
+			return false;
+		});
+		
+		
+		ArrayList<RequiredCourseNode> nodes = new ArrayList<>();
+		
+		for(Map<String, Object> childMap : preReqChildResults) {
+			String type = (String) childMap.get("type");
+			int preRecCourseID = (int) childMap.get("preRecCourseID");
+			
+			if(type.equals(PRE_REC_TYPE_LIST)) {
+				RequiredCourseNode child = getPreRecCourseNode(preRecCourseID);
+				nodes.add(child);
+			} else if (type.equals(PRE_REC_TYPE_COURSE)) {
+				RequiredCourse rc = new RequiredCourse(preRecCourseID);
+				nodes.add(rc);
+			} else {
+				throw new DatabaseFormatException(PREREC_COURSE_SELECTION_TABLE, "type", type, PRE_REC_TYPE_LIST, PRE_REC_TYPE_COURSE);
+			}
+		}
+		
+		return new RequiredCourseGroup(amtReq, nodes);
+	}
+	
 	
 	private static Map<String, Object> userToMap(User user) {
-		int userID = user.getUserId();
+		int userID = user.getUserID();
 		String universityID = user.getUniversityID();
 		String firstName = user.getFirstName();
 		String lastName = user.getLastName();
@@ -378,6 +708,37 @@ public class DatabaseManager {
 	public static class UsernameNotUniqueException extends EntryNotUniqueException {
 		private UsernameNotUniqueException(String username) {
 			super("Username \"" + username + "\" is already taken.");
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	public static class DatabaseFormatException extends RuntimeException {
+		private static final String MSG_FORMAT = "The table \"%s\" at column \"%s\" is given the type %s, but must";
+		
+		private DatabaseFormatException(String msg) {
+			super(msg);
+		}
+		
+		private DatabaseFormatException(DatabaseTable table, String column, String givenArg, String ... availableArgs) {
+			super(genString(table, column, givenArg, availableArgs));
+		}
+		
+		private static String genString(DatabaseTable table, String column, String givenArg, String ... availableArgs) {
+			String tableName = table.getFullString(JSONDatabase.TABLE_SEPARATOR);
+			String msg = String.format(MSG_FORMAT, tableName, column, givenArg);
+			
+			if(availableArgs.length > 1) {
+				int argLength = availableArgs.length;
+				msg += " either be " + availableArgs[0];
+				for(int i = 1; i < argLength - 1; i++)
+					msg += ", " + availableArgs[i];
+				msg += ", or " + availableArgs[argLength - 1];
+			} else if (availableArgs.length == 1) {
+				msg += " be " + availableArgs[0];
+			} else {
+				return "Error";
+			}
+			return msg;
 		}
 	}
 }

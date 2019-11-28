@@ -1,9 +1,10 @@
 package framework;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class Curriculum {
-	private enum CurriculumType {
+	public static enum CurriculumType {
 		MAJOR, MINOR;
 	}
 	
@@ -12,10 +13,10 @@ public class Curriculum {
 	private final CurriculumType curriculumType;
 	private final RequiredCourses requiredCourses;
 	
-	public Curriculum(int curriculumID, String curriculumName, CurriculumType curriculumtype, RequiredCourses requiredCourses) {
+	public Curriculum(int curriculumID, String curriculumName, CurriculumType curriculumType, RequiredCourses requiredCourses) {
 		this.curriculumID = curriculumID;
 		this.curriculumName = curriculumName;
-		this.curriculumType = curriculumtype;
+		this.curriculumType = curriculumType;
 		this.requiredCourses = requiredCourses;
 	}
 	
@@ -37,5 +38,17 @@ public class Curriculum {
 	
 	public RequiredCourses getRequiredCourses() {
 		return requiredCourses;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Curriculum)
+			return curriculumID == ((Curriculum) obj).curriculumID;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(curriculumID);
 	}
 }

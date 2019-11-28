@@ -1,5 +1,7 @@
 package framework;
 
+import java.util.Objects;
+
 public abstract class User {
 	private int userID;
 	private String universityID;
@@ -61,11 +63,25 @@ public abstract class User {
 		return password;
 	}
 
-	public int getUserId() {
+	public int getUserID() {
 		return userID;
 	}
 
 	public boolean isUserIsStudent() {
 		return this instanceof Student;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof User)
+			return this.userID == ((User) obj).userID;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(userID);
+	}
+	
+	
 }

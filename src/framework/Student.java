@@ -2,20 +2,21 @@ package framework;
 
 public class Student extends User {
 	
-	private String startSemesterDate;
 	private boolean isStudentNew;
+	private AcademicPlan academicPlan;
 	
-	public Student(int userID, String universityID, String firstName, String lastName, String username, String password, String startSemesterDate, boolean isStudentNew) {
+	public Student(int userID, String universityID, String firstName, String lastName, String username, String password, boolean isStudentNew, AcademicPlan academicPlan) {
 		super(userID, universityID, firstName, lastName, username, password);
-		this.startSemesterDate = startSemesterDate;
 		this.isStudentNew = isStudentNew;
-	}
-	
-	public String getStartSemesterDate() {
-		return startSemesterDate;
+		this.academicPlan = academicPlan;
 	}
 	
 	public boolean isStudentNew() {
 		return isStudentNew;
 	}
+	
+	public AcademicPlan getAcademicPlan() {
+		return academicPlan;
+	}
+	
 }

@@ -1,16 +1,21 @@
 package framework;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
 public class Course {
 	private final int courseID;
 	private final String courseCode;
 	private final String courseName;
-	private final RequiredCourses requiredCourses;
+	private ArrayList<String> timesOffered;
+	private final RequiredCourses preRecCourses;
 	
-	public Course(int courseID, String courseCode, String courseName, RequiredCourses requiredCourses) {
+	public Course(int courseID, String courseCode, String courseName, ArrayList<String> timesOffered, RequiredCourses requiredCourses) {
 		this.courseID = courseID;
 		this.courseCode = courseCode;
 		this.courseName = courseName;
-		this.requiredCourses = requiredCourses;
+		this.timesOffered = timesOffered;
+		this.preRecCourses = requiredCourses;
 	}
 	
 	public int getCourseID() {
@@ -26,6 +31,22 @@ public class Course {
 	}
 	
 	public RequiredCourses getRequiredCourses() {
-		return requiredCourses;
+		return preRecCourses;
+	}
+	
+	public ArrayList<String> getTimesOffered() {
+		return timesOffered;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Course)
+			return courseID == ((Course) obj).courseID;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(courseID);
 	}
 }

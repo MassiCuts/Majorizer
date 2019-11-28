@@ -27,11 +27,12 @@ public class JSONDatabase implements DatabaseInterface {
 	private File databaseRoot = null;
 	
 
-	private static final String JSON_EXT = "JSON";
-	private static final String CONTENTS_FILENAME = "tableContents." + JSON_EXT;
-	private static final String COLUMN_DATA = "columnData";
-	private static final String ENTRY_DATA = "entryData";
-	private static final int INDENT_FACTOR = 1;
+	public static final String JSON_EXT = "JSON";
+	public static final String TABLE_SEPARATOR = ".";
+	public static final String CONTENTS_FILENAME = "tableContents." + JSON_EXT;
+	public static final String COLUMN_DATA = "columnData";
+	public static final String ENTRY_DATA = "entryData";
+	public static final int INDENT_FACTOR = 1;
 	
 	@Override
 	public void connect(URI uri, Object ... args) throws JSONDatabaseConnectionException {
@@ -64,7 +65,7 @@ public class JSONDatabase implements DatabaseInterface {
 			return jsonTable;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			throw new JSONDatabaseException("Could not retreive JSON object at " + table.getFullString("."));
+			throw new JSONDatabaseException("Could not retreive JSON object at " + table.getFullString(TABLE_SEPARATOR));
 		}
 	}
 	
@@ -77,7 +78,7 @@ public class JSONDatabase implements DatabaseInterface {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new JSONDatabaseException("Could not save JSON object at " + table.getFullString("."));
+			throw new JSONDatabaseException("Could not save JSON object at " + table.getFullString(TABLE_SEPARATOR));
 		}
 	}
 	
@@ -91,7 +92,7 @@ public class JSONDatabase implements DatabaseInterface {
 		});
 		
 		if(files.length == 0)
-			throw new JSONDatabaseException("Cannot find \"" + CONTENTS_FILENAME +"\" for " + table.getFullString("."));
+			throw new JSONDatabaseException("Cannot find \"" + CONTENTS_FILENAME +"\" for " + table.getFullString(TABLE_SEPARATOR));
 		return files[0];
 	}
 	
@@ -106,7 +107,7 @@ public class JSONDatabase implements DatabaseInterface {
 			tableName = subTableNames[subTableIndex - 1];
 		
 		if(tableName.endsWith("." + JSON_EXT))
-			throw new JSONDatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString("."));
+			throw new JSONDatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString(TABLE_SEPARATOR));
 		
 		File[] files = parentDirectory.listFiles((f) -> {
 			return f.isDirectory() && f.getName().equals(tableName);
@@ -114,7 +115,7 @@ public class JSONDatabase implements DatabaseInterface {
 		
 		File tableFile;
 		if(files.length == 0)
-			throw new JSONDatabaseException("No table exists at " + table.getFullString("."));
+			throw new JSONDatabaseException("No table exists at " + table.getFullString(TABLE_SEPARATOR));
 		else
 			tableFile = files[0];
 		
@@ -134,7 +135,7 @@ public class JSONDatabase implements DatabaseInterface {
 			});
 			
 			if(files.length != 0) {
-				throw new JSONDatabaseException("A table exists at " + table.getFullString("."));
+				throw new JSONDatabaseException("A table exists at " + table.getFullString(TABLE_SEPARATOR));
 			} else {
 				File contentFile = new File(parentDirectory, CONTENTS_FILENAME);
 				if(contentFile.isDirectory())
@@ -150,7 +151,7 @@ public class JSONDatabase implements DatabaseInterface {
 					fw.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-					throw new JSONDatabaseException("Not able to create \"" + CONTENTS_FILENAME + "\" for "  + table.getFullString("."));
+					throw new JSONDatabaseException("Not able to create \"" + CONTENTS_FILENAME + "\" for "  + table.getFullString(TABLE_SEPARATOR));
 				}
 			}
 			return parentDirectory;
@@ -164,7 +165,7 @@ public class JSONDatabase implements DatabaseInterface {
 			tableName = subTableNames[subTableIndex - 1];
 		
 		if(tableName.endsWith("." + JSON_EXT))
-			throw new JSONDatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString("."));
+			throw new JSONDatabaseException("Cannot have table name end with \"." + JSON_EXT + "\" for " + table.getFullString(TABLE_SEPARATOR));
 		
 		
 		File[] files = parentDirectory.listFiles((f) -> {
@@ -446,7 +447,7 @@ public class JSONDatabase implements DatabaseInterface {
 
 		JSONObject entry = entryData.getJSONObject(entryIndex);
 		if(!entry.has(column))
-			throw new JSONDatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString("."));
+			throw new JSONDatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString(TABLE_SEPARATOR));
 		entry.put(column, element);
 		entryData.put(entryIndex, entry);
 		saveJSONTable(table, jsonTable);
@@ -462,7 +463,7 @@ public class JSONDatabase implements DatabaseInterface {
 
 		JSONObject entry = entryData.getJSONObject(entryIndex);
 		if(!entry.has(column))
-			throw new JSONDatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString("."));
+			throw new JSONDatabaseException("Column \"" + column + "\" does not exist for table " + table.getFullString(TABLE_SEPARATOR));
 		
 		return entry.get(column);
 	}

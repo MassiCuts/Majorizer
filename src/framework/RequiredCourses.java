@@ -2,6 +2,7 @@ package framework;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class RequiredCourses {
@@ -17,7 +18,20 @@ public class RequiredCourses {
 	}
 	
 	public boolean meetsRequirements(Predicate<Integer> courseIDPredicate) {
+		if(root == null) return true;
 		return root.meetsRequirements(courseIDPredicate);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof RequiredCourses)
+			return root.equals(((RequiredCourses)obj).root);
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(root);
 	}
 	
 	// nested classes:
@@ -57,6 +71,20 @@ public class RequiredCourses {
 			}
 			return amtMetRequirment == amtMustChoose;
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof RequiredCourseGroup) {
+				RequiredCourseGroup group = (RequiredCourseGroup) obj;
+				return amtMustChoose == group.amtMustChoose && requiredCourses.equals(group.requiredCourses);
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hash(amtMustChoose, requiredCourses);
+		}
 	}
 	
 	public static class RequiredCourse extends RequiredCourseNode {
@@ -73,6 +101,18 @@ public class RequiredCourses {
 		@Override
 		public boolean meetsRequirements(Predicate<Integer> courseIDPredicate) {
 			return courseIDPredicate.test(courseID);
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof RequiredCourse)
+				return courseID == ((RequiredCourse) obj).courseID;
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hash(courseID);
 		}
 	}
 	
