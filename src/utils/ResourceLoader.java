@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -16,6 +17,8 @@ public class ResourceLoader {
 	
 	public static Image getImage(String iconName) throws IOException{
 		InputStream stream = ResourceLoader.class.getClassLoader().getResourceAsStream("images/" + iconName);
+		if(stream == null)
+			throw new FileNotFoundException("The image \"" + iconName + "\" cannot be found in images");
 		return new Image(stream);
  	}
 	
