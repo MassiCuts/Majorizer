@@ -11,6 +11,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
@@ -39,7 +40,7 @@ public class UserInterface extends Application{
 	public int getCurrentSem()	{
 		return 4;
 	}
-	
+
 	public BorderPane loginScreen()	{
 		BorderPane root = new BorderPane();
 		try	{
@@ -130,8 +131,8 @@ public class UserInterface extends Application{
 			root.setCenter(login);
 			root.setTop(logoBox);
 			
-			
 			root.setMargin(login, new Insets(100));
+
 			
 		}	catch( IOException ioe)	{
 			ioe.printStackTrace();
@@ -516,6 +517,7 @@ public class UserInterface extends Application{
 						
 			root.setTop(orgPane);
 
+
 		}	catch( Exception e )	{
 			e.printStackTrace();
 		}
@@ -532,6 +534,7 @@ public class UserInterface extends Application{
 			
 			//Student View
 			root = studentView();
+
 			
 			Scene scene = new Scene(root, 1000, 800);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

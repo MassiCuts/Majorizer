@@ -1,4 +1,6 @@
 package framework;
+//import org.yaml.snakeyaml.Yaml;
+
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,6 +10,11 @@ import java.util.function.Predicate;
 public class RequiredCourses {
 	
 	private final RequiredCourseNode root;
+	
+	public RequiredCourses(String description) {
+		this.root = null; //TODO make this actually be what it should be
+		//Yaml yaml = new Yaml();
+	}
 	
 	public RequiredCourses(RequiredCourseNode root) {
 		this.root = root;

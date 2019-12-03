@@ -1,26 +1,30 @@
 package scheduler;
 
 public class SchedulerCourse extends SchedulerNode {
-	
-	public String name;
+	protected int available, taken, scheduled, added, dropped;
 	
 	public SchedulerCourse(SchedulerNode node) {
-//		this.available = node.courseinfo[AVAILABILITY]
-	}
-	public SchedulerCourse() {
-		
+		this.name = node.name;
+		if (node.courseinfo.isEmpty()) {
+			//Throw some error so we know this shouldn't have been initialized
+		}
+		this.available = node.courseinfo.get(CourseInfo.AVAILABILITY);
+		this.taken = node.courseinfo.get(CourseInfo.TAKEN);
+		this.scheduled = node.courseinfo.get(CourseInfo.SCHEDULED);
+		this.added = node.courseinfo.get(CourseInfo.ADDED);
+		this.dropped = node.courseinfo.get(CourseInfo.DROPPED);
+		this.children = node.children;
+		this.parents = node.parents;
 	}
 	
-	public boolean available() {
-		return false;
+	public SchedulerCourse(Course course) {
+		this.name = course.name;
 	}
-	public float getPathScore() {
-		return 0f;
-	}
-	public float getPriceScore() {
-		return 0f;
-	}
+	
+	public boolean available() { return this.available == 1;}
+	
+	
 	public SchedulerNode getChild() {
-		return null;
+		return this.children.get(0);	//Only one child because this is a cours
 	}
-}
+};
