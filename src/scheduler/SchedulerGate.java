@@ -7,12 +7,24 @@ public class SchedulerGate extends SchedulerNode {
 	public int required;
 	private Random rand = new Random();
 	
+	static int numberOfGates = 0;
+	{
+		numberOfGates += 1;
+	}
+	
 	public SchedulerGate(SchedulerNode node) {
+		if (node.gateinfo.isEmpty()) {
+			//Throw some error so we know this shouldn't have been happened
+		}
+		this.children = node.children;
+		this.parents = node.parents;
+		this.name = node.name;
 		this.options = node.gateinfo.get(GateInfo.OPTIONS);
 		this.required = node.gateinfo.get(GateInfo.REQUIRED);
 	}
 
 	public SchedulerGate(int options, int required) {
+		this.name = "GATE " + Integer.toString(numberOfGates);
 		this.options = options;
 		this.required = required;
 	}
@@ -53,8 +65,6 @@ public class SchedulerGate extends SchedulerNode {
 	}
 	
 	public SchedulerNode getBestChild(int semesters_remaining) {
-		Vector<Float> scores = this.getPathLengths();
-		Vector<Float> prices = this.getCosts();
 		Vector<Integer> choices = this.getChoices( semesters_remaining);
 		int index = this.getLongestChoice( choices, 0, semesters_remaining);
 		SchedulerNode next_node = this.getChild(index);
@@ -78,20 +88,20 @@ public class SchedulerGate extends SchedulerNode {
 		 * Returns size k list of ints representing indexes of the k smallest scores
 		 */
 		//TODO: base this on semesters remaining
-		Vector<Float> scores = this.getPathLengths();
-		Vector<Float> prices = this.getCosts();
+		Vector<Float> lengths = this.getPathLengths();
+		Vector<Float> costs = this.getCosts();
 		Vector<Integer> choices = new Vector<>();
 		for (int i = 0; i < this.required; ++i) {
 			int min_idx = -1;
 			float min_val = (float) Integer.MAX_VALUE;
-			for (int j = 0; j < scores.size(); ++j) {
-				if (scores.get(j) < min_val) {
-					min_val = scores.get(j);
+			for (int j = 0; j < costs.size(); ++j) {
+				if (costs.get(j) < min_val && lengths.get(j) <= semesters_remaining) {
+					min_val = costs.get(j);
 					min_idx = j;
 				}
 			}
 			choices.add(min_idx);
-			scores.set(min_idx, (float) Integer.MAX_VALUE);
+			costs.set(min_idx, (float) Integer.MAX_VALUE);
 		}
 		return choices;
 	}
@@ -103,7 +113,6 @@ public class SchedulerGate extends SchedulerNode {
 		 * Returns the best index in scores, given that the indexes are in choices
 		 */
 		Vector<Float> scores = this.getPathLengths();
-		Vector<Float> prices = this.getCosts();
 		if (attempt==0) {
 			float max_length = 0;
 			int max_index = 0;

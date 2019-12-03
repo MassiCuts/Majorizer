@@ -6,6 +6,9 @@ public class SchedulerCourse extends SchedulerNode {
 	
 	public SchedulerCourse(SchedulerNode node) {
 		this.name = node.name;
+		if (node.courseinfo.isEmpty()) {
+			//Throw some error so we know this shouldn't have been initialized
+		}
 		this.available = node.courseinfo.get(CourseInfo.AVAILABILITY);
 		this.taken = node.courseinfo.get(CourseInfo.TAKEN);
 		this.scheduled = node.courseinfo.get(CourseInfo.SCHEDULED);

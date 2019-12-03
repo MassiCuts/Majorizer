@@ -1,6 +1,5 @@
 package scheduler;
 import java.util.Vector;
-import java.lang.IllegalArgumentException;
 import framework.Course;
 
 
@@ -22,7 +21,7 @@ public class Scheduler {
 		this.graph = graph;
 	}
 	
-	public Vector<Vector<String>> schedule(Vector<Course> requested_courses, Vector<Course> requested_dropped_courses){
+	public Vector<Vector<String>> schedule(Vector<SchedulerCourse> requested_courses, Vector<Course> requested_dropped_courses){
 		SchedulerCourse course;
 		Vector<Vector<String>> sched = new Vector<Vector<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
@@ -31,7 +30,17 @@ public class Scheduler {
 				//Add all the classes taken during this semester then skip
 			}
 			int added_this_semester=0;
-			//Go through added courses to see if any were added this semester
+			//TODO: Go through added courses to see if any were added this semester
+			
+			for(SchedulerCourse c : requested_courses) {
+				//Do we want the required_courses object to be Course or SchedulerCourse?
+				if (c.added == i) {
+					if(!c.available(i)) {RuntimeException("this course isn't available for the semester it was added to")}
+					sched.get(i).add(c.name);
+					continue;
+				}
+			}
+			
 			for(int j = 0; j < this.num_courses-added_this_semester; ++j) {
 				SchedulerNode node = this.graph.top;
 				SchedulerNode next_node = this.graph.top;
@@ -50,7 +59,7 @@ public class Scheduler {
 							++attempt;
 							next_node = this.graph.top;
 							if (attempt > MAX_ATTEMPTS) {
-								//throw new Exception("Your stupid program cant find a feasible schedule you dumb fuck");
+								throw new RuntimeException("Your stupid program cant find a feasible schedule you dumb fuck");
 							}
 						}
 					}

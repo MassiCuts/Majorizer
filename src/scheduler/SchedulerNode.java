@@ -1,13 +1,13 @@
 package scheduler;
 import java.util.Vector;
 import java.util.Hashtable;
-import framework.Course;
 
 public class SchedulerNode {
 	protected Vector<SchedulerNode> children;
 	protected Vector<SchedulerNode> parents;
 	protected int depth;
 	protected boolean isgate;
+	protected boolean root = false;
 	protected String name = null;
 	protected Hashtable<CourseInfo, Integer> courseinfo; //Taken, available, added, dropped, scheduled
 	protected Hashtable<GateInfo, Integer> gateinfo;	//n, k
@@ -33,6 +33,8 @@ public class SchedulerNode {
 	}
 	
 	public SchedulerNode(boolean isroot) {
+		this.root = true;
+		this.name = "ROOT";
 	}
 	
 	public SchedulerNode() {}
@@ -43,7 +45,11 @@ public class SchedulerNode {
 	public void attachIncoming(SchedulerNode node) {
 		this.children.add(node);
 	}
+	
+	
+	public String getName() {return this.name;}
 	public boolean isGate() { return this.isgate;}
+	
 	public boolean isSatisfied() {
 		/*
 		 * Return True:
