@@ -1,0 +1,133 @@
+# https://www.clarkson.edu/department-computer-science/major-computer-science
+ grad:
+    num: 3
+    requirments:
+      - common
+      - core
+      - professional
+      - electives1
+      - electives2
+      - science_electives
+
+common:
+  num: 2
+  requirments:
+    - FY100
+    - UNIV190
+
+core:
+  num: 14
+  requirments:
+    - CS141
+    - CS142
+    - CS241
+    - CS242
+    - CS341
+    - CS344
+    - CS345
+    - CS350
+    - CS444
+    - MA131
+    - MA132
+    - MA211
+    - linear_algebra
+    - probability
+
+linear_algebra:
+  num: 1
+  requirments:
+    - MA339
+    - MA239
+
+probability:
+  num: 1
+  requirments:
+    - STAT383
+    - STAT381
+
+professional:
+  num: 1
+  requirments:
+    - CS499
+
+electives1:
+  num: 3
+  requirments:
+    - CS442
+    - CS443
+    - CS445
+    - CS447
+    - CS449
+    - CS451
+    - CS452
+    - CS455
+    - CS456
+    - CS457
+    - CS458
+    - CS459
+    - CS460
+    - CS461
+    - CS464
+    - CS465
+
+electives2:
+  num: 2
+  requirments:
+    - COMM440
+    - COMM442
+    - COMM444
+    - CS442
+    - CS443
+    - CS445
+    - CS447
+    - CS449
+    - CS451
+    - CS452
+    - CS455
+    - CS456
+    - CS457
+    - CS458
+    - CS459
+    - CS460
+    - CS461
+    - CS464
+    - CS465
+    - EE368
+    - EE466
+    - IS314
+
+science_electives:
+  num: 1
+  requirments:
+    chem_bio
+    chem_phys
+    phys_bio
+    phys_chem
+
+chem_bio:
+  num: 3
+  requirments:
+    - CM100
+    - CM101
+    - BY100
+
+chem_phys:
+  num: 3
+  requirments:
+    - CM100
+    - CM101
+    - PH100
+
+phys_bio:
+  num: 3
+  requirments:
+    - PH100
+    - PH101
+    - BY100
+
+phys_chem:
+  num: 3
+  requirments:
+    - PH100
+    - PH101
+    - CM100
