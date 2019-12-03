@@ -34,7 +34,35 @@ public class Main {
 			DatabaseManager.printTable(table);
 			System.out.println();
 		}
-		SchedulerGraph schedule = new SchedulerGraph("3.0: 2018-07-22");
+		
+		String example = "- grad:\n" + 
+				"    num: 3\n" +  
+				"    requirments:\n" + 
+				"      - breath\n" + 
+				"      - CS142\n" + 
+				"      - CS444\n" +
+				"- breath:\n" + 
+				"    num: 1\n" +  
+				"    requirments:\n" + 
+				"      - PH100\n" + 
+				"      - PH200\n" +
+				"- CS142:\n" + 
+				"    num: 0\n" +  
+				"    requirments:\n" +
+				"- CS444:\n" + 
+				"    num: 0\n" +  
+				"    requirments:\n" +
+				"- PH100:\n" + 
+				"    num: 0\n" +  
+				"    requirments:\n"+
+				"- PH200:\n" + 
+				"    num: 0\n" +  
+				"    requirments:\n"
+				;  
+	
+		
+		
+		RequiredCourses required = new RequiredCourses("/home/david/dev/yogaandtheboys/data/curriculums/computer_science_major.yaml");
 //		Scheduler scheduler = new Scheduler(3);
 	}
 }

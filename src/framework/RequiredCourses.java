@@ -1,19 +1,47 @@
 package framework;
-//import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.Yaml;
 
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
+import java.nio.file.Files; // suggested by https://www.vogella.com/tutorials/JavaIO/article.html
+import java.nio.file.Paths;
 import java.util.function.Predicate;
+
+import org.yaml.snakeyaml.Yaml;
 
 public class RequiredCourses {
 	
 	private final RequiredCourseNode root;
 	
-	public RequiredCourses(String description) {
+	public RequiredCourses(String description){
 		this.root = null; //TODO make this actually be what it should be
-		//Yaml yaml = new Yaml();
+		Yaml yaml = new Yaml();
+		//InputStream inputStream = this.getClass()
+		//		 .getClassLoader()
+		//		 .getResourceAsStream("/home/david/dev/yogaandtheboys/data/example_schedule.yaml");
+		List<String> strings;
+		try {
+			strings = Files.readAllLines(Paths.get(description));
+			String string = String.join("\n", strings);
+			LinkedHashMap specification = yaml.load(string);// TODO determine what type this really is
+			System.out.println("Read from file");
+			System.out.println(specification);
+			System.out.println(specification.keySet());
+			System.out.println(specification.get("grad"));
+
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println(description + " could not be loaded");// TODO figure out more proper method to do this
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public RequiredCourses(RequiredCourseNode root) {
