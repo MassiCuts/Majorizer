@@ -3,9 +3,10 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -17,32 +18,46 @@ import org.yaml.snakeyaml.Yaml;
 
 public class RequiredCourses {
 	
-	private final RequiredCourseNode root;
+	private RequiredCourseNode root = null;
+	private Integer CurrentCourseID = 0;
+	private LinkedHashMap<String, Integer> CourseIDs = new LinkedHashMap<String, Integer>();
 	
-	public RequiredCourses(String description){
-		this.root = null; //TODO make this actually be what it should be
-		Yaml yaml = new Yaml();
-		//InputStream inputStream = this.getClass()
-		//		 .getClassLoader()
-		//		 .getResourceAsStream("/home/david/dev/yogaandtheboys/data/example_schedule.yaml");
+	public RequiredCourses(String filename){
+		Yaml yaml = new Yaml();// Create the parser
 		List<String> strings;
 		try {
-			strings = Files.readAllLines(Paths.get(description));
-			String string = String.join("\n", strings);
-			LinkedHashMap specification = yaml.load(string);// TODO determine what type this really is
-			System.out.println("Read from file");
-			System.out.println(specification);
-			System.out.println(specification.keySet());
-			System.out.println(specification.get("grad"));
-
-			
+			strings = Files.readAllLines(Paths.get(filename));// Read in all lines
+			String string = String.join("\n", strings); // Concatenate with newlines
+			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(string);// Parse the YAML representation
+			this.root = TraverseRequirements(specification, "grad"); // It is assumed that grad will always be the root of the requirements graph
+			System.out.println("Course name : ID mappings" + CourseIDs);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println(description + " could not be loaded");// TODO figure out more proper method to do this
+			System.out.println(filename + " could not be loaded or parsed correctly");// TODO figure out more proper method to do this
 			e.printStackTrace();
 		}
-		
 	}
+	
+	private RequiredCourseNode TraverseRequirements(LinkedHashMap<String, LinkedHashMap> description, String tag){
+		if(description.containsKey(tag)) {//This means it must be a course, as they don't have requirements
+			LinkedHashMap newNode = (LinkedHashMap) description.get(tag);// Get the new node from the description
+			ArrayList<String> requirementNames = (ArrayList) newNode.get("requirements");// Get all the names of things it depends on
+			int numRequired = (int) newNode.get("num");
+			ArrayList<RequiredCourseNode> createdRequirements = new ArrayList<RequiredCourseNode>();
+			for (String rec : requirementNames) { 
+	            createdRequirements.add(TraverseRequirements(description, rec));// Add all of the requirements recursively
+			}
+			return new RequiredCourseGroup(numRequired, createdRequirements);
+		}else {
+			if(!CourseIDs.containsKey(tag)) { // Maintain a mapping from course name to course ID
+				CourseIDs.put(tag, CurrentCourseID);
+				CurrentCourseID++;
+			}
+			Integer courseNumber = CourseIDs.get(tag);
+			return new RequiredCourse(courseNumber);		
+		}
+		
+    } 
 	
 	public RequiredCourses(RequiredCourseNode root) {
 		this.root = root;
@@ -148,6 +163,10 @@ public class RequiredCourses {
 		@Override
 		public int hashCode() {
 			return Objects.hash(courseID);
+		}
+		
+		public String toString() {
+		    return "Course ID: " + courseID;
 		}
 	}
 	
