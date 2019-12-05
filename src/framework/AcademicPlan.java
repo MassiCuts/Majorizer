@@ -1,6 +1,7 @@
 package framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import scheduler.SchedulerGraph;
@@ -10,6 +11,11 @@ public class AcademicPlan {
 	private ArrayList<Integer> degreeIDs;
 	private Map<String, ArrayList<Integer>> selectedCourseIDs;
 	private SchedulerGraph schedulerGraph;
+	
+	
+	public static AcademicPlan getEmptyPlan(String startSemester) {
+		return new AcademicPlan(startSemester, new ArrayList<>(), new HashMap<>(), null);
+	}
 	
 	public AcademicPlan(String startSemester, ArrayList<Integer> degreesIDs, Map<String, ArrayList<Integer>> selectedCoursesIDs, SchedulerGraph schedulerGraph) {
 		this.startSemester = startSemester;

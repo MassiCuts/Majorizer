@@ -28,7 +28,6 @@ public class RequiredCourses {
 		try (
 			InputStream is = new FileInputStream(yamlFile);	
 		) {
-			
 			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(is);// Parse the YAML representation
 			YAMLTraverser traverser = new YAMLTraverser();
 			RequiredCourseNode root = traverseRequirements(traverser, specification, ROOT_NAME); 
@@ -84,6 +83,10 @@ public class RequiredCourses {
 	
 	public RequiredCourses() {
 		this.root = null;
+	}
+	
+	public boolean hasRequirements() {
+		return root != null;
 	}
 	
 	public RequiredCourseNode getRootCourseNode() {

@@ -388,7 +388,7 @@ public class DatabaseManager {
 		int amtReq = (int) curriculumResults.get(0).get("amtReq");
 		
 		RequiredCourseNode root = getCurriculumNode(curriculumID, amtReq);
-		return  new RequiredCourses(root);
+		return new RequiredCourses(root);
 	}
 	
 	public static RequiredCourses getCurriculumCourses(String curriculumName) {
@@ -405,7 +405,7 @@ public class DatabaseManager {
 		int amtReq = (int) curriculumResults.get(0).get("amtReq");
 		
 		RequiredCourseNode root = getCurriculumNode(curriculumID, amtReq);
-		return  new RequiredCourses(root);
+		return new RequiredCourses(root);
 	}
 	
 	private static RequiredCourseNode getCurriculumNode(int curriculumID, int amtReq) {
@@ -897,22 +897,35 @@ public class DatabaseManager {
 		return maps;
 	}
 	
-	private static Two<ArrayList<Map<String, Object>>> studentCurriculumsToMaps(Curriculum curriculum) {
-		int curricu = student.getUserID();
+	private static Two<ArrayList<Map<String, Object>>> curriculumsToMaps(Curriculum curriculum) {
+		int curriculumID = curriculum.getCurriculumID();
+		String curriculumName = curriculum.getName();
+		CurriculumType curriculumType = curriculum.getCurriculumType();
+		String type = curriculumType == CurriculumType.MAJOR ? CURRICULUM_TYPE_MAJOR : CURRICULUM_TYPE_MINOR;
+		RequiredCourses rc = curriculum.getRequiredCourses();
 		
+		int amtReq = -1;
 		ArrayList<Map<String, Object>> curriculumMaps = new ArrayList<>();
 		ArrayList<Map<String, Object>> curriculumCourseMaps = new ArrayList<>();
 		
-		ArrayList<Map<String, Object>> maps = new ArrayList<>();
-		for(int curriculumID : student.getAcademicPlan().getDegreeIDs()) {
-			HashMap<String, Object> map = new HashMap<>();
-			map.put("studentID", studentID); 
-			map.put("curriculumID", curriculumID); 
-			map.containsKey("curriculumID");
-			maps.add(map);
-		}
+//		if(rc.hasRequirements()) {
+//			HashMap<String, Object> map = new HashMap<>();
+//			map.put("", );
+//			
+//		} else {
+//			
+//		}
 		
-		return maps;
+//		ArrayList<Map<String, Object>> maps = new ArrayList<>();
+//		for(int curriculumID : student.getAcademicPlan().getDegreeIDs()) {
+//			HashMap<String, Object> map = new HashMap<>();
+//			map.put("studentID", studentID); 
+//			map.put("curriculumID", curriculumID); 
+//			map.containsKey("curriculumID");
+//			maps.add(map);
+//		}
+		
+		return new Two<>(curriculumMaps, curriculumCourseMaps);
 	}
 	
 	

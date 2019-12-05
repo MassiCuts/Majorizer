@@ -8,13 +8,11 @@ import framework.Student;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
@@ -71,7 +69,9 @@ public class UserInterface extends Application{
 		String courseName = course.getCourseName();
 	}
 
-	
+	public void loginPressed(ActionEvent action) {
+		System.out.println("Here");
+	}
 	
 	//REUSABLE ELEMENTS
 	public Button newRemoveButton()	{
@@ -90,6 +90,10 @@ public class UserInterface extends Application{
 
 		return removeButton;
 	}
+	
+
+
+	
 	
 	public BorderPane loginScreen()	{
 		BorderPane loginScreen = new BorderPane();
@@ -160,12 +164,13 @@ public class UserInterface extends Application{
 	    	    });
 	    	 
 	    	
-	    	loginButton.setOnAction(new EventHandler<ActionEvent>()	{
-	    		@Override
-	    		public void handle(ActionEvent ae)	{
-	    			System.out.println(username.getText() + '\n' + password.getText());
-	    		}
-	    	});
+	    	loginButton.setOnAction(this::loginPressed);
+//	    			new EventHandler<ActionEvent>()	{
+//	    		@Override
+//	    		public void handle(ActionEvent ae)	{
+//	    			System.out.println(username.getText() + '\n' + password.getText());
+//	    		}
+//	    	});
 	    	
 	    	
 	    	VBox logoBox = new VBox();
@@ -549,7 +554,9 @@ public class UserInterface extends Application{
 	@Override
 	public void start(Stage primaryStage)	{
 		try	{		
+		
 			updateUI();
+
 			
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
