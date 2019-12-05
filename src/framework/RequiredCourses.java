@@ -22,18 +22,27 @@ public class RequiredCourses {
 	private Integer CurrentCourseID = 0;
 	private LinkedHashMap<String, Integer> CourseIDs = new LinkedHashMap<String, Integer>();
 	
-	public RequiredCourses(String filename){
+	//public RequiredCourses(String curriculumFilename) { //TODO determine how to do a one-argument constructor
+	//	RequiredCourses(curriculumFilename, "");
+	//}
+
+	public RequiredCourses(String curriculumFilename, String prerequisitesFilename){
 		Yaml yaml = new Yaml();// Create the parser
 		List<String> strings;
 		try {
-			strings = Files.readAllLines(Paths.get(filename));// Read in all lines
+			strings = Files.readAllLines(Paths.get(curriculumFilename));// Read in all lines
 			String string = String.join("\n", strings); // Concatenate with newlines
 			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(string);// Parse the YAML representation
 			this.root = TraverseRequirements(specification, "grad"); // It is assumed that grad will always be the root of the requirements graph
+			strings = Files.readAllLines(Paths.get(prerequisitesFilename));// Read in all lines
+			string = String.join("\n", strings); // Concatenate with newlines
+			LinkedHashMap<String, ArrayList<String>> prerequisites = yaml.load(string);
+			TraversePrerequisites(prerequisites);
 			System.out.println("Course name : ID mappings" + CourseIDs);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println(filename + " could not be loaded or parsed correctly");// TODO figure out more proper method to do this
+			System.out.println(curriculumFilename + " could not be loaded or parsed correctly");// TODO figure out more proper method to do this
 			e.printStackTrace();
 		}
 	}
@@ -58,6 +67,21 @@ public class RequiredCourses {
 		}
 		
     } 
+	
+	// TraverseRequirements is assumed to be called first 
+	// I'm not sure it makes sense to encode the prerequisites here
+	private void TraversePrerequisites(LinkedHashMap<String, ArrayList<String>> prerequisites) {
+		Integer courseNumber;
+		for(String key : prerequisites.keySet()) {
+			System.out.println(key);
+			if(!CourseIDs.containsKey(key)) { // Maintain a mapping from course name to course ID
+				CourseIDs.put(key, CurrentCourseID);
+				CurrentCourseID++;
+			}
+			courseNumber = CourseIDs.get(key);
+			System.out.println("Course: " + key + " Number: " + courseNumber);
+		}
+	}
 	
 	public RequiredCourses(RequiredCourseNode root) {
 		this.root = root;
@@ -107,6 +131,10 @@ public class RequiredCourses {
 		public int getAmtMustChoose() {
 			return amtMustChoose;
 		}
+		
+		public int getNumRequiredCourses() {
+			return requiredCourses.size();
+		}
 
 		@Override
 		public boolean meetsRequirements(Predicate<Integer> courseIDPredicate) {
@@ -135,6 +163,16 @@ public class RequiredCourses {
 		public int hashCode() {
 			return Objects.hash(amtMustChoose, requiredCourses);
 		}
+		
+		@Override
+	    public String toString() {
+			String output = "Group Containing: \n";//Maybe unnecessary
+			for(RequiredCourseNode r : requiredCourses) {
+				output += r.toString() + " ";
+			}
+			output += "\n";
+	        return output; 
+	    } 
 	}
 	
 	public static class RequiredCourse extends RequiredCourseNode {

@@ -1,5 +1,5 @@
 package scheduler;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class SchedulerGate extends SchedulerNode {
@@ -22,16 +22,26 @@ public class SchedulerGate extends SchedulerNode {
 		this.options = node.gateinfo.get(GateInfo.OPTIONS);
 		this.required = node.gateinfo.get(GateInfo.REQUIRED);
 	}
+	
+	public SchedulerGate(int options, int required, ArrayList<SchedulerNode> children) {
+		this(options, required);
+		if(children == null) {
+			System.out.println("chilldren are null");
+		}
+		this.children = children;
+	}
 
 	public SchedulerGate(int options, int required) {
 		this.name = "GATE " + Integer.toString(numberOfGates);
 		this.options = options;
 		this.required = required;
+		this.children = new ArrayList<SchedulerNode>();
+		this.parents  = new ArrayList<SchedulerNode>();
 	}
 	
-	public Vector<Float> getPathLengths() {
+	public ArrayList<Float> getPathLengths() {
 		assert(selfcheck());
-		Vector<Float> scores = new Vector<Float>();
+		ArrayList<Float> scores = new ArrayList<Float>();
 		for (int i = 0; i < this.children.size(); ++i) {
 			scores.add(this.children.get(i).getPathLength());
 		}
@@ -42,9 +52,9 @@ public class SchedulerGate extends SchedulerNode {
 		return this.getBestChild(Integer.MAX_VALUE).getPathLength();
 	}
 	
-	public Vector<Float> getCosts() {
+	public ArrayList<Float> getCosts() {
 		assert(selfcheck());
-		Vector<Float> scores = new Vector<Float>();
+		ArrayList<Float> scores = new ArrayList<Float>();
 		for (SchedulerNode node : this.children) {
 			scores.add(node.getCost());
 		}
@@ -56,7 +66,7 @@ public class SchedulerGate extends SchedulerNode {
 		 * Returns the sum of the k smallest price scores
 		 */
 		assert(selfcheck());
-		Vector<Float> scores = this.getCosts();
+		ArrayList<Float> scores = this.getCosts();
 		float sum = 0;
 		for (int i = 0; i < scores.size(); ++i) {
 			
@@ -65,14 +75,14 @@ public class SchedulerGate extends SchedulerNode {
 	}
 	
 	public SchedulerNode getBestChild(int semesters_remaining) {
-		Vector<Integer> choices = this.getChoices( semesters_remaining);
+		ArrayList<Integer> choices = this.getChoices( semesters_remaining);
 		int index = this.getLongestChoice( choices, 0, semesters_remaining);
 		SchedulerNode next_node = this.getChild(index);
 		return next_node;
 	}
 	
 	public SchedulerNode getGoodChild(int semesters_remaining) {
-		Vector<Integer> choices = this.getChoices(semesters_remaining);
+		ArrayList<Integer> choices = this.getChoices(semesters_remaining);
 		int index = this.getLongestChoice(choices, 1, semesters_remaining);
 		SchedulerNode next_node = this.getChild(index);
 		return next_node;
@@ -82,15 +92,15 @@ public class SchedulerGate extends SchedulerNode {
 		return this.children.get(index);
 	}
 	
-	protected Vector<Integer> getChoices(int semesters_remaining) {
+	protected ArrayList<Integer> getChoices(int semesters_remaining) {
 		/*
 		 * Get the k smallest prices that are feasible to complete, given the semesters left
 		 * Returns size k list of ints representing indexes of the k smallest scores
 		 */
 		//TODO: base this on semesters remaining
-		Vector<Float> lengths = this.getPathLengths();
-		Vector<Float> costs = this.getCosts();
-		Vector<Integer> choices = new Vector<>();
+		ArrayList<Float> lengths = this.getPathLengths();
+		ArrayList<Float> costs = this.getCosts();
+		ArrayList<Integer> choices = new ArrayList<>();
 		for (int i = 0; i < this.required; ++i) {
 			int min_idx = -1;
 			float min_val = (float) Integer.MAX_VALUE;
@@ -106,13 +116,13 @@ public class SchedulerGate extends SchedulerNode {
 		return choices;
 	}
 	
-	private int getLongestChoice( Vector<Integer> choices, int attempt, int semesters_remaining) {
+	private int getLongestChoice( ArrayList<Integer> choices, int attempt, int semesters_remaining) {
 		/*
 		 * If attempt = 0, get the longest path value
 		 * If attempt != 0, get a random path value unless semesters_remaining = longest_path, in which case you must take longest path
 		 * Returns the best index in scores, given that the indexes are in choices
 		 */
-		Vector<Float> scores = this.getPathLengths();
+		ArrayList<Float> scores = this.getPathLengths();
 		if (attempt==0) {
 			float max_length = 0;
 			int max_index = 0;

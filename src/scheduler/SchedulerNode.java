@@ -1,10 +1,10 @@
 package scheduler;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class SchedulerNode {
-	protected Vector<SchedulerNode> children;
-	protected Vector<SchedulerNode> parents;
+	protected ArrayList<SchedulerNode> children;
+	protected ArrayList<SchedulerNode> parents;
 	protected int depth;
 	protected boolean isgate;
 	protected boolean root = false;
@@ -17,6 +17,7 @@ public class SchedulerNode {
 		this.parents = gate.parents;
 		this.isgate = true;
 		this.name = gate.name;
+		this.gateinfo = new Hashtable<GateInfo, Integer>();// Otherwise you'll get an error when inserting
 		this.gateinfo.put(GateInfo.OPTIONS, gate.options);
 		this.gateinfo.put(GateInfo.REQUIRED, gate.required);
 	}
@@ -26,6 +27,7 @@ public class SchedulerNode {
 		this.parents = course.parents;
 		this.isgate = false;
 		this.name = course.name;
+		this.courseinfo = new Hashtable<CourseInfo, Integer>();// Otherwise you'll get an error when inserting
 		this.courseinfo.put(CourseInfo.TAKEN, course.taken);
 		this.courseinfo.put(CourseInfo.SCHEDULED, course.scheduled);
 		this.courseinfo.put(CourseInfo.ADDED, course.added);
@@ -46,8 +48,8 @@ public class SchedulerNode {
 		this.children.add(node);
 	}
 	
-	
 	public String getName() {return this.name;}
+	public ArrayList<SchedulerNode> getChildren(){return this.children;}
 	public boolean isGate() { return this.isgate;}
 	
 	public boolean isSatisfied() {
@@ -120,4 +122,27 @@ public class SchedulerNode {
 	private float getDepth() {
 		return 0;
 	}
+	
+	@Override
+    public String toString() {
+		return traverseNodes(this.children);
+	}
+	
+	private String traverseNodes(ArrayList<SchedulerNode> nodes) {
+		String res;
+		ArrayList<SchedulerNode> children;
+		String output = "";
+		for(SchedulerNode n : nodes) {
+			children = n.getChildren();
+			if(null == children) {
+				System.out.println("Nodes are null");
+			}
+			res = traverseNodes(children);
+			output += res;
+		}
+		return output;
+		
+	}
+
+	
 };

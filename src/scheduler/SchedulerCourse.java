@@ -1,5 +1,7 @@
 package scheduler;
 
+import java.util.ArrayList;
+
 public class SchedulerCourse extends SchedulerNode {
 	protected int available, taken, scheduled, added, dropped;
 	
@@ -17,8 +19,17 @@ public class SchedulerCourse extends SchedulerNode {
 		this.parents = node.parents;
 	}
 	
-	public SchedulerCourse(Course course) {
-		this.name = course.name;
+	public SchedulerCourse(String Name) {
+		this.name = name;
+		this.children = new ArrayList<SchedulerNode>();
+		if(this.children == null) {
+			System.out.println("chilldren are null");
+		}
+		this.parents  = new ArrayList<SchedulerNode>();
+		this.taken = 0;//TODO create setters for all of these 
+		this.scheduled = 0;
+		this.added = 0;
+		this.dropped = 0;
 	}
 	
 	public boolean available() { return this.available == 1;}

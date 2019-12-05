@@ -1,0 +1,36 @@
+# for each class encode its DIRECT prerequisites
+# This can be done by groups like the curriculum, but it is assumed that all requirements must be satisfied
+# If you want to have a prerequisite be A or B encode this as a group AORB, and have this group be the sole prerequisite
+# courses with no prerequisites need not be included
+# https://www.clarkson.edu/sites/default/files/2019-11/Course%20Catalog%2019-20.pdf
+
+CS142:
+  - CS141
+
+CS241:
+  - CS142
+
+CS242:
+  - CS142
+
+CS341:
+  - CS142
+
+CS344:
+  - CS142
+  - MA132
+
+CS345:
+  - CS142
+  - MA211
+
+MA211:
+  - MA142
+
+MA141:
+  - MA141
+
+#CS350: # TODO debug this construct a bit more
+#  - group:
+#    - CS344
+#    - CS344

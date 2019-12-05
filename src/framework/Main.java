@@ -62,7 +62,8 @@ public class Main {
 	
 		
 		
-		RequiredCourses required = new RequiredCourses("/home/david/dev/yogaandtheboys/data/curriculums/computer_science_major.yaml");
-//		Scheduler scheduler = new Scheduler(3);
+		RequiredCourses required = new RequiredCourses("/home/david/dev/yogaandtheboys/data/curriculums/computer_science_major.yaml", "/home/david/dev/yogaandtheboys/data/curriculums/prerequisites.yaml");
+		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
+		//Scheduler scheduler = new Scheduler(3);
 	}
 }
