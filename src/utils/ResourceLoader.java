@@ -20,11 +20,11 @@ public class ResourceLoader {
 	public static File getYAMLFile(String filename) throws IOException {
 		URL url = ResourceLoader.class.getClassLoader().getResource("yaml/" + filename);
 		if(url == null)
-			throw new FileNotFoundException("The image \"" + filename + "\" cannot be found in the yaml folder");
+			throw new FileNotFoundException("The file \"" + filename + "\" cannot be found in the yaml folder");
 		try {
 			return new File(url.toURI());
 		} catch (URISyntaxException e) {
-			throw new FileNotFoundException("The image \"" + filename + "\" cannot be found in the yaml folder");
+			throw new FileNotFoundException("The file \"" + filename + "\" cannot be found in the yaml folder");
 		}
 	}
 	

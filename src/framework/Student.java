@@ -5,6 +5,10 @@ public class Student extends User {
 	private boolean isStudentNew;
 	private AcademicPlan academicPlan;
 	
+	public Student(String universityID, String firstName, String lastName, String username, String password, String startSemester) {
+		this(DatabaseManager.REQUEST_NEW_ID, universityID, firstName, lastName, username, password, true, AcademicPlan.getEmptyPlan(startSemester));
+	}
+	
 	public Student(String universityID, String firstName, String lastName, String username, String password, AcademicPlan academicPlan) {
 		this(DatabaseManager.REQUEST_NEW_ID, universityID, firstName, lastName, username, password, true, academicPlan);
 	}

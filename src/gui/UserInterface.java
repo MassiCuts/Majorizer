@@ -5,13 +5,11 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
@@ -41,6 +39,11 @@ public class UserInterface extends Application{
 		return 4;
 	}
 
+	public void loginPressed(ActionEvent action) {
+		System.out.println("Here");
+	}
+	
+	
 	public BorderPane loginScreen()	{
 		BorderPane root = new BorderPane();
 		try	{
@@ -110,12 +113,13 @@ public class UserInterface extends Application{
 	    	    });
 	    	 
 	    	
-	    	loginButton.setOnAction(new EventHandler<ActionEvent>()	{
-	    		@Override
-	    		public void handle(ActionEvent ae)	{
-	    			System.out.println(username.getText() + '\n' + password.getText());
-	    		}
-	    	});
+	    	loginButton.setOnAction(this::loginPressed);
+//	    			new EventHandler<ActionEvent>()	{
+//	    		@Override
+//	    		public void handle(ActionEvent ae)	{
+//	    			System.out.println(username.getText() + '\n' + password.getText());
+//	    		}
+//	    	});
 	    	
 	    	
 	    	VBox logoBox = new VBox();
@@ -530,10 +534,10 @@ public class UserInterface extends Application{
 		try	{
 			BorderPane root = new BorderPane();
 			//Login Screen
-//			root = loginScreen();
+			root = loginScreen();
 			
 			//Student View
-			root = studentView();
+//			root = studentView();
 
 			
 			Scene scene = new Scene(root, 1000, 800);
