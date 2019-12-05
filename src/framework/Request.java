@@ -9,6 +9,10 @@ public class Request {
 	private boolean isAdding;
 	private int curriculumID;
 	
+	public Request(int studentID, boolean isAdding, int curriculumID) {
+		this(DatabaseManager.REQUEST_NEW_ID, studentID, isAdding, curriculumID);
+	}
+	
 	public Request(int requestID, int studentID, boolean isAdding, int curriculumID) {
 		this.requestID = requestID;
 		this.studentID = studentID;
@@ -28,7 +32,7 @@ public class Request {
 		return isAdding;
 	}
 	
-	public int getCurriculum() {
+	public int getCurriculumID() {
 		return curriculumID;
 	}
 	

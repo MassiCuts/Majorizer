@@ -1,17 +1,12 @@
 package framework;
-import org.yaml.snakeyaml.Yaml;
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Vector;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Objects;
-import java.nio.file.Files; // suggested by https://www.vogella.com/tutorials/JavaIO/article.html
-import java.nio.file.Paths;
 import java.util.function.Predicate;
 
 import org.yaml.snakeyaml.Yaml;
@@ -19,41 +14,50 @@ import org.yaml.snakeyaml.Yaml;
 public class RequiredCourses {
 	
 	private RequiredCourseNode root = null;
-	private Integer CurrentCourseID = 0;
-	private LinkedHashMap<String, Integer> CourseIDs = new LinkedHashMap<String, Integer>();
 	
-	public RequiredCourses(String filename){
-		Yaml yaml = new Yaml();// Create the parser
-		List<String> strings;
-		try {
-			strings = Files.readAllLines(Paths.get(filename));// Read in all lines
-			String string = String.join("\n", strings); // Concatenate with newlines
-			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(string);// Parse the YAML representation
-			this.root = TraverseRequirements(specification, "grad"); // It is assumed that grad will always be the root of the requirements graph
-			System.out.println("Course name : ID mappings" + CourseIDs);
+	private static class YAMLTraverser {
+		Integer currentCourseID = 0;
+		LinkedHashMap<String, Integer> courseIDs = new LinkedHashMap<String, Integer>();
+	}
+	
+	
+	public static RequiredCourses load(File yamlFile) {
+		final String ROOT_NAME = "grad"; // It is assumed that this will always be the root of the requirements graph
+		
+		Yaml yaml = new Yaml(); // Create the parser
+		try (
+			InputStream is = new FileInputStream(yamlFile);	
+		) {
+			
+			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(is);// Parse the YAML representation
+			YAMLTraverser traverser = new YAMLTraverser();
+			RequiredCourseNode root = traverseRequirements(traverser, specification, ROOT_NAME); 
+			System.out.println("Course name : ID mappings" + traverser.courseIDs);
+			return new RequiredCourses(root);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println(filename + " could not be loaded or parsed correctly");// TODO figure out more proper method to do this
+			System.out.println(yamlFile.getAbsolutePath() + " could not be loaded or parsed correctly");
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	private RequiredCourseNode TraverseRequirements(LinkedHashMap<String, LinkedHashMap> description, String tag){
+	
+	private static RequiredCourseNode traverseRequirements(YAMLTraverser yamlTraverser, LinkedHashMap<String, LinkedHashMap> description, String tag){
 		if(description.containsKey(tag)) {//This means it must be a course, as they don't have requirements
 			LinkedHashMap newNode = (LinkedHashMap) description.get(tag);// Get the new node from the description
 			ArrayList<String> requirementNames = (ArrayList) newNode.get("requirements");// Get all the names of things it depends on
 			int numRequired = (int) newNode.get("num");
 			ArrayList<RequiredCourseNode> createdRequirements = new ArrayList<RequiredCourseNode>();
 			for (String rec : requirementNames) { 
-	            createdRequirements.add(TraverseRequirements(description, rec));// Add all of the requirements recursively
+	            createdRequirements.add(traverseRequirements(yamlTraverser, description, rec));// Add all of the requirements recursively
 			}
 			return new RequiredCourseGroup(numRequired, createdRequirements);
 		}else {
-			if(!CourseIDs.containsKey(tag)) { // Maintain a mapping from course name to course ID
-				CourseIDs.put(tag, CurrentCourseID);
-				CurrentCourseID++;
+			if(!yamlTraverser.courseIDs.containsKey(tag)) { // Maintain a mapping from course name to course ID
+				yamlTraverser.courseIDs.put(tag, yamlTraverser.currentCourseID);
+				yamlTraverser.currentCourseID++;
 			}
-			Integer courseNumber = CourseIDs.get(tag);
+			Integer courseNumber = yamlTraverser.courseIDs.get(tag);
 			return new RequiredCourse(courseNumber);		
 		}
 		
@@ -61,6 +65,10 @@ public class RequiredCourses {
 	
 	public RequiredCourses(RequiredCourseNode root) {
 		this.root = root;
+	}
+	
+	public RequiredCourses() {
+		this.root = null;
 	}
 	
 	public RequiredCourseNode getRootCourseNode() {

@@ -1,0 +1,23 @@
+- grad:
+    num: 3
+    requirments:
+      - breath
+      - CS142
+      - CS444
+- breath:
+    num: 1
+    requirments:
+      - PH100
+      - PH200
+- CS142:
+    num: 0
+    requirments:
+- CS444:
+    num: 0
+    requirments:
+- PH100:
+    num: 0
+    requirments:
+- PH200:
+    num: 0
+    requirments:

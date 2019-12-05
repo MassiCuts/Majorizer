@@ -10,6 +10,10 @@ public class Course {
 	private ArrayList<String> timesOffered;
 	private final RequiredCourses preRecCourses;
 	
+	public Course(String courseCode, String courseName, ArrayList<String> timesOffered, RequiredCourses requiredCourses) {
+		this(DatabaseManager.REQUEST_NEW_ID, courseCode, courseName, timesOffered, requiredCourses);
+	}
+	
 	public Course(int courseID, String courseCode, String courseName, ArrayList<String> timesOffered, RequiredCourses requiredCourses) {
 		this.courseID = courseID;
 		this.courseCode = courseCode;

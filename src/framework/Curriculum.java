@@ -13,6 +13,10 @@ public class Curriculum {
 	private final CurriculumType curriculumType;
 	private final RequiredCourses requiredCourses;
 	
+	public Curriculum(String curriculumName, CurriculumType curriculumType, RequiredCourses requiredCourses) {
+		this(DatabaseManager.REQUEST_NEW_ID, curriculumName, curriculumType, requiredCourses);
+	}
+	
 	public Curriculum(int curriculumID, String curriculumName, CurriculumType curriculumType, RequiredCourses requiredCourses) {
 		this.curriculumID = curriculumID;
 		this.curriculumName = curriculumName;
