@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Hashtable;
 
 import javafx.fxml.FXMLLoader;
@@ -14,6 +16,17 @@ import javafx.scene.text.Font;
 public class ResourceLoader {
 		
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
+	
+	public static File getYAMLFile(String filename) throws IOException {
+		URL url = ResourceLoader.class.getClassLoader().getResource("yaml/" + filename);
+		if(url == null)
+			throw new FileNotFoundException("The image \"" + filename + "\" cannot be found in the yaml folder");
+		try {
+			return new File(url.toURI());
+		} catch (URISyntaxException e) {
+			throw new FileNotFoundException("The image \"" + filename + "\" cannot be found in the yaml folder");
+		}
+	}
 	
 	public static Image getImage(String iconName) throws IOException{
 		InputStream stream = ResourceLoader.class.getClassLoader().getResourceAsStream("images/" + iconName);

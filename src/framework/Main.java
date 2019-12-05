@@ -1,8 +1,13 @@
 package framework;
 
+
+
+import java.io.File;
+import java.io.IOException;
+
 import database.DatabaseTable;
 import scheduler.Scheduler;
-import scheduler.SchedulerGraph;
+import utils.ResourceLoader;
 
 public class Main {
 	
@@ -28,42 +33,42 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
+		testDatabase();
+		testRequiredCourses();
+//		testScheduler();
+	}
+	
+	public static void testDatabase() {
 		// Print the database contents
 		DatabaseTable[] tables = DatabaseManager.listTables();
 		for(DatabaseTable table : tables) {
 			DatabaseManager.printTable(table);
 			System.out.println();
 		}
-		
-		String example = "- grad:\n" + 
-				"    num: 3\n" +  
-				"    requirments:\n" + 
-				"      - breath\n" + 
-				"      - CS142\n" + 
-				"      - CS444\n" +
-				"- breath:\n" + 
-				"    num: 1\n" +  
-				"    requirments:\n" + 
-				"      - PH100\n" + 
-				"      - PH200\n" +
-				"- CS142:\n" + 
-				"    num: 0\n" +  
-				"    requirments:\n" +
-				"- CS444:\n" + 
-				"    num: 0\n" +  
-				"    requirments:\n" +
-				"- PH100:\n" + 
-				"    num: 0\n" +  
-				"    requirments:\n"+
-				"- PH200:\n" + 
-				"    num: 0\n" +  
-				"    requirments:\n"
-				;  
-	
-		
-		
-		RequiredCourses required = new RequiredCourses("/home/david/dev/yogaandtheboys/data/curriculums/computer_science_major.yaml", "/home/david/dev/yogaandtheboys/data/curriculums/prerequisites.yaml");
-		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
-		//Scheduler scheduler = new Scheduler(3);
 	}
+	
+	public static void testRequiredCourses() {
+		try {
+			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
+			RequiredCourses required = RequiredCourses.load(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void testScheduler() {
+		Scheduler scheduler = new Scheduler(null);
+	}
+	
+	public static void testSchedulerGraph(){
+		try {
+			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
+			RequiredCourses required = RequiredCourses.load(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
+	}
+	
+	
 }
