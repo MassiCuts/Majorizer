@@ -62,6 +62,21 @@ public class RequiredCourses {
 		
     } 
 	
+	// TraverseRequirements is assumed to be called first 
+	// I'm not sure it makes sense to encode the prerequisites here
+	private void TraversePrerequisites(LinkedHashMap<String, ArrayList<String>> prerequisites) {
+		Integer courseNumber;
+		for(String key : prerequisites.keySet()) {
+			System.out.println(key);
+			if(!CourseIDs.containsKey(key)) { // Maintain a mapping from course name to course ID
+				CourseIDs.put(key, CurrentCourseID);
+				CurrentCourseID++;
+			}
+			courseNumber = CourseIDs.get(key);
+			System.out.println("Course: " + key + " Number: " + courseNumber);
+		}
+	}
+	
 	public RequiredCourses(RequiredCourseNode root) {
 		this.root = root;
 	}
@@ -118,6 +133,10 @@ public class RequiredCourses {
 		public int getAmtMustChoose() {
 			return amtMustChoose;
 		}
+		
+		public int getNumRequiredCourses() {
+			return requiredCourses.size();
+		}
 
 		@Override
 		public boolean meetsRequirements(Predicate<Integer> courseIDPredicate) {
@@ -146,6 +165,16 @@ public class RequiredCourses {
 		public int hashCode() {
 			return Objects.hash(amtMustChoose, requiredCourses);
 		}
+		
+		@Override
+	    public String toString() {
+			String output = "Group Containing: \n";//Maybe unnecessary
+			for(RequiredCourseNode r : requiredCourses) {
+				output += r.toString() + " ";
+			}
+			output += "\n";
+	        return output; 
+	    } 
 	}
 	
 	public static class RequiredCourse extends RequiredCourseNode {

@@ -60,5 +60,15 @@ public class Main {
 		Scheduler scheduler = new Scheduler(null);
 	}
 	
+	public static void testSchedulerGraph(){
+		try {
+			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
+			RequiredCourses required = RequiredCourses.load(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
+	}
+	
 	
 }
