@@ -1,7 +1,10 @@
 package gui;
 
 import java.io.IOException;
+import java.util.Optional;
 
+import framework.Course;
+import framework.Student;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,11 +19,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -28,6 +33,27 @@ import utils.ResourceLoader;
 
 public class UserInterface extends Application{
 
+	private Scene scene = null;
+	
+	public void updateUI()	{
+		
+		BorderPane root = null;
+		
+		
+		//Login Screen
+//		root = loginScreen();
+		
+		//Student View
+		root = studentView();
+
+		
+		if(scene == null)
+			scene = new Scene(root);
+		else
+			scene.setRoot(root);
+	}
+	
+	
 	//TESTING ONLY
 	public String getName()	{
 		return "Lorenzo Villani";
@@ -41,10 +67,34 @@ public class UserInterface extends Application{
 		return 4;
 	}
 
+	public void addToCurrentSelectedSemester(Student student, Course course)	{
+		String courseName = course.getCourseName();
+	}
+
+	
+	
+	//REUSABLE ELEMENTS
+	public Button newRemoveButton()	{
+		Button removeButton = new Button();
+		removeButton.setShape(new Circle(2));
+		ImageView redMinusMark = null;
+		try {
+			redMinusMark = new ImageView(ResourceLoader.getImage("minus-512.png"));
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		removeButton.setGraphic(redMinusMark);
+		redMinusMark.setFitWidth(10);
+		redMinusMark.setFitHeight(25);
+		removeButton.getStyleClass().add("redbuttontheme");
+
+		return removeButton;
+	}
+	
 	public BorderPane loginScreen()	{
-		BorderPane root = new BorderPane();
+		BorderPane loginScreen = new BorderPane();
 		try	{
-			root.getStyleClass().add("goldgradient");
+			loginScreen.getStyleClass().add("goldgradient");
 			
 			VBox login = new VBox();
 			login.getStyleClass().add("roundedRect");
@@ -128,22 +178,22 @@ public class UserInterface extends Application{
 	    	logoBox.setMaxHeight(100);
 	    	logoBox.setPadding(new Insets(20));
 	    	
-			root.setCenter(login);
-			root.setTop(logoBox);
+			loginScreen.setCenter(login);
+			loginScreen.setTop(logoBox);
 			
-			root.setMargin(login, new Insets(100));
+			loginScreen.setMargin(login, new Insets(100));
 
 			
 		}	catch( IOException ioe)	{
 			ioe.printStackTrace();
 		}
-		return root;
+		return loginScreen;
 	}
 	
 	public BorderPane studentView()	{
-		BorderPane root = new BorderPane();
+		BorderPane studentScreen = new BorderPane();
 		try	{
-			root.getStyleClass().add("lightgraytheme");
+			studentScreen.getStyleClass().add("lightgraytheme");
 			
 			//Pane for Organization
 			GridPane orgPane = new GridPane();
@@ -172,7 +222,9 @@ public class UserInterface extends Application{
 			//logoutButton.setGraphic(logoutButtonMark);
 			logoutButton.setText("Logout");
 			logoutButton.getStyleClass().add("logoutbuttontheme");
-			//logoutButton.setDefaultButton(true);
+			logoutButton.setOnAction((ae) -> {
+				Platform.exit();
+			});
 			
 			VBox logoutButtonBox = new VBox();
 			logoutButtonBox.getChildren().add(logoutButton);
@@ -192,23 +244,21 @@ public class UserInterface extends Application{
 			schedulePane.add(header, 0, 0);
 			
 			GridPane semester[] = new GridPane[8];
-			for(int i = 0; i <= 7; ++i)	{
-				semester[i] = new GridPane();
-				if(i < getCurrentSem())
-					semester[i].getStyleClass().add("pastSem");
-				else if(i == getCurrentSem())
-					semester[i].getStyleClass().add("currentSem");
-				else if(i > getCurrentSem())
-					semester[i].getStyleClass().add("futureSem");
+			for(int columnIndex = 0; columnIndex <= 7; ++columnIndex)	{
+				semester[columnIndex] = new GridPane();
+				if(columnIndex < getCurrentSem())
+					semester[columnIndex].getStyleClass().add("pastSem");
+				else if(columnIndex == getCurrentSem())
+					semester[columnIndex].getStyleClass().add("currentSem");
+				else if(columnIndex > getCurrentSem())
+					semester[columnIndex].getStyleClass().add("futureSem");
 				
-				semester[i].setMinSize(100, 170);
+				semester[columnIndex].setMinSize(100, 170);
+				
+				schedulePane.add(semester[columnIndex], columnIndex, 1);
 			}
 						
 			
-			for(int i = 0; i <= 7; ++i)	{
-				schedulePane.add(semester[i], i, 1);
-			}
-									
 			//Action Pane
 			GridPane actionPane = new GridPane();
 			
@@ -279,6 +329,7 @@ public class UserInterface extends Application{
 			majorsAndMinorsPane.add(greenPlusButtonForMajorsAndMinorsBox, 1, 0);
 			
 			GridPane majorsAndMinorsTab = new GridPane();
+//			majorsAndMinorsTab.setVgap(5);
 			majorsAndMinorsTab.getStyleClass().add("windows");
 			majorsAndMinorsTab.setMinSize(180, 200);		
 			
@@ -289,14 +340,7 @@ public class UserInterface extends Application{
 			majorsAndMinorsTab.add(new Label("Computer Engineering Major"), 0, 1);
 			
 			//Red Minus Button for Major#1
-			Button redMinusForMajorButton = new Button();
-			redMinusForMajorButton.setShape(new Circle(2));
-			ImageView redMinusMarkForMajor = new ImageView(ResourceLoader.getImage("minus-512.png"));
-			redMinusForMajorButton.setGraphic(redMinusMarkForMajor);
-			redMinusMarkForMajor.setFitWidth(10);
-			redMinusMarkForMajor.setFitHeight(25);
-			redMinusForMajorButton.getStyleClass().add("redbuttontheme");
-			
+			Button redMinusForMajorButton = newRemoveButton();
 			VBox redMinusButtonForMajorBox = new VBox();
 			redMinusButtonForMajorBox.getChildren().add(redMinusForMajorButton);
 			redMinusButtonForMajorBox.setAlignment(Pos.CENTER_RIGHT);
@@ -305,18 +349,14 @@ public class UserInterface extends Application{
 			majorsAndMinorsTab.add(redMinusButtonForMajorBox, 1, 0);
 			
 			//Red Minus Button for Major#2
-			Button redMinusForMajor2Button = new Button();
-			redMinusForMajor2Button.setShape(new Circle(2));
-			ImageView redMinusMarkForMajor2 = new ImageView(ResourceLoader.getImage("minus-512.png"));
-			redMinusForMajor2Button.setGraphic(redMinusMarkForMajor2);
-			redMinusMarkForMajor2.setFitWidth(10);
-			redMinusMarkForMajor2.setFitHeight(25);
-			redMinusForMajor2Button.getStyleClass().add("redbuttontheme");
+			Button redMinusForMajor2Button = newRemoveButton();
 			
 			VBox redMinusButtonForMajor2Box = new VBox();
-			redMinusButtonForMajor2Box.getChildren().add(redMinusForMajor2Button);
+			redMinusButtonForMajor2Box.getChildren().add(redMinusForMajorButton);
 			redMinusButtonForMajor2Box.setAlignment(Pos.CENTER_RIGHT);
 			redMinusButtonForMajor2Box.setPadding(new Insets(5));
+			
+			
 			
 			majorsAndMinorsTab.add(redMinusButtonForMajor2Box, 1, 1);
 			
@@ -354,6 +394,8 @@ public class UserInterface extends Application{
 			currentSelectedSemesterPane.add(greenPlusButtonForCurrentSelectedSemesterBox, 1, 0);
 			
 			GridPane currentSelectedSemesterTab = new GridPane();
+			currentSelectedSemesterTab.setHgap(5);
+			currentSelectedSemesterTab.setPadding(new Insets(5));
 			currentSelectedSemesterTab.getStyleClass().add("windows");
 			currentSelectedSemesterTab.setMinSize(180, 200);
 			
@@ -362,44 +404,23 @@ public class UserInterface extends Application{
 			windowsPane.add(currentSelectedSemesterPane, 1, 1);
 			
 			//SAMPLE DATA
+			
 			currentSelectedSemesterTab.add(new Label("CS350	Software Design and Development"), 0, 0);
 			currentSelectedSemesterTab.add(new Label("EE262	Introduction to Object Oriented Programming"), 0, 1);
-			//currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
-			//currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
-			//currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
-			//currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
+			currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
+			currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
+			currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
+			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
 			
-			//Red Minus Button for Course
-			Button redMinusForCourseButton = new Button();
-			redMinusForCourseButton.setShape(new Circle(2));
-			ImageView redMinusMarkForCourse = new ImageView(ResourceLoader.getImage("minus-512.png"));
-			redMinusForCourseButton.setGraphic(redMinusMarkForCourse);
-			redMinusMarkForCourse.setFitWidth(10);
-			redMinusMarkForCourse.setFitHeight(25);
-			redMinusForCourseButton.getStyleClass().add("redbuttontheme");
 			
-			VBox redMinusButtonForCourseBox = new VBox();
-			redMinusButtonForCourseBox.getChildren().add(redMinusForCourseButton);
-			redMinusButtonForCourseBox.setAlignment(Pos.CENTER_RIGHT);
-			redMinusButtonForCourseBox.setPadding(new Insets(5));
+			//Red Minus Buttons for Course
+			int numberOfCourses = 6;																//TEMP
+			Button removeCourseButton[] = new Button[numberOfCourses];
+			for(int rowIndex = 0; rowIndex < numberOfCourses; ++rowIndex)	{
+				removeCourseButton[rowIndex] = newRemoveButton();
+				currentSelectedSemesterTab.add(removeCourseButton[rowIndex], 1, rowIndex);
+			}
 			
-			currentSelectedSemesterTab.add(redMinusButtonForCourseBox, 1, 0);
-			
-			//Red Minus Button for Course2
-			Button redMinusForCourse2Button = new Button();
-			redMinusForCourse2Button.setShape(new Circle(2));
-			ImageView redMinusMarkForCourse2 = new ImageView(ResourceLoader.getImage("minus-512.png"));
-			redMinusForCourse2Button.setGraphic(redMinusMarkForCourse2);
-			redMinusMarkForCourse2.setFitWidth(10);
-			redMinusMarkForCourse2.setFitHeight(25);
-			redMinusForCourse2Button.getStyleClass().add("redbuttontheme");
-			
-			VBox redMinusButtonForCourse2Box = new VBox();
-			redMinusButtonForCourse2Box.getChildren().add(redMinusForCourse2Button);
-			redMinusButtonForCourse2Box.setAlignment(Pos.CENTER_RIGHT);
-			redMinusButtonForCourse2Box.setPadding(new Insets(5));
-			
-			currentSelectedSemesterTab.add(redMinusButtonForCourse2Box, 1, 1);
 			
 			
 			//Electives Pane
@@ -515,28 +536,21 @@ public class UserInterface extends Application{
 			orgPane.add(postWindowsPane, 0, 500);
 			orgPane.add(bottomPane, 1000, 1000);
 						
-			root.setTop(orgPane);
+			studentScreen.setTop(orgPane);
 
 
 		}	catch( Exception e )	{
 			e.printStackTrace();
 		}
 		
-		return root;
+		return studentScreen;
 	}
 	
 	@Override
 	public void start(Stage primaryStage)	{
-		try	{
-			BorderPane root = new BorderPane();
-			//Login Screen
-//			root = loginScreen();
+		try	{		
+			updateUI();
 			
-			//Student View
-			root = studentView();
-
-			
-			Scene scene = new Scene(root, 1000, 800);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Majorizer");
