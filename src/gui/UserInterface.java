@@ -1,10 +1,12 @@
 package gui;
 
 import java.io.IOException;
-import java.util.Optional;
 
+import framework.AcademicPlan;
 import framework.Course;
+import framework.Majorizer;
 import framework.Student;
+import framework.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,13 +19,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -52,17 +52,12 @@ public class UserInterface extends Application{
 	}
 	
 	
-	//TESTING ONLY
 	public String getName()	{
-		return "Lorenzo Villani";
+		return Majorizer.getUser().getFirstName() + ' ' + Majorizer.getUser().getLastName();
 	}
-	//TESTING ONLY
+
 	public String getStudentID()	{
-		return "0755050";
-	}
-	//TESTING ONLY
-	public int getCurrentSem()	{
-		return 4;
+		return Majorizer.getUser().getUniversityID();
 	}
 
 	public void addToCurrentSelectedSemester(Student student, Course course)	{
@@ -91,9 +86,22 @@ public class UserInterface extends Application{
 		return removeButton;
 	}
 	
+	public Button newAddButton()	{
+		Button addButton = new Button();
+		addButton.setShape(new Circle(2));
+		ImageView greenPlusMark = null;
+		try {
+			greenPlusMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+		addButton.setGraphic(greenPlusMark);
+		greenPlusMark.setFitWidth(30);
+		greenPlusMark.setFitHeight(20);
+		addButton.getStyleClass().add("greenbuttontheme");
+		return addButton;
+	}
 
-
-	
 	
 	public BorderPane loginScreen()	{
 		BorderPane loginScreen = new BorderPane();
@@ -165,13 +173,6 @@ public class UserInterface extends Application{
 	    	 
 	    	
 	    	loginButton.setOnAction(this::loginPressed);
-//	    			new EventHandler<ActionEvent>()	{
-//	    		@Override
-//	    		public void handle(ActionEvent ae)	{
-//	    			System.out.println(username.getText() + '\n' + password.getText());
-//	    		}
-//	    	});
-	    	
 	    	
 	    	VBox logoBox = new VBox();
 	    	ImageView logoView = new ImageView();
@@ -196,6 +197,12 @@ public class UserInterface extends Application{
 	}
 	
 	public BorderPane studentView()	{
+		//TESTING ONLY
+		AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
+		User Lorenzo = new Student(0755050, "Clarkson University", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
+		Majorizer.setUser(Lorenzo);
+
+		
 		BorderPane studentScreen = new BorderPane();
 		try	{
 			studentScreen.getStyleClass().add("lightgraytheme");
@@ -251,11 +258,11 @@ public class UserInterface extends Application{
 			GridPane semester[] = new GridPane[8];
 			for(int columnIndex = 0; columnIndex <= 7; ++columnIndex)	{
 				semester[columnIndex] = new GridPane();
-				if(columnIndex < getCurrentSem())
+				if(columnIndex < Majorizer.getStudentCurrentSemester())
 					semester[columnIndex].getStyleClass().add("pastSem");
-				else if(columnIndex == getCurrentSem())
+				else if(columnIndex == Majorizer.getStudentCurrentSemester())
 					semester[columnIndex].getStyleClass().add("currentSem");
-				else if(columnIndex > getCurrentSem())
+				else if(columnIndex > Majorizer.getStudentCurrentSemester())
 					semester[columnIndex].getStyleClass().add("futureSem");
 				
 				semester[columnIndex].setMinSize(100, 170);
@@ -302,11 +309,8 @@ public class UserInterface extends Application{
 			actionPane.add(rightArrowButtonBox, 1, 0);
 			
 			
-			
 			//Windows Pane
 			GridPane windowsPane = new GridPane();
-			
-			
 			
 			//Majors and Minors Pane
 			GridPane majorsAndMinorsPane = new GridPane();
@@ -318,23 +322,14 @@ public class UserInterface extends Application{
 			majorsAndMinorsPane.add(headerForMajorsAndMinors, 0, 0);
 			
 			//Green Plus Button for Majors and Minors
-			Button greenPlusForMajorsAndMinorsButton = new Button();
-			greenPlusForMajorsAndMinorsButton.setShape(new Circle(2));
-			ImageView greenPlusMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
-			greenPlusForMajorsAndMinorsButton.setGraphic(greenPlusMark);
-			greenPlusMark.setFitWidth(30);
-			greenPlusMark.setFitHeight(20);
-			greenPlusForMajorsAndMinorsButton.getStyleClass().add("greenbuttontheme");
+			Button addCurriculumButton = newAddButton();
 			
-			VBox greenPlusButtonForMajorsAndMinorsBox = new VBox();
-			greenPlusButtonForMajorsAndMinorsBox.getChildren().add(greenPlusForMajorsAndMinorsButton);
-			greenPlusButtonForMajorsAndMinorsBox.setAlignment(Pos.CENTER_LEFT);
-			greenPlusButtonForMajorsAndMinorsBox.setPadding(new Insets(5));
 			
-			majorsAndMinorsPane.add(greenPlusButtonForMajorsAndMinorsBox, 1, 0);
+			majorsAndMinorsPane.add(addCurriculumButton, 1, 0);
 			
 			GridPane majorsAndMinorsTab = new GridPane();
-//			majorsAndMinorsTab.setVgap(5);
+			majorsAndMinorsTab.setHgap(5);
+			majorsAndMinorsTab.setPadding(new Insets(5));
 			majorsAndMinorsTab.getStyleClass().add("windows");
 			majorsAndMinorsTab.setMinSize(180, 200);		
 			
@@ -344,26 +339,14 @@ public class UserInterface extends Application{
 			majorsAndMinorsTab.add(new Label("Computer Science Major"), 0, 0);
 			majorsAndMinorsTab.add(new Label("Computer Engineering Major"), 0, 1);
 			
-			//Red Minus Button for Major#1
-			Button redMinusForMajorButton = newRemoveButton();
-			VBox redMinusButtonForMajorBox = new VBox();
-			redMinusButtonForMajorBox.getChildren().add(redMinusForMajorButton);
-			redMinusButtonForMajorBox.setAlignment(Pos.CENTER_RIGHT);
-			redMinusButtonForMajorBox.setPadding(new Insets(5));
+			//Remove Major/Minor Buttons
+			int numberOfMajMin = 2;																//TEMP
+			Button removeMajorButton[] = new Button[numberOfMajMin];
+			for(int rowIndex = 0; rowIndex < numberOfMajMin; ++rowIndex)	{
+				removeMajorButton[rowIndex] = newRemoveButton();
+				majorsAndMinorsTab.add(removeMajorButton[rowIndex], 1, rowIndex);
+			}
 			
-			majorsAndMinorsTab.add(redMinusButtonForMajorBox, 1, 0);
-			
-			//Red Minus Button for Major#2
-			Button redMinusForMajor2Button = newRemoveButton();
-			
-			VBox redMinusButtonForMajor2Box = new VBox();
-			redMinusButtonForMajor2Box.getChildren().add(redMinusForMajorButton);
-			redMinusButtonForMajor2Box.setAlignment(Pos.CENTER_RIGHT);
-			redMinusButtonForMajor2Box.setPadding(new Insets(5));
-			
-			
-			
-			majorsAndMinorsTab.add(redMinusButtonForMajor2Box, 1, 1);
 			
 			//----------------------
 			//Slider for Majors And Minors Tab
@@ -383,20 +366,9 @@ public class UserInterface extends Application{
 			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
 			
 			//Green Plus Button for Current Selected Semester
-			Button greenPlusForCurrentSelectedSemesterButton = new Button();
-			greenPlusForCurrentSelectedSemesterButton.setShape(new Circle(2));
-			ImageView greenPlusForCSSMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
-			greenPlusForCurrentSelectedSemesterButton.setGraphic(greenPlusForCSSMark);
-			greenPlusForCSSMark.setFitWidth(30);
-			greenPlusForCSSMark.setFitHeight(20);
-			greenPlusForCurrentSelectedSemesterButton.getStyleClass().add("greenbuttontheme");
+			Button addCourseButton = newAddButton();
 			
-			VBox greenPlusButtonForCurrentSelectedSemesterBox = new VBox();
-			greenPlusButtonForCurrentSelectedSemesterBox.getChildren().add(greenPlusForCurrentSelectedSemesterButton);
-			greenPlusButtonForCurrentSelectedSemesterBox.setAlignment(Pos.CENTER_LEFT);
-			greenPlusButtonForCurrentSelectedSemesterBox.setPadding(new Insets(5));
-			
-			currentSelectedSemesterPane.add(greenPlusButtonForCurrentSelectedSemesterBox, 1, 0);
+			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
 			
 			GridPane currentSelectedSemesterTab = new GridPane();
 			currentSelectedSemesterTab.setHgap(5);
@@ -418,7 +390,7 @@ public class UserInterface extends Application{
 			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
 			
 			
-			//Red Minus Buttons for Course
+			//Remove Course Buttons
 			int numberOfCourses = 6;																//TEMP
 			Button removeCourseButton[] = new Button[numberOfCourses];
 			for(int rowIndex = 0; rowIndex < numberOfCourses; ++rowIndex)	{
@@ -437,31 +409,6 @@ public class UserInterface extends Application{
 			headerForElectives.getStyleClass().add("fontmed");
 			electivesPane.add(headerForElectives, 0, 0);
 			
-			GridPane electivesTab = new GridPane();
-			electivesTab.getStyleClass().add("windows");
-			electivesTab.setMinSize(180, 200);
-			
-			electivesTab.add(new Label("CS470	Deep Learning"), 0, 0);
-			
-			//Green Plus Button for ElectiveCourse
-			Button greenPlusForElectiveCourseButton = new Button();
-			greenPlusForElectiveCourseButton.setShape(new Circle(2));
-			ImageView greenPlusForElectiveCourseMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
-			greenPlusForElectiveCourseButton.setGraphic(greenPlusForElectiveCourseMark);
-			greenPlusForElectiveCourseMark.setFitWidth(30);
-			greenPlusForElectiveCourseMark.setFitHeight(20);
-			greenPlusForElectiveCourseButton.getStyleClass().add("greenbuttontheme");
-			
-			VBox greenPlusButtonForElectiveCourseBox = new VBox();
-			greenPlusButtonForElectiveCourseBox.getChildren().add(greenPlusForElectiveCourseButton);
-			greenPlusButtonForElectiveCourseBox.setAlignment(Pos.CENTER_LEFT);
-			greenPlusButtonForElectiveCourseBox.setPadding(new Insets(5));
-			
-			electivesTab.add(greenPlusButtonForElectiveCourseBox, 1, 0);
-			
-			electivesPane.add(electivesTab, 0, 1);
-
-			windowsPane.add(electivesPane, 2, 1);
 			
 			
 			//POST windows Pane for AddCourses and AddMajorOrMinor
@@ -491,20 +438,9 @@ public class UserInterface extends Application{
 			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
 			
 			//Green Plus Button for addCoursesTab
-			Button greenPlusForAddCoursesButton = new Button();
-			greenPlusForAddCoursesButton.setShape(new Circle(2));
-			ImageView greenPlusForAddCoursesMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
-			greenPlusForAddCoursesButton.setGraphic(greenPlusForAddCoursesMark);
-			greenPlusForAddCoursesMark.setFitWidth(30);
-			greenPlusForAddCoursesMark.setFitHeight(20);
-			greenPlusForAddCoursesButton.getStyleClass().add("greenbuttontheme");
+			Button addCoursesButton = newAddButton();
 			
-			VBox greenPlusButtonForAddCoursesBox = new VBox();
-			greenPlusButtonForAddCoursesBox.getChildren().add(greenPlusForAddCoursesButton);
-			greenPlusButtonForAddCoursesBox.setAlignment(Pos.CENTER_LEFT);
-			greenPlusButtonForAddCoursesBox.setPadding(new Insets(5));
-			
-			addCoursesTab.add(greenPlusButtonForAddCoursesBox, 1, 0);
+			addCoursesTab.add(addCoursesButton, 1, 0);
 			
 			addCoursesPane.add(addCoursesTab, 0, 1);
 			
