@@ -41,10 +41,10 @@ public class SchedulerNode {
 	
 	public SchedulerNode() {}
 	
-	public void attachOutgoing(SchedulerNode node) {
+	public void addParent(SchedulerNode node) {
 		this.parents.add(node);
 	}
-	public void attachIncoming(SchedulerNode node) {
+	public void addChild(SchedulerNode node) {
 		this.children.add(node);
 	}
 	
@@ -116,11 +116,21 @@ public class SchedulerNode {
 	
 	private float getOverlapScore() {
 		this.getDepth();
+		//TODO: traverse parents until at same depth, then analyze the gate. Overlap score = gate.options
 		return this.parents.size();
 	}
 	
 	private float getDepth() {
+		//TODO: largest depth of parents + 1
 		return 0;
+	}
+	
+	public boolean equals(SchedulerNode node) {
+		if (this.isgate) {
+			return (SchedulerGate) this == node;
+		} else {
+			return (SchedulerCourse) this == node;
+		}
 	}
 	
 	@Override

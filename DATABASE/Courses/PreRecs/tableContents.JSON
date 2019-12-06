@@ -1,7 +1,0 @@
-{
- "columnData": {
-  "courseID": "STRING",
-  "preRecCourseID": "STRING"
- },
- "entryData": []
-}

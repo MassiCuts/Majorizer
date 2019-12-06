@@ -554,8 +554,6 @@ public class DatabaseManager {
 	public static void saveStudent(Student student) {
 		if(student.getUserID() == REQUEST_NEW_ID) {
 			
-			
-			
 		} else {
 			
 		}

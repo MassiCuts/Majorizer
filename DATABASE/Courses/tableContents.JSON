@@ -1,7 +1,14 @@
 {
  "columnData": {
   "courseName": "STRING",
-  "courseID": "STRING"
+  "courseCode": "STRING",
+  "courseID": "INT"
  },
- "entryData": []
+ "entryData": [
+ 	{
+ 	"courseName": "Intro To Prog",
+ 	"courseCode": "CS141",
+ 	"courseID"  : 1
+ 	}
+ ]
 }

@@ -2,15 +2,19 @@ package scheduler;
 
 import java.util.ArrayList;
 
+import framework.Course;
+
+//availability: Bit 0: Odd Fall, Bit 1: Even Spring, Bit 2: Even Fall, Bit 3: Even Spring
+
 public class SchedulerCourse extends SchedulerNode {
-	protected int available, taken, scheduled, added, dropped;
+	protected int availability, taken, scheduled, added, dropped;
 	
 	public SchedulerCourse(SchedulerNode node) {
 		this.name = node.name;
 		if (node.courseinfo.isEmpty()) {
 			//Throw some error so we know this shouldn't have been initialized
 		}
-		this.available = node.courseinfo.get(CourseInfo.AVAILABILITY);
+		this.availability = node.courseinfo.get(CourseInfo.AVAILABILITY);
 		this.taken = node.courseinfo.get(CourseInfo.TAKEN);
 		this.scheduled = node.courseinfo.get(CourseInfo.SCHEDULED);
 		this.added = node.courseinfo.get(CourseInfo.ADDED);
@@ -19,8 +23,8 @@ public class SchedulerCourse extends SchedulerNode {
 		this.parents = node.parents;
 	}
 	
-	public SchedulerCourse(String Name) {
-		this.name = name;
+	public SchedulerCourse(Course c) {
+		this.name = c.getCourseName();
 		this.children = new ArrayList<SchedulerNode>();
 		if(this.children == null) {
 			System.out.println("chilldren are null");
@@ -32,10 +36,23 @@ public class SchedulerCourse extends SchedulerNode {
 		this.dropped = 0;
 	}
 	
-	public boolean available() { return this.available == 1;}
+	public boolean available(int semester_num) {
+		boolean a = false;
+		semester_num %= 4;
+		return ((this.availability >> semester_num) & 1) == 1;
+	}
 	
+	public void addToSemester(int semester_num) {this.added = semester_num;}
+	public void removeFromSemester(int semester_num) {this.dropped = semester_num;}
 	
 	public SchedulerNode getChild() {
 		return this.children.get(0);	//Only one child because this is a cours
+	}
+	
+	public boolean equals(SchedulerNode node) {
+		if (!node.isGate()) {
+			if (this.name == ((SchedulerCourse) node).name) {return true;}
+		}
+		return false;
 	}
 };
