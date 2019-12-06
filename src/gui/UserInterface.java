@@ -1,8 +1,10 @@
 package gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import framework.AcademicPlan;
+import framework.Advisor;
 import framework.Course;
 import framework.Majorizer;
 import framework.Student;
@@ -10,6 +12,7 @@ import framework.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -23,7 +26,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -43,7 +48,10 @@ public class UserInterface extends Application{
 //		root = loginScreen();
 		
 		//Student View
-		root = studentView();
+//		root = studentView();
+		
+		//Advisor View
+		root = advisorView();
 
 		
 		if(scene == null)
@@ -109,7 +117,6 @@ public class UserInterface extends Application{
 		GridPane actionGrid = new GridPane();
 		actionGrid.setHgap(5);
 		actionGrid.setPadding(new Insets(5));
-		actionGrid.getStyleClass().add("windows");
 		actionGrid.setMinSize(180, 200);		//fields?
 		return actionGrid;
 	}
@@ -118,7 +125,14 @@ public class UserInterface extends Application{
 		ScrollPane actionScroll = new ScrollPane();
 		actionScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 		actionScroll.setPrefViewportHeight(200);
+		actionScroll.getStyleClass().add("windows");
 		return actionScroll;
+	}
+	
+	public Label newStyledLabel(String text, String css)	{
+		Label styledLabel = new Label("text");
+		styledLabel.getStyleClass().add(css);
+		return styledLabel;
 	}
 	
 	//===================================================================
@@ -227,26 +241,25 @@ public class UserInterface extends Application{
 		try	{
 			studentScreen.getStyleClass().add("lightgraytheme");
 			
-			//Pane for Organization
+			ColumnConstraints constraints = new ColumnConstraints();
+			constraints.setHgrow(Priority.ALWAYS);
+
 			GridPane orgPane = new GridPane();
-			
-			//Pre-Top Pane for Logout
-			GridPane preTopPane = new GridPane();
-			
-			//Top Pane
 			GridPane topPane = new GridPane();
-			//Name
+			GridPane actionPane = new GridPane();
+			GridPane windowsPane = new GridPane();
+			GridPane addCoursesTab = new GridPane();
+			GridPane bottomPane = new GridPane();
+			
 			Label name = new Label();
-			name.setText(getName());				//This will get the name from Majorizer eventually
+			name.setText(getName());
 			name.getStyleClass().add("fonttitle");
-			//Student ID
+			
 			Label studentID = new Label();
 			studentID.setText(getStudentID()); 		//Likewise ^^
 			studentID.getStyleClass().add("IDfont");
-			//Integrate
-			topPane.add(name, 0, 0);
-			topPane.add(studentID, 0, 1);
-			
+
+		
 			//Logout Button
 			Button logoutButton = new Button();
 			logoutButton.setShape(new Rectangle());
@@ -263,8 +276,15 @@ public class UserInterface extends Application{
 			logoutButtonBox.setAlignment(Pos.TOP_RIGHT);
 			logoutButtonBox.setPadding(new Insets(5));
 			logoutButtonBox.getStyleClass().add("logoutbuttontheme");
-						
-			preTopPane.add(logoutButtonBox, 100, 0);
+			
+			
+			topPane.add(name, 0, 0);
+			topPane.add(studentID, 0, 1);
+			topPane.add(logoutButtonBox, 1, 0);
+			topPane.setMargin(logoutButtonBox, new Insets(20, 0, 0, 0));
+			topPane.getColumnConstraints().add(constraints);
+			
+
 			
 			//Schedule Pane
 			GridPane schedulePane = new GridPane();
@@ -292,7 +312,6 @@ public class UserInterface extends Application{
 						
 			
 			//Action Pane
-			GridPane actionPane = new GridPane();
 			
 			//TODO: Replace with click event on semester window
 			/*
@@ -333,7 +352,6 @@ public class UserInterface extends Application{
 			
 			
 			//Windows Pane
-			GridPane windowsPane = new GridPane();
 			
 			//Majors and Minors Pane
 			GridPane curriculumPane = new GridPane();
@@ -392,10 +410,14 @@ public class UserInterface extends Application{
 			GridPane currentSelectedSemesterTab = newActionGrid();
 			ScrollPane currentSelectedSemesterScroll = newActionScroll();
 			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
-			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getWidth());
+			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getMinWidth());
 			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
+//			currentSelectedSemesterPane.setHgrow(child, value);
 
+			//TODO: Make the divider 1/3 of windowsPane width and 2/3?
+			//TODO: combine windows pane and action pane
 			windowsPane.add(currentSelectedSemesterPane, 1, 1);
+			windowsPane.setHgap(10);
 			
 			//SAMPLE DATA
 			
@@ -450,24 +472,20 @@ public class UserInterface extends Application{
 			
 			addCoursesPane.add(searchField, 1, 0);
 			
-			GridPane addCoursesTab = new GridPane();
 			addCoursesTab.getStyleClass().add("windows");
 			addCoursesTab.setMinSize(60, 60);
 			
 			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
 			
-			//Green Plus Button for addCoursesTab
 			Button addCoursesButton = newAddButton();
 			
 			addCoursesTab.add(addCoursesButton, 1, 0);
 			
 			addCoursesPane.add(addCoursesTab, 0, 1);
 			
-			postWindowsPane.add(addCoursesPane, 0, 0);
+			bottomPane.add(addCoursesPane, 0, 0);
 			
 			
-			//Bottom Pane
-			GridPane bottomPane = new GridPane();
 			
 			
 			//Check Button
@@ -478,33 +496,75 @@ public class UserInterface extends Application{
 			checkButtonMark.setFitWidth(40);
 			checkButtonMark.setFitHeight(40);
 			checkButton.getStyleClass().add("checkbuttontheme");
-			//checkButton.setDefaultButton(true);
 			
 			VBox checkButtonBox = new VBox();
 			checkButtonBox.getChildren().add(checkButton);
-			checkButtonBox.setAlignment(Pos.CENTER_RIGHT);
+			checkButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
 			checkButtonBox.setPadding(new Insets(5));
 			
-			bottomPane.add(checkButtonBox, 0, 100);
+			bottomPane.add(checkButtonBox, 1, 0);
 			
-			
-			orgPane.add(preTopPane, 1000, 0);
 			orgPane.add(topPane, 0, 0);
 			orgPane.add(schedulePane, 0, 1);
 			orgPane.add(actionPane, 0, 2);
-			orgPane.add(windowsPane, 0, 10);
-			orgPane.add(postWindowsPane, 0, 500);
-			orgPane.add(bottomPane, 1000, 1000);
-						
+			orgPane.add(windowsPane, 0, 3);
+			orgPane.add(postWindowsPane, 0, 4);
+			orgPane.add(bottomPane, 0, 5);
+			orgPane.setVgap(10);
+			orgPane.setHgap(5);
+			orgPane.setPadding(new Insets(10));			
+			
 			studentScreen.setCenter(orgPane);
-
-
 		}	catch( Exception e )	{
 			e.printStackTrace();
 		}
 		
 		return studentScreen;
 	}
+	
+	public BorderPane advisorView()	{
+		//TESTING ONLY
+		User Sean = new Advisor(0000006, "Clarkson University", "Sean", "Banerjee", "banerjsk", "password", null, null);
+
+		BorderPane advisorScreen = new BorderPane();
+//		try	{
+			BorderPane advisorInfoPane = new BorderPane();
+			BorderPane studentInfoPane = new BorderPane();
+			
+			advisorInfoPane.getStyleClass().add("lightgraytheme");
+
+			ColumnConstraints constraints = new ColumnConstraints();
+			constraints.setHgrow(Priority.ALWAYS);
+
+			//TESTING? -- Sets Student Side
+			studentInfoPane = studentView();
+			
+			GridPane orgPane = new GridPane();
+			
+			
+			Label name = new Label();
+			name.setText("Sean");//getName());
+			name.getStyleClass().add("fonttitle");
+			
+			//TESTING
+			orgPane.setGridLinesVisible(true);
+			
+			orgPane.getColumnConstraints().add(constraints);
+			orgPane.add(name, 0, 0);
+			orgPane.add(newStyledLabel("Students", "fontmed"), 0, 1);
+//			orgPane.add(name, 0, 0);
+//			orgPane.add(name, 0, 0);
+//			orgPane.add(name, 0, 0);
+			
+			advisorInfoPane.getChildren().add(orgPane);
+			advisorScreen.setLeft(advisorInfoPane);
+			advisorScreen.setRight(studentInfoPane);
+//		}	catch( IOException ioe )	{
+//			ioe.printStackTrace();
+//		}
+		return advisorScreen;
+	}
+
 	
 	@Override
 	public void start(Stage primaryStage)	{
