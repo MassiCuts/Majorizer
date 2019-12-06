@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -49,6 +50,8 @@ public class UserInterface extends Application{
 			scene = new Scene(root);
 		else
 			scene.setRoot(root);
+		
+		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	}
 	
 	
@@ -68,7 +71,7 @@ public class UserInterface extends Application{
 		System.out.println("Here");
 	}
 	
-	//REUSABLE ELEMENTS
+	//REUSABLE ELEMENTS===========================
 	public Button newRemoveButton()	{
 		Button removeButton = new Button();
 		removeButton.setShape(new Circle(2));
@@ -102,6 +105,23 @@ public class UserInterface extends Application{
 		return addButton;
 	}
 
+	public GridPane newActionGrid()	{
+		GridPane actionGrid = new GridPane();
+		actionGrid.setHgap(5);
+		actionGrid.setPadding(new Insets(5));
+		actionGrid.getStyleClass().add("windows");
+		actionGrid.setMinSize(180, 200);		//fields?
+		return actionGrid;
+	}
+	
+	public ScrollPane newActionScroll()	{
+		ScrollPane actionScroll = new ScrollPane();
+		actionScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		actionScroll.setPrefViewportHeight(200);
+		return actionScroll;
+	}
+	
+	//===================================================================
 	
 	public BorderPane loginScreen()	{
 		BorderPane loginScreen = new BorderPane();
@@ -274,6 +294,8 @@ public class UserInterface extends Application{
 			//Action Pane
 			GridPane actionPane = new GridPane();
 			
+			//TODO: Replace with click event on semester window
+			/*
 			//Left Arrow
 			Button leftArrowButton = new Button();
 			leftArrowButton.setShape(new Circle(2));
@@ -307,54 +329,51 @@ public class UserInterface extends Application{
 			
 			//Adding right arrow to the actionPane
 			actionPane.add(rightArrowButtonBox, 1, 0);
+			*/
 			
 			
 			//Windows Pane
 			GridPane windowsPane = new GridPane();
 			
 			//Majors and Minors Pane
-			GridPane majorsAndMinorsPane = new GridPane();
+			GridPane curriculumPane = new GridPane();
 			
 			//Header label for Majors and Minors
-			Label headerForMajorsAndMinors = new Label();
-			headerForMajorsAndMinors.setText("Majors and Minors");
-			headerForMajorsAndMinors.getStyleClass().add("fontmed");
-			majorsAndMinorsPane.add(headerForMajorsAndMinors, 0, 0);
+			Label curriculumHeader = new Label();
+			curriculumHeader.setText("Majors and Minors");
+			curriculumHeader.getStyleClass().add("fontmed");
+			curriculumPane.add(curriculumHeader, 0, 0);
 			
 			//Green Plus Button for Majors and Minors
 			Button addCurriculumButton = newAddButton();
 			
 			
-			majorsAndMinorsPane.add(addCurriculumButton, 1, 0);
+			curriculumPane.add(addCurriculumButton, 1, 0);
 			
-			GridPane majorsAndMinorsTab = new GridPane();
-			majorsAndMinorsTab.setHgap(5);
-			majorsAndMinorsTab.setPadding(new Insets(5));
-			majorsAndMinorsTab.getStyleClass().add("windows");
-			majorsAndMinorsTab.setMinSize(180, 200);		
+			GridPane curriculumTab = newActionGrid();	
+			ScrollPane curriculumScroll = newActionScroll();
+			curriculumScroll.setContent(curriculumTab);
+			curriculumScroll.setMinViewportWidth(curriculumTab.getWidth());
+			curriculumPane.add(curriculumScroll, 0, 1);
 			
-			majorsAndMinorsPane.add(majorsAndMinorsTab, 0, 1);
 			
 			//SAMPLE DATA
-			majorsAndMinorsTab.add(new Label("Computer Science Major"), 0, 0);
-			majorsAndMinorsTab.add(new Label("Computer Engineering Major"), 0, 1);
+			curriculumTab.add(new Label("Computer Science Major"), 0, 0);
+			curriculumTab.add(new Label("Computer Engineering Major"), 0, 1);
 			
 			//Remove Major/Minor Buttons
 			int numberOfMajMin = 2;																//TEMP
 			Button removeMajorButton[] = new Button[numberOfMajMin];
 			for(int rowIndex = 0; rowIndex < numberOfMajMin; ++rowIndex)	{
 				removeMajorButton[rowIndex] = newRemoveButton();
-				majorsAndMinorsTab.add(removeMajorButton[rowIndex], 1, rowIndex);
+				curriculumTab.add(removeMajorButton[rowIndex], 1, rowIndex);
 			}
 			
 			
 			//----------------------
-			//Slider for Majors And Minors Tab
-			Slider majorsAndMinorsSlider = new Slider();
-			majorsAndMinorsSlider.setOrientation(Orientation.VERTICAL);
 			//WORKING HERE
 			
-			windowsPane.add(majorsAndMinorsPane, 0, 1);
+			windowsPane.add(curriculumPane, 0, 1);
 			
 			//Current Selected Semester Pane
 			GridPane currentSelectedSemesterPane = new GridPane();
@@ -370,13 +389,11 @@ public class UserInterface extends Application{
 			
 			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
 			
-			GridPane currentSelectedSemesterTab = new GridPane();
-			currentSelectedSemesterTab.setHgap(5);
-			currentSelectedSemesterTab.setPadding(new Insets(5));
-			currentSelectedSemesterTab.getStyleClass().add("windows");
-			currentSelectedSemesterTab.setMinSize(180, 200);
-			
-			currentSelectedSemesterPane.add(currentSelectedSemesterTab, 0, 1);
+			GridPane currentSelectedSemesterTab = newActionGrid();
+			ScrollPane currentSelectedSemesterScroll = newActionScroll();
+			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
+			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getWidth());
+			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
 
 			windowsPane.add(currentSelectedSemesterPane, 1, 1);
 			
@@ -388,6 +405,8 @@ public class UserInterface extends Application{
 			currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
 			currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
 			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
+			currentSelectedSemesterTab.add(new Label("CSXXX	CS Course 1"), 0, 6);
+			currentSelectedSemesterTab.add(new Label("CSYYY	CS Course 2"), 0, 7);
 			
 			
 			//Remove Course Buttons
@@ -477,7 +496,7 @@ public class UserInterface extends Application{
 			orgPane.add(postWindowsPane, 0, 500);
 			orgPane.add(bottomPane, 1000, 1000);
 						
-			studentScreen.setTop(orgPane);
+			studentScreen.setCenter(orgPane);
 
 
 		}	catch( Exception e )	{
@@ -490,11 +509,8 @@ public class UserInterface extends Application{
 	@Override
 	public void start(Stage primaryStage)	{
 		try	{		
-		
 			updateUI();
-
 			
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Majorizer");
 			primaryStage.getIcons().add(ResourceLoader.getImage("favicon.png"));
