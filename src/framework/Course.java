@@ -53,4 +53,9 @@ public class Course {
 	public int hashCode() {
 		return Objects.hash(courseID);
 	}
+	
+	@Override
+	public String toString() {
+		return "Name: " + this.courseName;
+	}
 }

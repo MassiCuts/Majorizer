@@ -1,6 +1,8 @@
 package scheduler;
 import framework.Course;
+import framework.DatabaseManager;
 import framework.RequiredCourses;
+import framework.RequiredCourses.RequiredCourse;
 import framework.RequiredCourses.RequiredCourseGroup;
 import framework.RequiredCourses.RequiredCourseNode;
 
@@ -15,7 +17,7 @@ import java.util.Vector;
 
 public class SchedulerGraph {
 	public SchedulerNode root;
-	private Vector<Course> all_courses;
+	private Vector<SchedulerCourse> all_courses;
 	private Vector<SchedulerNode> graph;
 	// There needs to be some sort of hash map to uniquely identify course 
 
@@ -43,16 +45,24 @@ public class SchedulerGraph {
 			int numOptions = ((RequiredCourseGroup) subCurriculum).getNumRequiredCourses();
 			ArrayList<SchedulerNode> childNodes = new ArrayList<SchedulerNode>();
 			for( RequiredCourseNode r : ((RequiredCourseGroup) subCurriculum)){
-				childNodes.add(traverseRequiredCourses((RequiredCourseNode)r));
+				SchedulerNode snode = traverseRequiredCourses((RequiredCourseNode)r);
+				childNodes.add(snode);
 			}
 			SchedulerGate newGate = new SchedulerGate(numOptions, numRequired, childNodes);
+			SchedulerNode gatenode = (SchedulerNode) newGate;
+			for (SchedulerNode children : gatenode.getChildren()) {
+				children.addParent(gatenode);
+			}
 			return new SchedulerNode(newGate);
-		}else {
-			SchedulerCourse newCourse = new SchedulerCourse("Course");
-			return null;
+		} else {
+			Course course = DatabaseManager.getCourse(((RequiredCourse)subCurriculum).getCourseID());
+			System.out.println("Course name" + course);
+			SchedulerCourse newCourse = new SchedulerCourse(course);
+			this.all_courses.add(newCourse);
+			newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
+			newCourse.getChild().addParent(newCourse);
+			return newCourse;
 		}
-		
-		
 	}
 	
 	public void mergeGraphs(SchedulerGraph sgraph) {}

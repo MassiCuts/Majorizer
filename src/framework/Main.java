@@ -1,12 +1,12 @@
 package framework;
 
 
-
 import java.io.File;
 import java.io.IOException;
 
 import database.DatabaseTable;
 import scheduler.Scheduler;
+import scheduler.SchedulerGraph;
 import utils.ResourceLoader;
 
 public class Main {
@@ -35,7 +35,7 @@ public class Main {
 		
 		testDatabase();
 		testRequiredCourses();
-//		testScheduler();
+		testSchedulerGraph();
 	}
 	
 	public static void testDatabase() {
@@ -64,10 +64,12 @@ public class Main {
 		try {
 			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
 			RequiredCourses required = RequiredCourses.load(f);
+			SchedulerGraph requirementsGraph = new SchedulerGraph(required);
+			System.out.println(requirementsGraph);
+			System.out.println("hey");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
 	}
 	
 	

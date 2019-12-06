@@ -5,7 +5,9 @@
 # https://www.clarkson.edu/sites/default/files/2019-11/Course%20Catalog%2019-20.pdf
 
 CS142:
-  - CS141
+  num: 1
+  requirements:
+  	- CS141
 
 CS241:
   - CS142
