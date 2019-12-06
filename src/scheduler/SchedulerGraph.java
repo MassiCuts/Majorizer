@@ -12,12 +12,13 @@ import scheduler.SchedulerNode;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Vector;
 
 public class SchedulerGraph {
 	public SchedulerNode root;
-	private Vector<SchedulerCourse> all_courses;
+	private Vector<SchedulerCourse> all_courses = new Vector<SchedulerCourse>();
 	private Vector<SchedulerNode> graph;
 	// There needs to be some sort of hash map to uniquely identify course 
 
@@ -55,12 +56,14 @@ public class SchedulerGraph {
 			}
 			return new SchedulerNode(newGate);
 		} else {
-			Course course = DatabaseManager.getCourse(((RequiredCourse)subCurriculum).getCourseID());
+			//Course course = DatabaseManager.getCourse(((RequiredCourse)subCurriculum).getCourseID());
+			Course course = new Course(0, "CS141", "Intro to programing", new ArrayList<String>(Arrays.asList("1", "1", "1", "1")), null);
 			System.out.println("Course name" + course);
 			SchedulerCourse newCourse = new SchedulerCourse(course);
+			System.out.println(newCourse);
 			this.all_courses.add(newCourse);
-			newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
-			newCourse.getChild().addParent(newCourse);
+			//newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
+			//newCourse.getChild().addParent(newCourse);
 			return newCourse;
 		}
 	}

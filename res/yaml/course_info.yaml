@@ -1,0 +1,102 @@
+# Information to fill out the following feilds must be included
+#private final int courseID; # This will likely be computed internally
+#private final String courseCode; This is neccessary and serves as the unique identifier
+#private final String courseName; # This may be left blank for now
+#private ArrayList<String> timesOffered; # Will be an array of four bools, starting at even fall
+## This may be inaccurate for now
+#private final RequiredCourses preRecCourses; # will be an array of course names
+
+CS142:
+  timesOffered:
+    - 1
+    - 1
+    - 1
+    - 1
+  preRecCourses:
+    - CS141
+  courseName:
+    Intro to Programming II
+  numRequired:
+    0
+
+CS241:
+  timesOffered:
+    - 1
+    - 0
+    - 1
+    - 0
+  preRecCourses:
+    - CS142
+  courseName:
+    Intro to Advanced Programing Concepts in Java
+  numRequired:
+    0 # This means that it is a course
+
+CS344:
+  timesOffered:
+    - 1
+    - 0
+    - 1
+    - 0
+  preRecCourses:
+    - CS142
+    - math
+  courseName:
+    Intro to Advanced Programing Concepts in Java
+  numRequired: # This implies that it is a group, since courses are assumed to require all prerequisite course **GROUPS**
+    0
+
+math:
+  timesOffered:
+  preRecCourses:
+    - MA211
+    - MA141
+  courseName:
+    GROUP # Suggested but not required for groups
+  numRequired: # This implies that it is a group
+    1
+
+MA211:
+  timesOffered:
+    - 1
+    - 1
+    - 1
+    - 1
+  preRecCourses: []
+  courseName:
+    "Descrete Math" # Suggested but not required for groups
+  numRequired: # This implies that it is a group
+    0
+
+MA141:
+  timesOffered:
+    - 1
+    - 1
+    - 1
+    - 1
+  preRecCourses: []
+  courseName:
+    "Calc I" # Suggested but not required for groups
+  numRequired: # This implies that it is a group
+    0
+
+
+#CS242:
+#  - CS142
+#
+#CS341:
+#  - CS142
+#
+#CS344:
+#  - CS142
+#  - MA132
+#
+#CS345:
+#  - CS142
+#  - MA211
+#
+#MA211:
+#  - MA142
+#
+#MA141:
+#  - MA141

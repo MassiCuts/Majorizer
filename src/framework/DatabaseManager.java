@@ -6,7 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import database.DatabaseColumn;
 import database.DatabaseColumn.ColumnType;
@@ -52,6 +61,12 @@ public class DatabaseManager {
 	public static final String CURRICULUM_TYPE_MINOR = "MINOR";
 	public static final String CURRICULUM_TYPE_LIST = "SUB_CURRICULUM";
 	public static final String CURRICULUM_TYPE_COURSE = PRE_REC_TYPE_COURSE;
+	
+	private static final String COURSE_NAME = "courseName";
+	private static final String PREREC_NAME = "preRecCourses";
+	private static final String TIMES_OFFERED = "timesOffered";
+	private static final String NUM_REQUIRED = "numRequired";
+	private static final int DEFAULT_ID = 0;
 	
 	public static final int REQUEST_NEW_ID = -1;
 	
@@ -566,9 +581,63 @@ public class DatabaseManager {
 	public static void saveCurriculum(Curriculum curriculum) {
 		
 	}
+
+	public void loadStudents(File yamlFile) {
+		Yaml yaml = new Yaml(); // Create the parser
+		try (
+			InputStream is = new FileInputStream(yamlFile);	
+		) {
+			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(is);// Parse the YAML representation
+			System.out.println(specification);
+			System.out.println(specification.keySet());
+			LinkedHashMap courseInfo;
+			ArrayList<String> timesOffered; 
+			ArrayList<String> preRecCourses;
+			String courseName;
+			Course newCourse;
+			RequiredCourses requiredCourses;
+			
+			for(String courseCode : specification.keySet()) {// You can probably just iterate through all of the values rather than doing this crap
+				courseInfo = specification.get(courseCode);
+				if((int)courseInfo.get(NUM_REQUIRED) == 0) { // This implies that it is a course, not a group
+				    System.out.println(courseInfo);
+				    timesOffered = (ArrayList<String>) courseInfo.get(TIMES_OFFERED);
+				    preRecCourses = (ArrayList<String>) courseInfo.get(PREREC_NAME);
+				    courseName = (String) courseInfo.get(COURSE_NAME);
+				    requiredCourses = new RequiredCourses(parseRequiredCourses(specification, courseCode));
+				    newCourse = new Course(DEFAULT_ID, courseCode, courseName, timesOffered, requiredCourses);//TODO turn this null into a RequiredCourseObject
+				    saveCourse(newCourse);
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
-	public static void saveCourse(Student student) {
-		
+	private RequiredCourseNode parseRequiredCourses(LinkedHashMap<String, LinkedHashMap> description, String tag) {
+		if(description.containsKey(tag)) {
+			LinkedHashMap newNode = (LinkedHashMap) description.get(tag);// Get the new node from the description
+			int numRequired = (int) newNode.get(NUM_REQUIRED);
+			ArrayList<RequiredCourseNode> createdRequirements = new ArrayList<RequiredCourseNode>();
+			System.out.println(newNode);
+			ArrayList<String> requirementNames = (ArrayList<String>) newNode.get(PREREC_NAME);// Get all the names of things it depends on
+			System.out.println(requirementNames);
+			for (String rec : requirementNames) { 
+				createdRequirements.add(parseRequiredCourses(description, rec));// Add all of the requirements recursively
+			}
+			return new RequiredCourseGroup(numRequired, createdRequirements);
+		}else {
+			System.out.println("This is the tag which wasn't found: " + tag);
+			return null;
+		}
+	}
+	
+	public static void saveCourse(Course course) {
+		System.out.println("Loaded student " + course);
 	}
 	
 	public static void saveRequest(Request request) {

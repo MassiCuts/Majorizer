@@ -1,6 +1,7 @@
 package framework;
 
 
+
 import java.io.File;
 import java.io.IOException;
 
@@ -36,6 +37,7 @@ public class Main {
 		testDatabase();
 		testRequiredCourses();
 		testSchedulerGraph();
+		testCourseInfoLoad();
 	}
 	
 	public static void testDatabase() {
@@ -65,8 +67,18 @@ public class Main {
 			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
 			RequiredCourses required = RequiredCourses.load(f);
 			SchedulerGraph requirementsGraph = new SchedulerGraph(required);
-			System.out.println(requirementsGraph);
-			System.out.println("hey");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void testCourseInfoLoad(){
+		try {
+			File f = ResourceLoader.getYAMLFile("course_info.yaml");
+			System.out.println(f);
+			DatabaseManager database = new DatabaseManager();
+			database.loadStudents(f);
+			System.out.println("Loaded students");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
