@@ -6,6 +6,7 @@ import java.io.IOException;
 import framework.AcademicPlan;
 import framework.Advisor;
 import framework.Course;
+import framework.DatabaseManager;
 import framework.Majorizer;
 import framework.Student;
 import framework.User;
@@ -37,26 +38,23 @@ public class UserInterface extends Application{
 	private Scene scene = null;
 	private final GridPane semesters[] = new GridPane[8];
 	Dimension screenSize;
-	
-	AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
-	User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
+	boolean isAuthenticated = false;
 	
 	public void updateUI()	{
 		
 		BorderPane root = null;
 
 		this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		Majorizer.setUser(Lorenzo);
 		
 		//Login Screen
-//		root = loginScreen();
-		
-		//Student View
-//		root = studentView();
-		
-		//Advisor View
-		root = advisorView();
-
+		if(!isAuthenticated)
+			root = loginScreen();
+		else	{
+			if(Majorizer.getUser().isUserIsStudent())
+				root = studentView();
+			else
+				root = advisorView();
+		}
 		
 		if(scene == null)
 			scene = new Scene(root);
@@ -160,6 +158,13 @@ public class UserInterface extends Application{
 		return styledLabel;
 	}
 	
+	public Button newLogButton(String text)	{
+		Button logButton = new Button();
+		logButton.setShape(new Rectangle());
+		logButton.setText(text);
+		logButton.getStyleClass().add("logoutbuttontheme");
+		return logButton;
+	}
 	
 	//===================================================================
 	
@@ -195,10 +200,7 @@ public class UserInterface extends Application{
 			
 			
 			//Login Button
-			Button loginButton = new Button();
-			loginButton.setShape(new Rectangle());
-			loginButton.setText("Login");
-			loginButton.getStyleClass().add("logoutbuttontheme");
+			Button loginButton = newLogButton("Log In");
 			
 			loginButton.setDefaultButton(true);
 			
@@ -230,7 +232,14 @@ public class UserInterface extends Application{
 	    	    });
 	    	 
 	    	
-	    	loginButton.setOnAction(this::loginPressed);
+	    	loginButton.setOnAction((ae) -> {
+	    		Majorizer.setUser(Majorizer/*DatabaseManager*/.authenticate(username.getText(), password.getText()));
+	    		if(Majorizer.getUser() != null)
+	    			this.isAuthenticated = true;
+	    		this.updateUI();
+	    	});
+	    	
+	    	
 	    	
 	    	VBox logoBox = new VBox();
 	    	ImageView logoView = new ImageView();
@@ -254,7 +263,6 @@ public class UserInterface extends Application{
 	}
 	
 	public BorderPane studentView()	{
-		//TESTING ONLY
 
 		
 		BorderPane studentScreen = new BorderPane();
@@ -279,12 +287,7 @@ public class UserInterface extends Application{
 
 		
 			//Logout Button
-			Button logoutButton = new Button();
-			logoutButton.setShape(new Rectangle());
-			//ImageView logoutButtonMark = new ImageView(ResourceLoader.getImage("logoutMark.png"));
-			//logoutButton.setGraphic(logoutButtonMark);
-			logoutButton.setText("Logout");
-			logoutButton.getStyleClass().add("logoutbuttontheme");
+			Button logoutButton = newLogButton("Log Out");
 			logoutButton.setOnAction((ae) -> {
 				Platform.exit();
 			});
@@ -491,8 +494,6 @@ public class UserInterface extends Application{
 	}
 	
 	public BorderPane advisorView()	{
-		//TESTING ONLY
-		User Sean = new Advisor(0000006, "Clarkson University", "Sean", "Banerjee", "banerjsk", "password", null, null);
 
 		BorderPane advisorScreen = new BorderPane();
 		try	{

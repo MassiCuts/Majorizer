@@ -45,6 +45,20 @@ public class Majorizer {
 	}
 
 	//TESTING ONLY
+	public static User authenticate(String username, String password)	{
+		User Sean = new Advisor(0, "0000006","Sean", "Banerjee", "banerjsk", "password", null, null);
+		AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
+		User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
+		
+		if(username.equals(Sean.getUsername()) && password.equals(Sean.getPassword()))
+			return Sean;
+		if(username.equals(Lorenzo.getUsername()) && password.equals(Lorenzo.getPassword()))
+			return Lorenzo;
+		else
+			return null;
+	}
+	
+	//TESTING ONLY
 	public static void main(String[] args)	{
 		AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
 		User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
