@@ -1,8 +1,0 @@
-{
- "columnData": {
-  "courseName": "STRING",
-  "courseCode": "STRING",
-  "courseID": "INT"
- },
- "entryData": []
-}

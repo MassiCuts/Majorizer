@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import database.DatabaseTable;
 import scheduler.Scheduler;
+import scheduler.SchedulerGraph;
 import utils.ResourceLoader;
 
 public class Main {
@@ -31,8 +32,10 @@ public class Main {
 		}
 		
 		testDatabase();
+
 //		testRequiredCourses();
-//		testScheduler();
+//		testSchedulerGraph();
+//		testCourseInfoLoad();
 	}
 	
 	public static void sampleDataInit() {
@@ -89,10 +92,22 @@ public class Main {
 		try {
 			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
 			RequiredCourses required = RequiredCourses.load(f);
+			SchedulerGraph requirementsGraph = new SchedulerGraph(required);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-//		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
+	}
+	
+	public static void testCourseInfoLoad(){
+		try {
+			File f = ResourceLoader.getYAMLFile("course_info.yaml");
+			System.out.println(f);
+			DatabaseManager database = new DatabaseManager();
+			database.loadStudents(f);
+			System.out.println("Loaded students");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

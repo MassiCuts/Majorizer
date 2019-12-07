@@ -2,7 +2,7 @@ package scheduler;
 
 
 import java.util.Random;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import framework.Course;
 
@@ -25,29 +25,29 @@ public class Scheduler {
 	}
 	
 
-	public Vector<Vector<String>> schedule() throws Exception {
+	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops) throws Exception {
 		SchedulerCourse course = null;
-		Vector<Vector<String>> sched = new Vector<Vector<String>>();
+		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
-			sched.add(new Vector<String>());
+			sched.add(new ArrayList<String>());
 			if (i < current_semester) {
 				//Add all the classes taken during this semester then skip
 			}
 			int added_this_semester=0;
 			//TODO: Go through added courses to see if any were added this semester
 			
-			for(SchedulerCourse c : requested_courses) {
+			for(SchedulerCourse c : requested_adds) {
 				//Do we want the required_courses object to be Course or SchedulerCourse?
 				if (c.added == i) {
-					if(!c.available(i)) {RuntimeException("this course isn't available for the semester it was added to")}
+					if(!c.available(i)) {throw new Exception("this course isn't available for the semester it was added to");}
 					sched.get(i).add(c.name);
 					continue;
 				}
 			}
 			
 			for(int j = 0; j < this.num_courses-added_this_semester; ++j) {
-				SchedulerNode node = this.graph.top;
-				SchedulerNode next_node = this.graph.top;
+				SchedulerNode node = this.graph.root;
+				SchedulerNode next_node = this.graph.root;
 				int attempt = 0;
 				do {
 					node = next_node;
@@ -59,9 +59,9 @@ public class Scheduler {
 						//since we know the child isn't satisfied due to the while condition, move to child node
 						course = (SchedulerCourse) node;
 						next_node = course.getChild();
-						if (!course.available()){
+						if (!course.available(i) || this.dropped(i)){
 							++attempt;
-							next_node = this.graph.top;
+							next_node = this.graph.root;
 							if (attempt > MAX_ATTEMPTS) {
 								throw new RuntimeException("Your stupid program cant find a feasible schedule you dumb fuck");
 							}
@@ -72,12 +72,10 @@ public class Scheduler {
 				sched.get(i).add(node.name);
 			}
 		}
-		if (!graph.top.isSatisfied()) {
+		if (!graph.root.isSatisfied()) {
 			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
 
 		}
 		return sched;
 	}
-	
-	
 };

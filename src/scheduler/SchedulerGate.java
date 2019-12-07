@@ -152,4 +152,13 @@ public class SchedulerGate extends SchedulerNode {
 		 */
 		return this.options == this.children.size();
 	}
+	
+	public boolean equals(SchedulerNode node) {
+		if (node.isGate()){
+			if (node.children == this.children) {
+				return true;
+			}
+		}
+		return false;
+	}
 };
