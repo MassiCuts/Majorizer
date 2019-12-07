@@ -47,7 +47,7 @@ public class Majorizer {
 	//TESTING ONLY
 	public static void main(String[] args)	{
 		AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
-		User Lorenzo = new Student(0755050, "Clarkson University", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
+		User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
 		setUser(Lorenzo);
 		
 		

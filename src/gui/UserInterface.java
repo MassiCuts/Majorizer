@@ -1,8 +1,6 @@
 package gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
 import framework.AcademicPlan;
 import framework.Advisor;
 import framework.Course;
@@ -12,16 +10,13 @@ import framework.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,6 +33,7 @@ import utils.ResourceLoader;
 public class UserInterface extends Application{
 
 	private Scene scene = null;
+	private final GridPane semesters[] = new GridPane[8];
 	
 	public void updateUI()	{
 		
@@ -78,6 +74,27 @@ public class UserInterface extends Application{
 	public void loginPressed(ActionEvent action) {
 		System.out.println("Here");
 	}
+	
+	public void newSemester(final int semesterNumber, final String css)	{
+		GridPane semester = new GridPane();
+		semester.setMinSize(100, 170);
+		semester.getStyleClass().add(css);
+		semester.setStyle("-fx-border-color: black; -fx-border-width: 1px; outline: solid;");
+		semester.setOnMouseClicked((me) -> { 
+			selectSemester(semesterNumber);
+		});
+		this.semesters[semesterNumber] = semester;
+	}
+	
+	public void selectSemester(int semesterNumber)	{
+		for(int semester = 0; semester <= 7; ++semester)	{
+			if(semester == semesterNumber)
+				this.semesters[semester].setStyle("-fx-border-color: yellow; -fx-border-width: 30px; outline: solid;");
+			else
+				this.semesters[semester].setStyle("-fx-border-color: black; -fx-border-width: 1px; outline: solid;");
+		}
+	}
+
 	
 	//REUSABLE ELEMENTS===========================
 	public Button newRemoveButton()	{
@@ -130,10 +147,11 @@ public class UserInterface extends Application{
 	}
 	
 	public Label newStyledLabel(String text, String css)	{
-		Label styledLabel = new Label("text");
+		Label styledLabel = new Label(text);
 		styledLabel.getStyleClass().add(css);
 		return styledLabel;
 	}
+	
 	
 	//===================================================================
 	
@@ -164,10 +182,8 @@ public class UserInterface extends Application{
 			password.setPromptText("Password");
 			password.getStyleClass().add("lightgraytheme");
 			password.getStyleClass().add("boxoutline");
-			Label ulabel = new Label("Username");
-			Label plabel = new Label("Password");
-			ulabel.getStyleClass().add("lightgraytheme");
-			plabel.getStyleClass().add("lightgraytheme");
+			Label ulabel = newStyledLabel("Username", "lightgraytheme");
+			Label plabel = newStyledLabel("Password", "lightgraytheme");
 			
 			
 			//Login Button
@@ -223,7 +239,6 @@ public class UserInterface extends Application{
 			
 			loginScreen.setMargin(login, new Insets(100));
 
-			
 		}	catch( IOException ioe)	{
 			ioe.printStackTrace();
 		}
@@ -233,7 +248,7 @@ public class UserInterface extends Application{
 	public BorderPane studentView()	{
 		//TESTING ONLY
 		AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
-		User Lorenzo = new Student(0755050, "Clarkson University", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
+		User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
 		Majorizer.setUser(Lorenzo);
 
 		
@@ -247,9 +262,7 @@ public class UserInterface extends Application{
 			GridPane orgPane = new GridPane();
 			GridPane topPane = new GridPane();
 			GridPane actionPane = new GridPane();
-			GridPane windowsPane = new GridPane();
-			GridPane addCoursesTab = new GridPane();
-			GridPane bottomPane = new GridPane();
+			GridPane searchPane = new GridPane();
 			
 			Label name = new Label();
 			name.setText(getName());
@@ -290,88 +303,47 @@ public class UserInterface extends Application{
 			GridPane schedulePane = new GridPane();
 			
 			//Header label for Schedule Pane
-			Label header = new Label();
-			header.setText("Course Schedule");
-			header.getStyleClass().add("fonttitle");
+			Label header = newStyledLabel("Course Schedule", "fonttitle");
 			schedulePane.add(header, 0, 0);
 			
-			GridPane semester[] = new GridPane[8];
+			
+			
+			GridPane scheduleBox = new GridPane();
+			
 			for(int columnIndex = 0; columnIndex <= 7; ++columnIndex)	{
-				semester[columnIndex] = new GridPane();
 				if(columnIndex < Majorizer.getStudentCurrentSemester())
-					semester[columnIndex].getStyleClass().add("pastSem");
+					newSemester(columnIndex, "pastSem");
 				else if(columnIndex == Majorizer.getStudentCurrentSemester())
-					semester[columnIndex].getStyleClass().add("currentSem");
+					newSemester(columnIndex, "currentSem");
 				else if(columnIndex > Majorizer.getStudentCurrentSemester())
-					semester[columnIndex].getStyleClass().add("futureSem");
+					newSemester(columnIndex, "futureSem");
 				
-				semester[columnIndex].setMinSize(100, 170);
-				
-				schedulePane.add(semester[columnIndex], columnIndex, 1);
+				scheduleBox.add(this.semesters[columnIndex], columnIndex, 1);
 			}
-						
-			
-			//Action Pane
-			
-			//TODO: Replace with click event on semester window
-			/*
-			//Left Arrow
-			Button leftArrowButton = new Button();
-			leftArrowButton.setShape(new Circle(2));
-			ImageView leftArrowMark = new ImageView(ResourceLoader.getImage("leftArrow.png"));
-			leftArrowButton.setGraphic(leftArrowMark);
-			leftArrowMark.setFitWidth(20);
-			leftArrowMark.setFitHeight(20);
-			leftArrowButton.getStyleClass().add("arrowbuttontheme");
-			
-			VBox leftArrowButtonBox = new VBox();
-			leftArrowButtonBox.getChildren().add(leftArrowButton);
-			leftArrowButtonBox.setAlignment(Pos.CENTER_LEFT);
-			leftArrowButtonBox.setPadding(new Insets(5));
-			
-			//Adding left arrow to the actionPane
-			actionPane.add(leftArrowButtonBox, 0, 0);
-			
-			//Right Arrow
-			Button rightArrowButton = new Button();
-			rightArrowButton.setShape(new Circle(2));
-			ImageView rightArrowMark = new ImageView(ResourceLoader.getImage("rightArrow.png"));
-			rightArrowButton.setGraphic(rightArrowMark);
-			rightArrowMark.setFitWidth(20);
-			rightArrowMark.setFitHeight(20);
-			rightArrowButton.getStyleClass().add("arrowbuttontheme");
-			
-			VBox rightArrowButtonBox = new VBox();
-			rightArrowButtonBox.getChildren().add(rightArrowButton);
-			rightArrowButtonBox.setAlignment(Pos.CENTER_LEFT);
-			rightArrowButtonBox.setPadding(new Insets(5));
-			
-			//Adding right arrow to the actionPane
-			actionPane.add(rightArrowButtonBox, 1, 0);
-			*/
 			
 			
-			//Windows Pane
+			schedulePane.add(scheduleBox, 0, 1);
+			
+			//TODO: Click event on semester window to change semester shown in currentSelectedSemesterGame
+			
+			
 			
 			//Majors and Minors Pane
 			GridPane curriculumPane = new GridPane();
 			
 			//Header label for Majors and Minors
-			Label curriculumHeader = new Label();
-			curriculumHeader.setText("Majors and Minors");
-			curriculumHeader.getStyleClass().add("fontmed");
-			curriculumPane.add(curriculumHeader, 0, 0);
+			Label curriculumHeader = newStyledLabel("Majors and Minors", "fontmed");
 			
 			//Green Plus Button for Majors and Minors
 			Button addCurriculumButton = newAddButton();
-			
-			
-			curriculumPane.add(addCurriculumButton, 1, 0);
 			
 			GridPane curriculumTab = newActionGrid();	
 			ScrollPane curriculumScroll = newActionScroll();
 			curriculumScroll.setContent(curriculumTab);
 			curriculumScroll.setMinViewportWidth(curriculumTab.getWidth());
+			
+			curriculumPane.add(curriculumHeader, 0, 0);
+			curriculumPane.add(addCurriculumButton, 1, 0);
 			curriculumPane.add(curriculumScroll, 0, 1);
 			
 			
@@ -388,39 +360,36 @@ public class UserInterface extends Application{
 			}
 			
 			
-			//----------------------
-			//WORKING HERE
-			
-			windowsPane.add(curriculumPane, 0, 1);
+			actionPane.add(curriculumPane, 0, 0);
 			
 			//Current Selected Semester Pane
 			GridPane currentSelectedSemesterPane = new GridPane();
 			
 			//Header label for Current Selected Semester
-			Label headerForCurrentSelectedSemester = new Label();
-			headerForCurrentSelectedSemester.setText("Current Selected Semester");
-			headerForCurrentSelectedSemester.getStyleClass().add("fontmed");
-			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
+			Label headerForCurrentSelectedSemester = newStyledLabel("Current Selected Semester", "fontmed");
 			
 			//Green Plus Button for Current Selected Semester
 			Button addCourseButton = newAddButton();
 			
-			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
 			
 			GridPane currentSelectedSemesterTab = newActionGrid();
 			ScrollPane currentSelectedSemesterScroll = newActionScroll();
 			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
 			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getMinWidth());
-			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
-//			currentSelectedSemesterPane.setHgrow(child, value);
 
+			
+			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
+			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
+			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
+			
+			
 			//TODO: Make the divider 1/3 of windowsPane width and 2/3?
 			//TODO: combine windows pane and action pane
-			windowsPane.add(currentSelectedSemesterPane, 1, 1);
-			windowsPane.setHgap(10);
+			actionPane.add(currentSelectedSemesterPane, 1, 0);
+			actionPane.setHgap(10);
+			
 			
 			//SAMPLE DATA
-			
 			currentSelectedSemesterTab.add(new Label("CS350	Software Design and Development"), 0, 0);
 			currentSelectedSemesterTab.add(new Label("EE262	Introduction to Object Oriented Programming"), 0, 1);
 			currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
@@ -432,7 +401,7 @@ public class UserInterface extends Application{
 			
 			
 			//Remove Course Buttons
-			int numberOfCourses = 6;																//TEMP
+			int numberOfCourses = 8;																//TEMP
 			Button removeCourseButton[] = new Button[numberOfCourses];
 			for(int rowIndex = 0; rowIndex < numberOfCourses; ++rowIndex)	{
 				removeCourseButton[rowIndex] = newRemoveButton();
@@ -441,51 +410,26 @@ public class UserInterface extends Application{
 			
 			
 			
-			//Electives Pane
-			GridPane electivesPane = new GridPane();
+			//Search Header Pane
+			GridPane searchHeaderPane = new GridPane();
+			searchHeaderPane.getColumnConstraints().add(constraints);
 			
-			//Header label for Electives
-			Label headerForElectives = new Label();
-			headerForElectives.setText("Electives");
-			headerForElectives.getStyleClass().add("fontmed");
-			electivesPane.add(headerForElectives, 0, 0);
+			//Search Header
+			Label headerForAddCourses = newStyledLabel("Add Courses", "fontmed");
 			
-			
-			
-			//POST windows Pane for AddCourses and AddMajorOrMinor
-			GridPane postWindowsPane = new GridPane();
-			
-			//Add Courses Pane
-			GridPane addCoursesPane = new GridPane();
-			
-			//Header label for Add Courses
-			Label headerForAddCourses = new Label();
-			headerForAddCourses.setText("Add Courses");
-			headerForAddCourses.getStyleClass().add("fontmed");
-			addCoursesPane.add(headerForAddCourses, 0, 0);
-			
-			//Text box for Searching
+			//Search Field
 			TextField searchField = new TextField();
 			searchField.setPromptText("Course-ID");
-			searchField.getStyleClass().add("lightgraytheme");
-			//searchField.getStyleClass().add("boxoutline");
+			searchField.getStyleClass().add("windows");
+			searchField.setAlignment(Pos.CENTER_RIGHT);
 			
-			addCoursesPane.add(searchField, 1, 0);
-			
+			GridPane addCoursesTab = new GridPane();
+
 			addCoursesTab.getStyleClass().add("windows");
 			addCoursesTab.setMinSize(60, 60);
 			
-			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
 			
 			Button addCoursesButton = newAddButton();
-			
-			addCoursesTab.add(addCoursesButton, 1, 0);
-			
-			addCoursesPane.add(addCoursesTab, 0, 1);
-			
-			bottomPane.add(addCoursesPane, 0, 0);
-			
-			
 			
 			
 			//Check Button
@@ -496,20 +440,41 @@ public class UserInterface extends Application{
 			checkButtonMark.setFitWidth(40);
 			checkButtonMark.setFitHeight(40);
 			checkButton.getStyleClass().add("checkbuttontheme");
+			checkButton.setAlignment(Pos.BOTTOM_RIGHT);
 			
 			VBox checkButtonBox = new VBox();
 			checkButtonBox.getChildren().add(checkButton);
 			checkButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
 			checkButtonBox.setPadding(new Insets(5));
+
+			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
+			addCoursesTab.add(addCoursesButton, 1, 0);
 			
-			bottomPane.add(checkButtonBox, 1, 0);
+			searchHeaderPane.add(headerForAddCourses, 0, 0);
+			searchHeaderPane.add(searchField, 1, 0);
+			
+			searchPane.setAlignment(Pos.BOTTOM_CENTER);
+//			searchPane.getColumnConstraints().add(constraints);
+			searchPane.setVgap(5);
+			searchPane.setHgap(20);
+			
+			searchPane.add(searchHeaderPane, 0, 0);
+			searchPane.add(addCoursesTab, 0, 1);
+			searchPane.add(checkButtonBox, 1, 1);
+			
+			boolean gridLinesOn = true;
+			if(gridLinesOn)	{
+				searchHeaderPane.setGridLinesVisible(true);
+				actionPane.setGridLinesVisible(true);
+				searchPane.setGridLinesVisible(true);
+				orgPane.setGridLinesVisible(true);
+			}
+
 			
 			orgPane.add(topPane, 0, 0);
 			orgPane.add(schedulePane, 0, 1);
 			orgPane.add(actionPane, 0, 2);
-			orgPane.add(windowsPane, 0, 3);
-			orgPane.add(postWindowsPane, 0, 4);
-			orgPane.add(bottomPane, 0, 5);
+			orgPane.add(searchPane, 0, 3);
 			orgPane.setVgap(10);
 			orgPane.setHgap(5);
 			orgPane.setPadding(new Insets(10));			
@@ -527,7 +492,10 @@ public class UserInterface extends Application{
 		User Sean = new Advisor(0000006, "Clarkson University", "Sean", "Banerjee", "banerjsk", "password", null, null);
 
 		BorderPane advisorScreen = new BorderPane();
-//		try	{
+		try	{
+			if(false)						//TESTING ONLY - DELETE ONCE A FUNCTION IS ADDED THAT THROWS IOE
+				throw new IOException();	//TODO: REMOVE
+			
 			BorderPane advisorInfoPane = new BorderPane();
 			BorderPane studentInfoPane = new BorderPane();
 			
@@ -543,7 +511,7 @@ public class UserInterface extends Application{
 			
 			
 			Label name = new Label();
-			name.setText("Sean");//getName());
+			name.setText("Sean");		//getName());
 			name.getStyleClass().add("fonttitle");
 			
 			//TESTING
@@ -559,9 +527,9 @@ public class UserInterface extends Application{
 			advisorInfoPane.getChildren().add(orgPane);
 			advisorScreen.setLeft(advisorInfoPane);
 			advisorScreen.setRight(studentInfoPane);
-//		}	catch( IOException ioe )	{
-//			ioe.printStackTrace();
-//		}
+		}	catch( IOException ioe )	{
+			ioe.printStackTrace();
+		}
 		return advisorScreen;
 	}
 
