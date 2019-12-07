@@ -197,7 +197,17 @@ public class JSONDatabase implements DatabaseInterface {
 
 	@Override
 	public void removeTable(DatabaseTable table) {
-		getTableDirectory(table).delete();
+		File file = getTableDirectory(table);
+		if(file.exists())
+			deleteFile(file);
+	}
+	
+	private boolean deleteFile(File root) {
+	    File[] fileChildren = root.listFiles();
+	    if (fileChildren != null)
+	        for (File file : fileChildren)
+	            deleteFile(file);
+	    return root.delete();
 	}
 
 	@Override
@@ -523,7 +533,7 @@ public class JSONDatabase implements DatabaseInterface {
 			JSONObject entry = entryData.getJSONObject(i);
 			Map<String, Object> map = entry.toMap();
 			Map<String, Object> mapOut = operator.apply(map);
-			if(map != null) {
+			if(mapOut != null) {
 				for(String name : mapOut.keySet()) {
 					String typeName = columnData.getString(name);
 					Object value = mapOut.get(name);

@@ -1,16 +1,19 @@
 {
  "columnData": {
   "isNewStudent": "BOOLEAN",
-  "id": "INT"
+  "userID": "INT",
+  "startSemester": "STRING"
  },
  "entryData": [
   {
-   "isNewStudent": false,
-   "id": 668364
+   "isNewStudent": true,
+   "userID": 0,
+   "startSemester": "Fall 2016"
   },
   {
-   "isNewStudent": false,
-   "id": 120
+   "isNewStudent": true,
+   "userID": 1,
+   "startSemester": "Fall 2016"
   }
  ]
 }

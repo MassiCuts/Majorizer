@@ -24,18 +24,25 @@ public class Main {
 			if(args.length >= 2 && args[1].equals("create")) {
 					// create the database
 					DatabaseManager.initializeDatabase();
-//					DatabaseManager.makeAdvisorAccount("Sean Banerjee", "seanBanerjee", "lovesColor", 0);
-//					DatabaseManager.makeAdvisorAccount("Alexis Maciel", "alexisMaciel", "loveAutomata", 1);
-//					DatabaseManager.makeStudentAccount("Massimiliano Cutuno", "cutugnma", "12346", 668364, false);
-//					DatabaseManager.makeStudentAccount("Heet Dave", "heetd", "password", 120, false);
+					sampleDataInit();
 			}
 		} else {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
 		testDatabase();
-		testRequiredCourses();
+//		testRequiredCourses();
 //		testScheduler();
+	}
+	
+	public static void sampleDataInit() {
+		System.out.println("Adding Sample Data to Database:");
+		
+		Student max = new Student("0668364", "Massimiliano", "Cutugno", "cutugnma", "password", "Fall 2016");
+		Student heet = new Student("0668365", "Heet", "Dave", "heetd", "password", "Fall 2016");
+		
+		System.out.println(DatabaseManager.saveStudent(max));
+		System.out.println(DatabaseManager.saveStudent(heet));
 	}
 	
 	public static void testDatabase() {
@@ -45,6 +52,24 @@ public class Main {
 			DatabaseManager.printTable(table);
 			System.out.println();
 		}
+		
+		Student max = DatabaseManager.getStudent("cutugnma");
+		System.out.println(max.getFirstName());
+		System.out.println(max.getLastName());
+		System.out.println(max.getUsername());
+		System.out.println(max.getPassword());
+		System.out.println(max.getUniversityID());
+		System.out.println(max.getUserID());
+		System.out.println(max.getAcademicPlan());
+		Student heet = DatabaseManager.getStudent("heetd");
+		System.out.println(heet.getFirstName());
+		System.out.println(heet.getLastName());
+		System.out.println(heet.getUsername());
+		System.out.println(heet.getPassword());
+		System.out.println(heet.getUniversityID());
+		System.out.println(heet.getUserID());
+		System.out.println(heet.getAcademicPlan());
+		
 	}
 	
 	public static void testRequiredCourses() {
@@ -67,7 +92,7 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
+//		SchedulerGraph requirementsGraph = new SchedulerGraph(required);
 	}
 	
 	

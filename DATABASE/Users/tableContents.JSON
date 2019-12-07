@@ -1,38 +1,27 @@
 {
  "columnData": {
+  "universityID": "STRING",
+  "firstName": "STRING",
+  "lastName": "STRING",
   "password": "STRING",
-  "userIsStudent": "BOOLEAN",
-  "name": "STRING",
-  "id": "INT",
+  "userID": "INT",
   "username": "STRING"
  },
  "entryData": [
   {
-   "password": "lovesColor",
-   "userIsStudent": false,
-   "name": "Sean Banerjee",
-   "id": 0,
-   "username": "seanBanerjee"
-  },
-  {
-   "password": "loveAutomata",
-   "userIsStudent": false,
-   "name": "Alexis Maciel",
-   "id": 1,
-   "username": "alexisMaciel"
-  },
-  {
-   "password": "12346",
-   "userIsStudent": true,
-   "name": "Massimiliano Cutuno",
-   "id": 668364,
+   "universityID": "0668364",
+   "firstName": "Massimiliano",
+   "lastName": "Cutugno",
+   "password": "password",
+   "userID": 0,
    "username": "cutugnma"
   },
   {
+   "universityID": "0668365",
+   "firstName": "Heet",
+   "lastName": "Dave",
    "password": "password",
-   "userIsStudent": true,
-   "name": "Heet Dave",
-   "id": 120,
+   "userID": 1,
    "username": "heetd"
   }
  ]

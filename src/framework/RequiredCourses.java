@@ -14,11 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 public class RequiredCourses {
 	
 	private RequiredCourseNode root = null;
-	
-	private static class YAMLTraverser {
-		Integer currentCourseID = 0;
-		LinkedHashMap<String, Integer> courseIDs = new LinkedHashMap<String, Integer>();
-	}
+	private int requiredCoursesID;
 	
 	
 	public static RequiredCourses load(File yamlFile) {
@@ -29,9 +25,7 @@ public class RequiredCourses {
 			InputStream is = new FileInputStream(yamlFile);	
 		) {
 			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(is);// Parse the YAML representation
-			YAMLTraverser traverser = new YAMLTraverser();
-			RequiredCourseNode root = traverseRequirements(traverser, specification, ROOT_NAME); 
-			System.out.println("Course name : ID mappings" + traverser.courseIDs);
+			RequiredCourseNode root = traverseRequirements(specification, ROOT_NAME);
 			return new RequiredCourses(root);
 		} catch (IOException e) {
 			System.out.println(yamlFile.getAbsolutePath() + " could not be loaded or parsed correctly");
@@ -41,48 +35,53 @@ public class RequiredCourses {
 	}
 	
 	
-	private static RequiredCourseNode traverseRequirements(YAMLTraverser yamlTraverser, LinkedHashMap<String, LinkedHashMap> description, String tag){
+	private static RequiredCourseNode traverseRequirements(LinkedHashMap<String, LinkedHashMap> description, String tag){
 		if(description.containsKey(tag)) {//This means it must be a course, as they don't have requirements
 			LinkedHashMap newNode = (LinkedHashMap) description.get(tag);// Get the new node from the description
 			ArrayList<String> requirementNames = (ArrayList) newNode.get("requirements");// Get all the names of things it depends on
 			int numRequired = (int) newNode.get("num");
 			ArrayList<RequiredCourseNode> createdRequirements = new ArrayList<RequiredCourseNode>();
 			for (String rec : requirementNames) { 
-	            createdRequirements.add(traverseRequirements(yamlTraverser, description, rec));// Add all of the requirements recursively
+	            createdRequirements.add(traverseRequirements(description, rec));// Add all of the requirements recursively
 			}
 			return new RequiredCourseGroup(numRequired, createdRequirements);
-		}else {
-			if(!yamlTraverser.courseIDs.containsKey(tag)) { // Maintain a mapping from course name to course ID
-				yamlTraverser.courseIDs.put(tag, yamlTraverser.currentCourseID);
-				yamlTraverser.currentCourseID++;
-			}
-			Integer courseNumber = yamlTraverser.courseIDs.get(tag);
-			return new RequiredCourse(courseNumber);		
+		} else {
+			Course c = DatabaseManager.getCourse(tag);
+			return new RequiredCourse(c.getCourseID());		
 		}
 		
     } 
 	
 	// TraverseRequirements is assumed to be called first 
 	// I'm not sure it makes sense to encode the prerequisites here
-	private void TraversePrerequisites(LinkedHashMap<String, ArrayList<String>> prerequisites) {
-		Integer courseNumber;
-		for(String key : prerequisites.keySet()) {
-			System.out.println(key);
-			if(!CourseIDs.containsKey(key)) { // Maintain a mapping from course name to course ID
-				CourseIDs.put(key, CurrentCourseID);
-				CurrentCourseID++;
-			}
-			courseNumber = CourseIDs.get(key);
-			System.out.println("Course: " + key + " Number: " + courseNumber);
-		}
+//	private void TraversePrerequisites(LinkedHashMap<String, ArrayList<String>> prerequisites) {
+//		Integer courseNumber;
+//		for(String key : prerequisites.keySet()) {
+//			System.out.println(key);
+//			if(!CourseIDs.containsKey(key)) { // Maintain a mapping from course name to course ID
+//				CourseIDs.put(key, CurrentCourseID);
+//				CurrentCourseID++;
+//			}
+//			courseNumber = CourseIDs.get(key);
+//			System.out.println("Course: " + key + " Number: " + courseNumber);
+//		}
+//	}
+	
+	public RequiredCourses() {
+		this(null);
 	}
 	
 	public RequiredCourses(RequiredCourseNode root) {
-		this.root = root;
+		this(DatabaseManager.REQUEST_NEW_ID, root);
 	}
 	
-	public RequiredCourses() {
-		this.root = null;
+	public RequiredCourses(int requiredCourseID, RequiredCourseNode root) {
+		this.root = root;
+		this.requiredCoursesID = requiredCourseID;
+	}
+	
+	public int getRequiredCourseID() {
+		return requiredCoursesID;
 	}
 	
 	public boolean hasRequirements() {
@@ -114,6 +113,15 @@ public class RequiredCourses {
 	
 	public static abstract class RequiredCourseNode {
 		public abstract boolean meetsRequirements(Predicate<Integer> courseIDPredicate);
+		private final int nodeID;
+		
+		public RequiredCourseNode(int nodeID) {
+			this.nodeID = nodeID;
+		}
+		
+		public int getNodeID() {
+			return nodeID;
+		}
 	}
 	
 	public static class RequiredCourseGroup extends RequiredCourseNode implements Iterable<RequiredCourseNode> {
@@ -121,6 +129,11 @@ public class RequiredCourses {
 		private final ArrayList<RequiredCourseNode> requiredCourses;
 		
 		public RequiredCourseGroup(int amtMustChoose, ArrayList<RequiredCourseNode> requiredCourses) {
+			this(DatabaseManager.REQUEST_NEW_ID, amtMustChoose, requiredCourses);
+		}
+		
+		public RequiredCourseGroup(int nodeID, int amtMustChoose, ArrayList<RequiredCourseNode> requiredCourses) {
+			super(nodeID);
 			this.amtMustChoose = amtMustChoose;
 			this.requiredCourses = requiredCourses;
 		}
@@ -178,35 +191,35 @@ public class RequiredCourses {
 	}
 	
 	public static class RequiredCourse extends RequiredCourseNode {
-		private final int courseID;
 
-		public RequiredCourse(int courseID) {
-			this.courseID = courseID;
+		public RequiredCourse() {
+			this(DatabaseManager.REQUEST_NEW_ID);
 		}
 		
-		public int getCourseID() {
-			return courseID;
+		public RequiredCourse(int courseID) {
+			super(courseID);
 		}
+		
 		
 		@Override
 		public boolean meetsRequirements(Predicate<Integer> courseIDPredicate) {
-			return courseIDPredicate.test(courseID);
+			return courseIDPredicate.test(getNodeID());
 		}
 		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof RequiredCourse)
-				return courseID == ((RequiredCourse) obj).courseID;
+				return getNodeID() == ((RequiredCourse) obj).getNodeID();
 			return false;
 		}
 		
 		@Override
 		public int hashCode() {
-			return Objects.hash(courseID);
+			return Objects.hash(getNodeID());
 		}
 		
 		public String toString() {
-		    return "Course ID: " + courseID;
+		    return "Course ID: " + getNodeID();
 		}
 	}
 	

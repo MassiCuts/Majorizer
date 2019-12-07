@@ -19,6 +19,12 @@ public interface DatabaseInterface {
 	public DatabaseColumn[] listColumns(DatabaseTable table);
 	
 	public void addEntry(DatabaseTable table, int entryIndex, Map<String, Object> cells);
+	
+
+	public default void addEntry(DatabaseTable table, Map<String, Object> cells) {
+		addEntry(table, 0, cells);
+	}
+	
 	public void setEntry(DatabaseTable table, int entryIndex, Map<String, Object> cells);
 	public void setEntry(DatabaseTable table, UnaryOperator<Map<String, Object>> operator);
 	public void removeEntry(DatabaseTable table, int entryIndex);
