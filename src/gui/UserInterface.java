@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import framework.AcademicPlan;
 import framework.Advisor;
@@ -34,11 +36,17 @@ public class UserInterface extends Application{
 
 	private Scene scene = null;
 	private final GridPane semesters[] = new GridPane[8];
+	Dimension screenSize;
+	
+	AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
+	User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
 	
 	public void updateUI()	{
 		
 		BorderPane root = null;
-		
+
+		this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Majorizer.setUser(Lorenzo);
 		
 		//Login Screen
 //		root = loginScreen();
@@ -77,7 +85,7 @@ public class UserInterface extends Application{
 	
 	public void newSemester(final int semesterNumber, final String css)	{
 		GridPane semester = new GridPane();
-		semester.setMinSize(100, 170);
+		semester.setMinSize((screenSize.getWidth()*(2/3.0))/8.0, screenSize.getHeight()/5.0);
 		semester.getStyleClass().add(css);
 		semester.setStyle("-fx-border-color: black; -fx-border-width: 1px; outline: solid;");
 		semester.setOnMouseClicked((me) -> { 
@@ -140,7 +148,7 @@ public class UserInterface extends Application{
 	
 	public ScrollPane newActionScroll()	{
 		ScrollPane actionScroll = new ScrollPane();
-		actionScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		actionScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 		actionScroll.setPrefViewportHeight(200);
 		actionScroll.getStyleClass().add("windows");
 		return actionScroll;
@@ -247,9 +255,6 @@ public class UserInterface extends Application{
 	
 	public BorderPane studentView()	{
 		//TESTING ONLY
-		AcademicPlan academicPlanL = new AcademicPlan("FALL 2017", null, null, null);
-		User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
-		Majorizer.setUser(Lorenzo);
 
 		
 		BorderPane studentScreen = new BorderPane();
@@ -307,9 +312,8 @@ public class UserInterface extends Application{
 			schedulePane.add(header, 0, 0);
 			
 			
-			
+			//Schedule
 			GridPane scheduleBox = new GridPane();
-			
 			for(int columnIndex = 0; columnIndex <= 7; ++columnIndex)	{
 				if(columnIndex < Majorizer.getStudentCurrentSemester())
 					newSemester(columnIndex, "pastSem");
@@ -320,16 +324,16 @@ public class UserInterface extends Application{
 				
 				scheduleBox.add(this.semesters[columnIndex], columnIndex, 1);
 			}
-			
-			
 			schedulePane.add(scheduleBox, 0, 1);
 			
-			//TODO: Click event on semester window to change semester shown in currentSelectedSemesterGame
 			
-			
+			actionPane.setPrefWidth((screenSize.getWidth()*(2/3.0)));
+			actionPane.getColumnConstraints().add(constraints);
+
 			
 			//Majors and Minors Pane
 			GridPane curriculumPane = new GridPane();
+			curriculumPane.setMaxWidth(actionPane.getPrefWidth()*(1/3.0));
 			
 			//Header label for Majors and Minors
 			Label curriculumHeader = newStyledLabel("Majors and Minors", "fontmed");
@@ -337,7 +341,7 @@ public class UserInterface extends Application{
 			//Green Plus Button for Majors and Minors
 			Button addCurriculumButton = newAddButton();
 			
-			GridPane curriculumTab = newActionGrid();	
+			GridPane curriculumTab = newActionGrid();
 			ScrollPane curriculumScroll = newActionScroll();
 			curriculumScroll.setContent(curriculumTab);
 			curriculumScroll.setMinViewportWidth(curriculumTab.getWidth());
@@ -364,6 +368,8 @@ public class UserInterface extends Application{
 			
 			//Current Selected Semester Pane
 			GridPane currentSelectedSemesterPane = new GridPane();
+			currentSelectedSemesterPane.setMaxWidth(actionPane.getPrefWidth()*(2/3.0));
+//			currentSelectedSemesterPane.setPrefWidth(actionPane.getPrefWidth()*(2/3.0));
 			
 			//Header label for Current Selected Semester
 			Label headerForCurrentSelectedSemester = newStyledLabel("Current Selected Semester", "fontmed");
@@ -383,8 +389,6 @@ public class UserInterface extends Application{
 			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
 			
 			
-			//TODO: Make the divider 1/3 of windowsPane width and 2/3?
-			//TODO: combine windows pane and action pane
 			actionPane.add(currentSelectedSemesterPane, 1, 0);
 			actionPane.setHgap(10);
 			
@@ -398,7 +402,6 @@ public class UserInterface extends Application{
 			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
 			currentSelectedSemesterTab.add(new Label("CSXXX	CS Course 1"), 0, 6);
 			currentSelectedSemesterTab.add(new Label("CSYYY	CS Course 2"), 0, 7);
-			
 			
 			//Remove Course Buttons
 			int numberOfCourses = 8;																//TEMP
@@ -538,7 +541,7 @@ public class UserInterface extends Application{
 	public void start(Stage primaryStage)	{
 		try	{		
 			updateUI();
-			
+
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Majorizer");
 			primaryStage.getIcons().add(ResourceLoader.getImage("favicon.png"));
