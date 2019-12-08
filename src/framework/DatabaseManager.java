@@ -1,6 +1,5 @@
 package framework;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -21,6 +20,9 @@ import framework.Curriculum.CurriculumType;
 import framework.RequiredCourses.RequiredCourse;
 import framework.RequiredCourses.RequiredCourseGroup;
 import framework.RequiredCourses.RequiredCourseNode;
+import utils.MapArrayMap;
+import utils.MapMap;
+import utils.ReferenceHashMap;
 import utils.Two;
 
 public class DatabaseManager {
@@ -733,10 +735,12 @@ public class DatabaseManager {
 	}
 	
 	public static boolean saveCurriculum(Curriculum curriculum) {
-		Two<ArrayList<Map<String, Object>>> curriculumMap = curriculumToMaps(curriculum);
+		MapMap<String, Object> nodeDependacies = new MapMap<>();
+		MapArrayMap<String, Object> branchDependacies = new MapArrayMap<>();
+		Two<ArrayList<Map<String, Object>>> curriculumMap = curriculumToMaps(curriculum, nodeDependacies, branchDependacies);
 		Two<ArrayList<Map<String, Object>>> storedCurriculumMaps = loadTreeMap(CURRICULUMS_TABLE, "curriculumID", CURRICULUM_COURSE_SELECTION_TABLE, "curriculumCourseID", CURRICULUM_TYPE_LIST, curriculum.getCurriculumID());
 		
-		saveUniqueMaps(CURRICULUMS_TABLE, curriculumMap.first, storedCurriculumMaps.first, "curriculumID");
+		saveTreeMapNodes(CURRICULUMS_TABLE, new Two<>(curriculumMap.first, storedCurriculumMaps.first), nodeDependacies, branchDependacies, "curriculumID", "curriculumCourseID");
 		saveIdenticalMaps(CURRICULUM_COURSE_SELECTION_TABLE, curriculumMap.second, storedCurriculumMaps.second, "curriculumID", "type", "curriculumCourseID");
 		
 		int curriculumID = (int) curriculumMap.first.get(0).get("curriculumID");
@@ -766,9 +770,12 @@ public class DatabaseManager {
 		ArrayList<Map<String, Object>> storedCourseRecsMaps = loadMaps(COURSE_PREREC_TABLE, "preRecID", course.getRequiredCourses().getRequiredCourseID());
 		saveUniqueMap(COURSE_PREREC_TABLE, coursePreRec, storedCourseRecsMaps, "preRecID");
 		
-		Two<ArrayList<Map<String, Object>>> coursePreRecs = coursePreReqToMaps(course);
+
+		MapMap<String, Object> nodeDependacies = new MapMap<>();
+		MapArrayMap<String, Object> branchDependacies = new MapArrayMap<>();
+		Two<ArrayList<Map<String, Object>>> coursePreRecs = coursePreReqToMaps(course, nodeDependacies, branchDependacies);
 		Two<ArrayList<Map<String, Object>>> storedPreRecs = loadTreeMap(PREREC_TABLE, "preRecID", PREREC_COURSE_SELECTION_TABLE, "preRecCourseID", PRE_REC_TYPE_LIST, course.getRequiredCourses().getRequiredCourseID());
-		saveUniqueMaps(PREREC_TABLE, coursePreRecs.first, storedPreRecs.first, "preRecID");
+		saveTreeMapNodes(PREREC_TABLE, new Two<>(coursePreRecs.first, storedPreRecs.first), nodeDependacies, branchDependacies, "preRecID", "preRecCourseID");
 		saveIdenticalMaps(PREREC_COURSE_SELECTION_TABLE, coursePreRecs.second, storedPreRecs.second, "preRecID", "type", "preRecCourseID");
 		RequiredCourses rc = getCoursePreRecs(course.getCourseID());
 		course.setPreRecCourses(rc);
@@ -1055,7 +1062,7 @@ public class DatabaseManager {
 		return maps;
 	}
 	
-	private static Two<ArrayList<Map<String, Object>>> curriculumToMaps(Curriculum curriculum) {
+	private static Two<ArrayList<Map<String, Object>>> curriculumToMaps(Curriculum curriculum, MapMap<String, Object> nodeDependancies, MapArrayMap<String, Object> branchDependancies) {
 		int curriculumID = curriculum.getCurriculumID();
 		String curriculumName = curriculum.getName();
 		CurriculumType curriculumType = curriculum.getCurriculumType();
@@ -1068,12 +1075,12 @@ public class DatabaseManager {
 		
 		if(rc.hasRequirements()) {
 			RequiredCourseNode root = rc.getRootCourseNode();
-			curriculumToMaps(maps, root);
+			curriculumToMaps(maps, nodeDependancies, branchDependancies, null, root);
 		}
 		
 		Map<String, Object> map;
 		if(maps.first.isEmpty()) {
-			map = new HashMap<>();
+			map = new ReferenceHashMap<>();
 			boolean hasReq = !maps.second.isEmpty();
 			map.put("amtReq", hasReq? 1 : 0);
 			maps.first.add(map);
@@ -1088,28 +1095,32 @@ public class DatabaseManager {
 		return maps;
 	}
 	
-	private static boolean curriculumToMaps(Two<ArrayList<Map<String, Object>>> maps, RequiredCourseNode requiredCourseNode) {
+	private static boolean curriculumToMaps(Two<ArrayList<Map<String, Object>>> maps, MapMap<String, Object> nodeDependancies, MapArrayMap<String, Object> branchDependancies, Map<String, Object> parentMap, RequiredCourseNode requiredCourseNode) {
 		if(requiredCourseNode instanceof RequiredCourseGroup) {
 			RequiredCourseGroup group = (RequiredCourseGroup) requiredCourseNode;
 			int curriculumID = group.getNodeID();
 			int amtReq = group.getAmtMustChoose();
 			
-			Map<String, Object> map = new HashMap<>();
+			Map<String, Object> map = new ReferenceHashMap<>();
 			map.put("curriculumID", curriculumID);
 			map.put("curriculumName", "");
 			map.put("type", CURRICULUM_TYPE_LIST);
 			map.put("amtReq", amtReq);
 			maps.first.add(map);
+			nodeDependancies.put(map, parentMap);
+			ArrayList<Map<String, Object>> branchMaps = new ArrayList<>();
+			branchDependancies.put(map, branchMaps);
 			
-			for(RequiredCourseNode node : group) {
-				boolean isCourse = curriculumToMaps(maps, node);
+			for(RequiredCourseNode childNode : group) {
+				Map<String, Object> branchMap = new ReferenceHashMap<>();
+				boolean isCourse = curriculumToMaps(maps, nodeDependancies, branchDependancies, branchMap, childNode);
 				String type = isCourse? CURRICULUM_TYPE_COURSE : CURRICULUM_TYPE_LIST;
 				
-				Map<String, Object> selectionMap = new HashMap<>();
-				selectionMap.put("curriculumID", curriculumID);
-				selectionMap.put("type", type);
-				selectionMap.put("curriculumCourseID", node.getNodeID());
-				maps.second.add(selectionMap);
+				branchMap.put("curriculumID", curriculumID);
+				branchMap.put("type", type);
+				branchMap.put("curriculumCourseID", childNode.getNodeID());
+				maps.second.add(branchMap);
+				branchMaps.add(branchMap);
 			}
 			return false;
 		} else {
@@ -1181,7 +1192,7 @@ public class DatabaseManager {
 		return map;
 	}
 	
-	private static Two<ArrayList<Map<String, Object>>> coursePreReqToMaps (Course course) {
+	private static Two<ArrayList<Map<String, Object>>> coursePreReqToMaps (Course course, MapMap<String, Object> nodeDependacies, MapArrayMap<String, Object> branchDependacies) {
 		RequiredCourses requiredCourses = course.getRequiredCourses();
 		
 		ArrayList<Map<String, Object>> preRecNodes = new ArrayList<>();
@@ -1189,9 +1200,9 @@ public class DatabaseManager {
 		Two<ArrayList<Map<String, Object>>> maps = new Two<ArrayList<Map<String,Object>>>(preRecNodes, preRecBranches);
 		
 		if(requiredCourses.hasRequirements()) {
-			coursePreReqToMaps(maps, requiredCourses.getRootCourseNode());
+			coursePreReqToMaps(maps, nodeDependacies, branchDependacies, null, requiredCourses.getRootCourseNode());
 		} else {
-			Map<String, Object> map = new HashMap<>();
+			Map<String, Object> map = new ReferenceHashMap<>();
 			map.put("preRecID", requiredCourses.getRequiredCourseID());
 			map.put("amtReq", 0);
 			maps.first.add(map);
@@ -1199,25 +1210,29 @@ public class DatabaseManager {
 		return maps;
 	}
 	
-	private static boolean coursePreReqToMaps (Two<ArrayList<Map<String, Object>>> maps, RequiredCourseNode requiredCourseNode) {
+	private static boolean coursePreReqToMaps (Two<ArrayList<Map<String, Object>>> maps, MapMap<String, Object> nodeDependacies, MapArrayMap<String, Object> branchDependacies, Map<String, Object> parentMap, RequiredCourseNode requiredCourseNode) {
 		if(requiredCourseNode instanceof RequiredCourseGroup) {
 			RequiredCourseGroup group = (RequiredCourseGroup) requiredCourseNode;
 			
 			int preRecID = group.getNodeID();
 			int amtReq = group.getAmtMustChoose();
 			
-			Map<String, Object> map = new HashMap<>();
+			Map<String, Object> map = new ReferenceHashMap<>();
 			map.put("preRecID", preRecID);
 			map.put("amtReq", amtReq);
 			maps.first.add(map);
+			nodeDependacies.put(map, parentMap);
+			ArrayList<Map<String, Object>> branchMaps = new ArrayList<>();
+			branchDependacies.put(map, branchMaps);
 			
 			for(RequiredCourseNode node : group) {
-				boolean isCourse = coursePreReqToMaps (maps, node);
+				Map<String, Object> branchMap = new ReferenceHashMap<>();
+				branchMaps.add(branchMap);
+				boolean isCourse = coursePreReqToMaps (maps, nodeDependacies, branchDependacies, branchMap, node);
 				
 				String type = isCourse ? PRE_REC_TYPE_COURSE : PRE_REC_TYPE_LIST;
 				int preRecCourseID = node.getNodeID();
 				
-				Map<String, Object> branchMap = new HashMap<>();
 				branchMap.put("preRecID", preRecID);
 				branchMap.put("type", type);
 				branchMap.put("preRecCourseID", preRecCourseID);
@@ -1345,10 +1360,10 @@ public class DatabaseManager {
 		
 		ArrayList<Map<String, Object>> childBranchMaps = new ArrayList<>();
 		
-		for(Map<String, Object> map : branchMaps) {
-			String type = (String) map.get("type");
+		for(Map<String, Object> branchMap : branchMaps) {
+			String type = (String) branchMap.get("type");
 			if(type.equals(typeNode)) {
-				int childNodeID = (int) map.get(columnBranchChildIDName);
+				int childNodeID = (int) branchMap.get(columnBranchChildIDName);
 				Two<ArrayList<Map<String, Object>>> childMaps = loadTreeMap(nodeTable, columnNodeIDName, branchTable, columnBranchChildIDName, typeNode, childNodeID);
 				nodeMaps.addAll(childMaps.first);
 				childBranchMaps.addAll(childMaps.second);
@@ -1409,10 +1424,14 @@ public class DatabaseManager {
 	}
 	
 	private static void saveUniqueMaps(DatabaseTable table, ArrayList<Map<String, Object>> maps, ArrayList<Map<String, Object>> storedMaps, String uniqueIDColumn) {
+		saveTreeMapNodes(table, new Two<>(maps, storedMaps), null, null, uniqueIDColumn, null);
+	}
+	
+	private static void saveTreeMapNodes(DatabaseTable table, Two<ArrayList<Map<String, Object>>> nodeMaps, MapMap<String, Object> mapDependancies, MapArrayMap<String, Object> branchDependancies, String uniqueIDColumn, String columnBranchChildName) {
 		ArrayList<Map<String, Object>> elementsToCreate = new ArrayList<>();
 		ArrayList<Map<String, Object>> elementsToUpdate = new ArrayList<>();
 		
-		for(Map<String, Object> map : maps) {
+		for(Map<String, Object> map : nodeMaps.first) {
 			int id = (int) map.get(uniqueIDColumn);
 			if (id == REQUEST_NEW_ID)
 				elementsToCreate.add(map);
@@ -1421,7 +1440,7 @@ public class DatabaseManager {
 		} 
 		
 		ArrayList<Map<String, Object>> elementsToRemove = new ArrayList<>();
-		for(Map<String, Object> storedMap : storedMaps) {
+		for(Map<String, Object> storedMap : nodeMaps.second) {
 			boolean containsMap = false;
 			for(Map<String, Object> updatingMap : elementsToUpdate) {
 				if(storedMap.get(uniqueIDColumn).equals(updatingMap.get(uniqueIDColumn))) {
@@ -1455,9 +1474,25 @@ public class DatabaseManager {
 		});
 		
 		int[] uniqueIDs = findUniqueIDs(table, uniqueIDColumn, elementsToCreate.size());
+		
 		int idIndex = 0;
-		for(Map<String, Object> map : elementsToCreate)
-			map.put(uniqueIDColumn, uniqueIDs[idIndex++]);
+		if(mapDependancies != null && branchDependancies != null) { 
+			for(Map<String, Object> map : elementsToCreate) {
+				int id = uniqueIDs[idIndex++];
+				map.put(uniqueIDColumn, id);
+				Map<String, Object> mapDependancy = mapDependancies.get(map);
+				if(mapDependancy != null)
+					mapDependancy.put(columnBranchChildName, id);
+				ArrayList<Map<String, Object>> branchDependancyMaps = branchDependancies.get(map);
+				if(branchDependancyMaps != null)
+					for(Map<String, Object> branch : branchDependancyMaps)
+						branch.put(uniqueIDColumn, id);
+			}
+		} else {
+			for(Map<String, Object> map : elementsToCreate)
+				map.put(uniqueIDColumn, uniqueIDs[idIndex++]);
+		}
+			
 		
 		elementsToCreate.addAll(elementsToUpdate);
 		for(Map<String, Object> map : elementsToCreate)

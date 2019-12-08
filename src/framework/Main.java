@@ -34,7 +34,7 @@ public class Main {
 		testDatabase();
 
 //		testRequiredCourses();
-//		testSchedulerGraph();
+		testSchedulerGraph();
 //		testCourseInfoLoad();
 	}
 	
@@ -81,13 +81,8 @@ public class Main {
 	}
 	
 	public static void testSchedulerGraph(){
-		try {
-			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
-			RequiredCourses required = RequiredCourses.load(f);
-			SchedulerGraph requirementsGraph = new SchedulerGraph(required);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Curriculum c = DatabaseManager.getCurriculum("Computer Science Major");
+		SchedulerGraph requirementsGraph = new SchedulerGraph(c.getRequiredCourses());
 	}
 	
 //	public static void testCourseInfoLoad(){
