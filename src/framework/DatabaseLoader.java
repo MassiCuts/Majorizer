@@ -187,7 +187,6 @@ public class DatabaseLoader {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private static void loadCurriculum(Map<String, Object> map) {
 		String name = (String) map.get("name");
 		String typeName = (String) map.get("type");

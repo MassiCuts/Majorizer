@@ -4,6 +4,9 @@ package framework;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 import database.DatabaseTable;
 import scheduler.Scheduler;
@@ -41,9 +44,9 @@ public class Main {
 	public static void loadSampleData() {
 		System.out.println("--Loading Sample Data to Database--");
 		try {
-			File csFile = ResourceLoader.getYAMLFile("databaseSampleData/computer_science_major.yaml");
+			File csFile = ResourceLoader.getYAMLFile("databaseSampleData/curriculums.yaml");
 			File advisorsFile = ResourceLoader.getYAMLFile("databaseSampleData/advisors.yaml");
-			File courseInfoFile = ResourceLoader.getYAMLFile("databaseSampleData/course_info.yaml");
+			File courseInfoFile = ResourceLoader.getYAMLFile("databaseSampleData/courses.yaml");
 			File studentsFile = ResourceLoader.getYAMLFile("databaseSampleData/students.yaml");
 			
 			DatabaseLoader.loadCourses(courseInfoFile);
@@ -65,6 +68,25 @@ public class Main {
 			DatabaseManager.printTable(table);
 			System.out.println();
 		}
+		
+		System.out.println("Getting student with username: cutugnma");
+		Student student = DatabaseManager.getStudent("cutugnma");
+		AcademicPlan pl = student.getAcademicPlan();
+		ArrayList<Integer> degreeIDs = pl.getDegreeIDs();
+		System.out.println("DegreeIDs:");
+		for(Integer ids : degreeIDs)
+			System.out.println("  ->  " + ids);
+		System.out.println();
+		Map<String, ArrayList<Integer>> courseIDMap = pl.getSelectedCourseIDs();
+		Set<String> semesterSet = courseIDMap.keySet();
+		System.out.println("Course setup: ");
+		for(String semester : semesterSet) {
+			System.out.println("  ->  " + semester);
+			ArrayList<Integer> selectedCourseIDs = courseIDMap.get(semester);
+			for(Integer courseID : selectedCourseIDs)
+				System.out.println("  --->  " + courseID);
+		}
+		
 	}
 	
 	public static void testRequiredCourses() {
