@@ -101,7 +101,6 @@ public class UserInterface extends Application{
 		}
 	}
 
-	
 	//REUSABLE ELEMENTS===========================
 	public Button newRemoveButton()	{
 		Button removeButton = new Button();
@@ -165,7 +164,6 @@ public class UserInterface extends Application{
 		logButton.getStyleClass().add("logoutbuttontheme");
 		return logButton;
 	}
-	
 	//===================================================================
 	
 	public BorderPane loginScreen()	{
@@ -197,7 +195,6 @@ public class UserInterface extends Application{
 			password.getStyleClass().add("boxoutline");
 			Label ulabel = newStyledLabel("Username", "lightgraytheme");
 			Label plabel = newStyledLabel("Password", "lightgraytheme");
-			
 			
 			//Login Button
 			Button loginButton = newLogButton("Log In");
@@ -238,7 +235,6 @@ public class UserInterface extends Application{
 	    			this.isAuthenticated = true;
 	    		this.updateUI();
 	    	});
-	    	
 	    	
 	    	
 	    	VBox logoBox = new VBox();
@@ -285,7 +281,6 @@ public class UserInterface extends Application{
 			studentID.setText(getStudentID()); 		//Likewise ^^
 			studentID.getStyleClass().add("IDfont");
 
-		
 			//Logout Button
 			Button logoutButton = newLogButton("Log Out");
 			logoutButton.setOnAction((ae) -> {
@@ -386,15 +381,12 @@ public class UserInterface extends Application{
 			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
 			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getMinWidth());
 
-			
 			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
 			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
 			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
 			
-			
 			actionPane.add(currentSelectedSemesterPane, 1, 0);
 			actionPane.setHgap(10);
-			
 			
 			//SAMPLE DATA
 			currentSelectedSemesterTab.add(new Label("CS350	Software Design and Development"), 0, 0);
@@ -413,8 +405,6 @@ public class UserInterface extends Application{
 				removeCourseButton[rowIndex] = newRemoveButton();
 				currentSelectedSemesterTab.add(removeCourseButton[rowIndex], 1, rowIndex);
 			}
-			
-			
 			
 			//Search Header Pane
 			GridPane searchHeaderPane = new GridPane();
@@ -513,10 +503,70 @@ public class UserInterface extends Application{
 			
 			GridPane orgPane = new GridPane();
 			
-			
 			Label name = new Label();
-			name.setText("Sean");		//getName());
+			name.setText("Sean Banerjee");		//getName());
 			name.getStyleClass().add("fonttitle");
+			
+			//studentList Pane
+			GridPane studentListPane = new GridPane();
+			studentListPane.setMaxWidth(orgPane.getPrefWidth()*(1/3.0));
+			
+			//Header label for studentList
+			Label studentListHeader = newStyledLabel("Students", "fontmed");
+			
+			//Tab for studentList
+			GridPane studentListTab = newActionGrid();
+			
+			//Scroll for studentList
+			ScrollPane studentListScroll = newActionScroll();
+			studentListScroll.setContent(studentListTab);
+			studentListScroll.setMinViewportWidth(studentListTab.getWidth());
+			
+			studentListPane.add(studentListHeader, 0, 0);
+			studentListPane.add(studentListScroll, 0, 1);
+			
+			//SAMPLE DATA
+			studentListTab.add(new Label("Lorenzo Villani"), 0, 0);
+			
+			orgPane.add(studentListPane, 0, 0);
+			
+			//Requests Pane
+			GridPane requestsPane = new GridPane();
+			requestsPane.setMaxWidth(orgPane.getPrefWidth()*(1/3.0));
+			
+			//Header label for studentList
+			Label requestsHeader = newStyledLabel("List of Requests", "fontmed");
+			
+			//Tab for studentList
+			GridPane requestsTab = newActionGrid();
+			
+			//Scroll for studentList
+			ScrollPane requestsScroll = newActionScroll();
+			requestsScroll.setContent(requestsTab);
+			requestsScroll.setMinViewportWidth(requestsTab.getWidth());
+			
+			requestsPane.add(requestsHeader, 0, 0);
+			requestsPane.add(requestsScroll, 0, 1);
+			
+			//SAMPLE DATA
+			requestsTab.add(new Label("Heet Dave - Add Business Major"), 0, 0);
+			
+			//Remove Requests Buttons
+			int numberOfRequests = 1;																//TEMP
+			Button removeRequestsButton[] = new Button[numberOfRequests];
+			for(int rowIndex = 0; rowIndex < numberOfRequests; ++rowIndex)	{
+				removeRequestsButton[rowIndex] = newRemoveButton();
+				requestsTab.add(removeRequestsButton[rowIndex], 1, rowIndex);
+			}
+			
+			//Add Requests Buttons
+			Button addRequestsButton[] = new Button[numberOfRequests];
+			for(int rowIndex = 0; rowIndex < numberOfRequests; ++rowIndex)	{
+				addRequestsButton[rowIndex] = newAddButton();
+				requestsTab.add(addRequestsButton[rowIndex], 1, rowIndex);
+			}
+			
+			orgPane.add(requestsPane, 1, 0);
 			
 			//TESTING
 			orgPane.setGridLinesVisible(true);
