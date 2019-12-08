@@ -6,11 +6,15 @@ public class Student extends User {
 	private AcademicPlan academicPlan;
 	
 	public Student(String universityID, String firstName, String lastName, String username, String password, String startSemester) {
-		this(DatabaseManager.REQUEST_NEW_ID, universityID, firstName, lastName, username, password, true, AcademicPlan.getEmptyPlan(startSemester));
+		this(universityID, firstName, lastName, username, password, AcademicPlan.getEmptyPlan(startSemester));
 	}
 	
 	public Student(String universityID, String firstName, String lastName, String username, String password, AcademicPlan academicPlan) {
-		this(DatabaseManager.REQUEST_NEW_ID, universityID, firstName, lastName, username, password, true, academicPlan);
+		this(universityID, firstName, lastName, username, password, true, academicPlan);
+	}
+	
+	public Student(String universityID, String firstName, String lastName, String username, String password, boolean isStudentNew, AcademicPlan academicPlan) {
+		this(DatabaseManager.REQUEST_NEW_ID, universityID, firstName, lastName, username, password, isStudentNew, academicPlan);
 	}
 	
 	public Student(int userID, String universityID, String firstName, String lastName, String username, String password, boolean isStudentNew, AcademicPlan academicPlan) {

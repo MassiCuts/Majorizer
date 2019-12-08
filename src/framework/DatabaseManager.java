@@ -1,10 +1,6 @@
 package framework;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -12,11 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.yaml.snakeyaml.Yaml;
 
 import database.DatabaseColumn;
 import database.DatabaseColumn.ColumnType;
@@ -63,13 +56,14 @@ public class DatabaseManager {
 	public static final String CURRICULUM_TYPE_LIST = "SUB_CURRICULUM";
 	public static final String CURRICULUM_TYPE_COURSE = PRE_REC_TYPE_COURSE;
 	
-	private static final String COURSE_NAME = "courseName";
-	private static final String PREREC_NAME = "preRecCourses";
-	private static final String TIMES_OFFERED = "timesOffered";
-	private static final String NUM_REQUIRED = "numRequired";
-	private static final int DEFAULT_ID = 0;
+//	private static final String COURSE_NAME = "courseName";
+//	private static final String PREREC_NAME = "preRecCourses";
+//	private static final String TIMES_OFFERED = "timesOffered";
+//	private static final String NUM_REQUIRED = "numRequired";
+//	private static final int DEFAULT_ID = 0;
 	
 	public static final int REQUEST_NEW_ID = -1;
+	public static final String NULL_ENTRY_STRING = "!<NULL>!";
 	
 	public static void connect(String database_locator) {
 		URI uri;
@@ -181,23 +175,6 @@ public class DatabaseManager {
 				new DatabaseColumn("preRecID", 			ColumnType.INT), 
 				new DatabaseColumn("type", 				ColumnType.STRING), 
 				new DatabaseColumn("preRecCourseID", 	ColumnType.INT));
-		
-	}
-	
-	
-	public static void loadAdvisors(File yamlFile) {
-		
-	}
-	
-	public static void loadStudents(File yamlFile) {
-		
-	}
-	
-	public static void loadCourses(File yamlFile) {
-		
-	}
-	
-	public static void loadCurriculums(File yamlFile) {
 		
 	}
 	
@@ -786,8 +763,8 @@ public class DatabaseManager {
 		saveIdenticalMaps(COURSE_AVAILABLITY_TABLE, courseTimeMaps, storedCourseTimesMaps, "courseID", "timeOffered");
 		
 		Map<String, Object> coursePreRec = coursePreReqToMap(course);
-		ArrayList<Map<String, Object>> storedCourseRecsMaps = loadMaps(COURSE_PREREC_TABLE, "courseID", course.getCourseID());
-		saveUniqueMap(COURSE_PREREC_TABLE, coursePreRec, storedCourseRecsMaps, "courseID");
+		ArrayList<Map<String, Object>> storedCourseRecsMaps = loadMaps(COURSE_PREREC_TABLE, "preRecID", course.getRequiredCourses().getRequiredCourseID());
+		saveUniqueMap(COURSE_PREREC_TABLE, coursePreRec, storedCourseRecsMaps, "preRecID");
 		
 		Two<ArrayList<Map<String, Object>>> coursePreRecs = coursePreReqToMaps(course);
 		Two<ArrayList<Map<String, Object>>> storedPreRecs = loadTreeMap(PREREC_TABLE, "preRecID", PREREC_COURSE_SELECTION_TABLE, "preRecCourseID", PRE_REC_TYPE_LIST, course.getRequiredCourses().getRequiredCourseID());
@@ -1117,7 +1094,7 @@ public class DatabaseManager {
 			int curriculumID = group.getNodeID();
 			int amtReq = group.getAmtMustChoose();
 			
-			Map<String, Object> map = maps.first.get(0);
+			Map<String, Object> map = new HashMap<>();
 			map.put("curriculumID", curriculumID);
 			map.put("curriculumName", "");
 			map.put("type", CURRICULUM_TYPE_LIST);
@@ -1235,7 +1212,7 @@ public class DatabaseManager {
 			maps.first.add(map);
 			
 			for(RequiredCourseNode node : group) {
-				boolean isCourse = coursePreReqToMaps (maps, requiredCourseNode);
+				boolean isCourse = coursePreReqToMaps (maps, node);
 				
 				String type = isCourse ? PRE_REC_TYPE_COURSE : PRE_REC_TYPE_LIST;
 				int preRecCourseID = node.getNodeID();
@@ -1300,10 +1277,15 @@ public class DatabaseManager {
 	
 	private static boolean isUniqueMap(DatabaseTable table, Map<String, Object> map, String columIDName, String ... columnNames) {
 		int id = (int) map.get(columIDName);
+		ArrayList<String> columnNamesToCheck = new ArrayList<>(); 
+		for (String columnName : columnNames)
+			if(!map.get(columnName).equals(NULL_ENTRY_STRING))
+				columnNamesToCheck.add(columnName);
+		
 		
 		if(id == REQUEST_NEW_ID) {
 			ArrayList<Map<String, Object>> results = DATABASE.queryEntry(table, (m)-> {
-				for(String columnName : columnNames)
+				for(String columnName : columnNamesToCheck)
 					if(m.get(columnName).equals(map.get(columnName)))
 						return true;
 				return false;
@@ -1314,7 +1296,7 @@ public class DatabaseManager {
 			ArrayList<Map<String, Object>> results = DATABASE.queryEntry(table, (m)-> {
 				if(m.get(columIDName).equals(id))
 					return false;
-				for(String columnName : columnNames)
+				for(String columnName : columnNamesToCheck)
 					if(m.get(columnName).equals(map.get(columnName)))
 						return true;
 				return false;

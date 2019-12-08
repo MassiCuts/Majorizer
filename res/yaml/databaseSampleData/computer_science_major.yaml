@@ -1,0 +1,118 @@
+-
+  name: Computer Science Major
+  type: Major
+  amtReq: 6
+  requirements:
+    -  name: common
+       amtReq: 2
+       requirements: 
+         - FY100
+         - UNIV190
+         
+    -  name: core
+       amtReq: 14
+       requirements:
+         - CS141
+         - CS142
+         - CS241
+         - CS242
+         - CS341
+         - CS344
+         - CS345
+         - CS350
+         - CS444
+         - MA131
+         - MA132
+         - MA211
+         -  name: linear algebra
+            amtReq: 1
+            requirements:
+              - MA339
+              - MA239
+              
+         -  name: probability
+            amtReq: 1
+            requirements:
+              - STAT383
+              - STAT381
+              
+    -  name: professional
+       amtReq: 1
+       requirements:
+         - CS499
+    
+    -  name: electives I
+       amtReq: 3
+       requirements:
+         - CS442
+         - CS443
+         - CS445
+         - CS447
+         - CS449
+         - CS451
+         - CS452
+         - CS455
+         - CS456
+         - CS457
+         - CS458
+         - CS459
+         - CS460
+         - CS461
+         - CS464
+         - CS465
+     
+    -  name: electives II
+       amtReq: 2
+       requirements:
+         - COMM440
+         - COMM442
+         - COMM444
+         - CS442
+         - CS443
+         - CS445
+         - CS447
+         - CS449
+         - CS451
+         - CS452
+         - CS455
+         - CS456
+         - CS457
+         - CS458
+         - CS459
+         - CS460
+         - CS461
+         - CS464
+         - CS465
+         - EE368
+         - EE466
+         - IS3144
+    
+    -  name: science electives
+       amtReq: 1
+       requirements:
+         -  name: chem bio
+            amtReq: 3
+            requirements:
+              - CM100
+              - CM101
+              - BY100
+         -  name: chem phys
+            amtReq: 3
+            requirements:
+              - CM100
+              - CM101
+              - PH100
+         -  name: phys bio
+            amtReq: 3
+            requirements:
+              - PH100
+              - PH101
+              - BY100
+         -  name: phys chem
+            amtReq: 3
+            requirements:
+              - PH100
+              - PH101
+              - CM100m
+
+

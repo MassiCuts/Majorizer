@@ -6,6 +6,13 @@ import java.util.function.Predicate;
 public class Curriculum {
 	public static enum CurriculumType {
 		MAJOR, MINOR;
+		
+		public static CurriculumType getByName(String name) {
+			for(CurriculumType type : values())
+				if(type.name().equalsIgnoreCase(name))
+					return type;
+			return null;
+		}
 	}
 	
 	private int curriculumID;

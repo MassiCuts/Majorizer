@@ -5,15 +5,14 @@
    username: alexis
    password: greatMan
    advisees:
-     -  
-       username: cutugnma
+     -  cutugnma
+       
  -  
-   universityID: '0'
+   universityID: '1'
    firstName: Sean
    lastName: Banerjee
    username: sbanerje
    password: alsoGreatMan
    advisees:
-     -  
-       username: heethr
+     -  heethr
       

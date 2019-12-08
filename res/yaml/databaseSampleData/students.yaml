@@ -8,13 +8,13 @@
    startSemester: Fall 2016
    curriculums:
      - 
-        name: Computer Science
+        name: Computer Science Major
         type: Major
      -
-        name: Computer Engineering
+        name: Computer Engineering Major
         type: Major
      - 
-        name: Mathematics
+        name: Mathematics Minor
         type: Minor
         
    takenCourses:
@@ -87,13 +87,13 @@
    universityID: '0668365'
    firstName: Heet
    lastName: Dave
-   username: davehr
+   username: heethr
    password: GOAT
    isNewStudent: No
    startSemester: Fall 2016
    curriculums:
      - 
-        name: Computer Science
+        name: Computer Science Major
         type: Major
         
    takenCourses: []

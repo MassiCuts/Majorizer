@@ -25,7 +25,7 @@ public class Main {
 			if(args.length >= 2 && args[1].equals("create")) {
 					// create the database
 					DatabaseManager.initializeDatabase();
-					sampleDataInit();
+					loadSampleData();
 			}
 		} else {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
@@ -38,61 +38,29 @@ public class Main {
 //		testCourseInfoLoad();
 	}
 	
-	public static void sampleDataInit() {
-		System.out.println("Adding Sample Data to Database:");
-		
-		Student max = new Student("0668364", "Massimiliano", "Cutugno", "cutugnma", "password", "Fall 2016");
-		Student heet = new Student("0668365", "Heet", "Dave", "dheet", "password1", "Fall 2016");
-		
-		System.out.println(DatabaseManager.saveStudent(max));
-		System.out.println(DatabaseManager.saveStudent(heet));
-		
-		Advisor banerjee = new Advisor("1", "Sean", "Banerjee", "sbanerjee", "password2", max.getUserID(), heet.getUserID());
-		System.out.println(DatabaseManager.saveAdvisor(banerjee));
+	public static void loadSampleData() {
+		System.out.println("--Loading Sample Data to Database--");
+		try {
+			File csFile = ResourceLoader.getYAMLFile("databaseSampleData/computer_science_major.yaml");
+			File advisorsFile = ResourceLoader.getYAMLFile("databaseSampleData/advisors.yaml");
+			File courseInfoFile = ResourceLoader.getYAMLFile("databaseSampleData/course_info.yaml");
+			File studentsFile = ResourceLoader.getYAMLFile("databaseSampleData/students.yaml");
+			
+			DatabaseLoader.loadCourses(courseInfoFile);
+			DatabaseLoader.loadCurriculums(csFile);
+			DatabaseLoader.loadStudents(studentsFile);
+			DatabaseLoader.loadAdvisors(advisorsFile);
+			
+			System.out.println("--Loading Complete--");
+		} catch (IOException e) {
+			System.err.println("--Loading Error--");
+			e.printStackTrace();
+		}
 	}
 	
 	public static void testDatabase() {
-		// Print the database contents
+//		 Print the database contents
 		DatabaseTable[] tables = DatabaseManager.listTables();
-		for(DatabaseTable table : tables) {
-			DatabaseManager.printTable(table);
-			System.out.println();
-		}
-		
-		User[] users = new User[3];
-		Student max = DatabaseManager.getStudent("cutugnma");
-		Student heet = DatabaseManager.getStudent("dheet");
-		Advisor banerjee = DatabaseManager.getAdvisor("sbanerjee");
-		banerjee.setFirstName("Joe");
-		banerjee.getAdviseeIDs().remove(1);
-		DatabaseManager.saveAdvisor(banerjee);
-		banerjee = DatabaseManager.getAdvisor("sbanerjee");
-		
-		
-		users[0] = max;
-		users[1] = heet;
-		users[2] = banerjee;
-		
-		for(User user : users) {
-			System.out.println(user.getFirstName());
-			System.out.println(user.getLastName());
-			System.out.println(user.getUsername());
-			System.out.println(user.getPassword());
-			System.out.println(user.getUniversityID());
-			System.out.println(user.getUserID());
-			
-			if(user.isUserIsStudent()) {
-				Student student = (Student) user;
-				System.out.println(student.getAcademicPlan().getStartSemester());
-			} else {
-				Advisor advisor = (Advisor) user;
-				for(int studentID : advisor.getAdviseeIDs())
-					System.out.println("[student] " + studentID);
-			}
-		}
-		
-		// Print the database contents
-		System.out.println("\n\n After Changes: ");
 		for(DatabaseTable table : tables) {
 			DatabaseManager.printTable(table);
 			System.out.println();
@@ -122,17 +90,17 @@ public class Main {
 		}
 	}
 	
-	public static void testCourseInfoLoad(){
-		try {
-			File f = ResourceLoader.getYAMLFile("course_info.yaml");
-			System.out.println(f);
-			DatabaseManager database = new DatabaseManager();
-			database.loadStudents(f);
-			System.out.println("Loaded students");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void testCourseInfoLoad(){
+//		try {
+//			File f = ResourceLoader.getYAMLFile("course_info.yaml");
+//			System.out.println(f);
+//			DatabaseManager database = new DatabaseManager();
+//			database.loadStudents(f);
+//			System.out.println("Loaded students");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	
 }
