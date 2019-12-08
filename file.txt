@@ -1,0 +1,257 @@
+commit 4ea7a8b20d6947f037bc4f9f8659dcf71032ab4a
+Merge: defd8ad 8a1614e
+Author: U-AD\davehr <davehr@CB257-MAE-04.ad.clarkson.edu>
+Date:   Sun Nov 24 23:00:06 2019 -0500
+
+    Merge branch 'master' of https://bitbucket.org/bakerjb/yogaandtheboys
+    merging gui
+
+commit defd8ad477c36b790bbb88387d3a436f3e030e63
+Author: U-AD\davehr <davehr@CB257-MAE-04.ad.clarkson.edu>
+Date:   Sun Nov 24 22:55:15 2019 -0500
+
+    green plus buttons + initial work on sliders
+
+commit 8a1614ed3c618aee3350a3850527ef37318e2c53
+Merge: e54783d 2e32411
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 24 22:44:38 2019 -0500
+
+    Merge https://bitbucket.org/bakerjb/yogaandtheboys
+    "Merged with master"
+
+commit e54783deee630cd3440b76a95f6fbb3bed9e67b1
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 24 22:40:14 2019 -0500
+
+    updated .gitignore once more
+
+commit 7ae9ae78fe63a939281119ad2da809a26b99ea45
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 24 22:37:44 2019 -0500
+
+    updated .gitignore
+
+commit 04d85e9c92db48569762d204e52d20fbf024340a
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 24 22:20:38 2019 -0500
+
+    Added bin to .gitignore
+
+commit 0b49569c741c1aa363e7d49f0033a07abb18160a
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 24 22:17:20 2019 -0500
+
+    Reformatted Database. Added get/save advisor/student
+
+commit 2e3241107766d4374f8b50a70a274cf8c0d771e9
+Author: U-AD\davehr <davehr@CB257-MAE-04.ad.clarkson.edu>
+Date:   Sun Nov 24 21:54:17 2019 -0500
+
+    added left,right arrows + windows for majorsandminors, currentselectedsemester, electives
+
+commit d664555793df57d1ceb77e69283edde75ef55083
+Author: U-AD\davehr <davehr@CB257-MAE-04.ad.clarkson.edu>
+Date:   Sun Nov 24 20:16:20 2019 -0500
+
+    re-colored buttons, blocks added fully functional logout button, replaced check button with login button
+
+commit 033c0f298f3f125bde2aea03d4e0cf7ec4c9fa1e
+Author: U-AD\davehr <davehr@CB257-MAE-04.ad.clarkson.edu>
+Date:   Sun Nov 17 18:54:12 2019 -0500
+
+    logout button
+
+commit c0460c28493c55e6917777f2dc6b9fc4c8518fab
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Sun Nov 17 18:51:02 2019 -0500
+
+    Updates on student view
+
+commit e1f4f4c79810abb3a997f7fc5b7f2f9523b62294
+Merge: bde501b 33479c3
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Sun Nov 17 17:26:42 2019 -0500
+
+    Merge branch 'master' of https://bitbucket.org/bakerjb/yogaandtheboys
+
+commit bde501bc0867a206b3c3cbcadd8805b615a8b158
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Sun Nov 17 17:26:26 2019 -0500
+
+    Updates to GUI
+
+commit 33479c3981a5a02bb5c18b58547de4d9378df8d5
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Mon Nov 11 23:39:24 2019 -0500
+
+    Added Implementation for Course/Curriculum. Added Required Courses
+
+commit 7366e05cf0363040d2c3edeb9825f752725754ff
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 10 15:35:53 2019 -0500
+
+    Fixed Errors from last Commmit
+
+commit 678f5910cb09b434860d43967671f300a05abb90
+Merge: 1fbcf32 5034be5
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Wed Nov 6 15:31:17 2019 -0500
+
+    Merge branch 'master' of https://bitbucket.org/bakerjb/yogaandtheboys
+
+commit 1fbcf329ade9087232b08a205804e104924a464d
+Merge: b5f1ca4 835391b
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Tue Nov 5 12:15:10 2019 -0500
+
+    Merge branch 'master' of https://bitbucket.org/bakerjb/yogaandtheboys
+
+commit 5034be509e88f1084a162933f23829a2a8595269
+Author: Jacob Baker <bakerjb@clarkson.edu>
+Date:   Wed Nov 6 12:47:56 2019 -0500
+
+    Named member variables and functions of Classes in scheduler package
+
+commit afd15ff0e298db6be7fcb0b7f5f598b40cdbae62
+Author: Jacob Baker <bakerjb@clarkson.edu>
+Date:   Tue Nov 5 14:29:11 2019 -0500
+
+    Implementation of top level scheduler (scheduler.java), no other scheduler methods touched yet
+
+commit b688d6de0bc8304f5918414b6fadde146f72d2ef
+Merge: b5f1ca4 835391b
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Tue Nov 5 12:15:10 2019 -0500
+
+    Merge branch 'master' of https://bitbucket.org/bakerjb/yogaandtheboys
+
+commit b5f1ca405441e093b9ba974b15d6d3d7e983c770
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Tue Nov 5 12:15:01 2019 -0500
+
+    Updates on UI
+
+commit 835391b07786caf32784031080b48ea3dc7dd182
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Mon Nov 4 19:42:52 2019 -0500
+
+    fixed bug
+
+commit 33163fa49aab124704c88c955c9ad3ec212c6bcd
+Author: heet dave <heetdave@heets-MacBook-Pro.local>
+Date:   Mon Nov 4 19:33:35 2019 -0500
+
+    res folder with imageExample.png
+
+commit 00b9d1d83811024461bcd8e7ae7d27add728d21b
+Author: heet dave <heetdave@heets-MacBook-Pro.local>
+Date:   Mon Nov 4 19:13:15 2019 -0500
+
+    git instructions textfile
+
+commit d77fec1f5d0216c98c8c005c4a1c3097671e2a5f
+Merge: 258c88a b08fe51
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Mon Nov 4 10:20:00 2019 -0500
+
+    Updates on UI
+
+commit 258c88abf646775fffba8ac0b31a0dbe5f45e56a
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Mon Nov 4 10:17:00 2019 -0500
+
+    Updates on UI
+
+commit b08fe514bfa0508aa3898fbe3108b32db75e5075
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Mon Nov 4 00:09:47 2019 -0500
+
+    Added Resource Loader class
+
+commit df3dfc33c56e5ab4885a63e79c32ae35f6b63d1a
+Author: Lorenzo Villani <lvillani6@gmail.com>
+Date:   Sun Nov 3 14:35:01 2019 -0500
+
+    Initial commit for the user iterface
+
+commit b1e11e009076795bd9844a30aa590003b25ff734
+Author: Jacob Baker <bakerjb@clarkson.edu>
+Date:   Sun Nov 3 14:31:01 2019 -0500
+
+    Created Scheduler package
+
+commit 12f2d89a2b5649541ac3302becd53223629c0529
+Merge: 59cbe96 0883703
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 3 13:12:05 2019 -0500
+
+    Merged Branches and removed .classpath from git
+
+commit 59cbe968a4b0e8606775edacb7c0d5d658bae89c
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 3 12:35:01 2019 -0500
+
+    Fixed create table bug with subtables
+
+commit bc5df03a778c172fd24ac7e9037b256bdfd21c2b
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Nov 3 00:29:16 2019 -0400
+
+    Fixed Database bugs and added listTables()
+
+commit 0883703823d2ac2d1e64162f711b41d76a7e20cf
+Author: David Russell <russeldj@clarkson.edu>
+Date:   Sat Nov 2 20:45:11 2019 -0400
+
+    I revised the framework/main such that you can specify a few command line arguments to control the database.
+
+commit 852ca619b109e0716673e727795bccc148a873e7
+Author: Jacob Baker <bakerjb@clarkson.edu>
+Date:   Tue Oct 29 14:05:22 2019 -0400
+
+    added Scheduler Class
+
+commit 48b102bf97a9497215d0930e15dd87a9d4e71f64
+Merge: 2088996 ac20f2f
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Oct 27 20:50:00 2019 -0400
+
+    Merge https://bitbucket.org/bakerjb/yogaandtheboys
+    Merge with unrelated histories
+
+commit 2088996de22721ae6d0f00d67f100cebfa059268
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sun Oct 27 20:31:53 2019 -0400
+
+    Commented code
+
+commit 7f055756789a50e3474758c3ddbc0a557fbd322f
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sat Oct 26 15:23:17 2019 -0400
+
+    Added basic database manager functionality
+
+commit 98d7ae634215ffa2503ff5f3555a285dd7307a68
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sat Oct 26 14:44:08 2019 -0400
+
+    removed submodule git files
+
+commit f830dbd7bbbff12c7b75994772e334364c00ec30
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sat Oct 26 14:29:37 2019 -0400
+
+    removed class files and added basic models
+
+commit d3f3b774e2bc1db513861002d840ccc286b96b19
+Author: MassiCuts <maxcutugno16@gmail.com>
+Date:   Sat Oct 26 12:40:36 2019 -0400
+
+    Added JSON database and JSON library
+
+commit ac20f2f7b7886a0b7ca814487e48a09e08854086
+Author: David Russell <russeldj@clarkson.edu>
+Date:   Thu Oct 24 13:05:51 2019 -0400
+
+    Initial commit
