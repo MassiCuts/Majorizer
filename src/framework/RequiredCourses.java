@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -97,6 +98,12 @@ public class RequiredCourses {
 		return root.meetsRequirements(courseIDPredicate);
 	}
 	
+	public void traverseTree(UnaryOperator<Integer> unaryOperator) {
+		if(hasRequirements()) {
+			root.traverseTree(unaryOperator);
+		}
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof RequiredCourses)
@@ -112,11 +119,17 @@ public class RequiredCourses {
 	// nested classes:
 	
 	public static abstract class RequiredCourseNode {
-		public abstract boolean meetsRequirements(Predicate<Integer> courseIDPredicate);
-		private final int nodeID;
+		private int nodeID;
 		
 		public RequiredCourseNode(int nodeID) {
 			this.nodeID = nodeID;
+		}
+		
+		public abstract boolean meetsRequirements(Predicate<Integer> courseIDPredicate);
+		public abstract void traverseTree(UnaryOperator<Integer> unaryOperator);
+		
+		public void setNodeID(int id) {
+			nodeID = id;
 		}
 		
 		public int getNodeID() {
@@ -165,6 +178,12 @@ public class RequiredCourses {
 			return amtMetRequirment == amtMustChoose;
 		}
 		
+		public void traverseTree(UnaryOperator<Integer> unaryOperator) {
+			setNodeID(unaryOperator.apply(getNodeID()));
+			for(RequiredCourseNode node : requiredCourses)
+				traverseTree(unaryOperator);
+		}
+		
 		@Override
 		public boolean equals(Object obj) {
 			if(obj instanceof RequiredCourseGroup) {
@@ -200,6 +219,10 @@ public class RequiredCourses {
 			super(courseID);
 		}
 		
+		@Override
+		public void traverseTree(UnaryOperator<Integer> unaryOperator) {
+			setNodeID(unaryOperator.apply(getNodeID()));
+		}
 		
 		@Override
 		public boolean meetsRequirements(Predicate<Integer> courseIDPredicate) {

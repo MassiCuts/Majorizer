@@ -2,9 +2,16 @@ package framework;
 
 import java.util.ArrayList;
 
+import utils.ArrayUtils;
+
+
 public class Advisor extends User {
 	private ArrayList<Integer> adviseeIDs;
 	private ArrayList<Integer> requestsIDs;
+	
+	public Advisor(String universityID, String firstName, String lastName, String username, String password, Integer ... adviseeIDs) {
+		this(universityID, firstName, lastName, username, password, ArrayUtils.create(adviseeIDs));
+	}
 	
 	public Advisor(String universityID, String firstName, String lastName, String username, String password, ArrayList<Integer> adviseeIDs) {
 		this(DatabaseManager.REQUEST_NEW_ID, universityID, firstName, lastName, username, password, adviseeIDs, new ArrayList<>());

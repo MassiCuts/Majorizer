@@ -20,6 +20,10 @@ public class Request {
 		this.curriculumID = curriculumID;
 	}
 	
+	public void setRequestID(int requestID) {
+		this.requestID = requestID;
+	}
+	
 	public int getRequestID() {
 		return requestID;
 	}

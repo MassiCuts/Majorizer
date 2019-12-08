@@ -28,7 +28,7 @@ CS241:
   preRecCourses:
     - CS142
   courseName:
-    Intro to Advanced Programing Concepts in Java
+    Intro to Advanced Programming Concepts in Java
   numRequired:
     0 # This means that it is a course
 

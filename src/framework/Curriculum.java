@@ -8,10 +8,10 @@ public class Curriculum {
 		MAJOR, MINOR;
 	}
 	
-	private final int curriculumID;
-	private final String curriculumName;
-	private final CurriculumType curriculumType;
-	private final RequiredCourses requiredCourses;
+	private int curriculumID;
+	private String curriculumName;
+	private CurriculumType curriculumType;
+	private RequiredCourses requiredCourses;
 	
 	public Curriculum(String curriculumName, CurriculumType curriculumType, RequiredCourses requiredCourses) {
 		this(DatabaseManager.REQUEST_NEW_ID, curriculumName, curriculumType, requiredCourses);
@@ -21,6 +21,14 @@ public class Curriculum {
 		this.curriculumID = curriculumID;
 		this.curriculumName = curriculumName;
 		this.curriculumType = curriculumType;
+		this.requiredCourses = requiredCourses;
+	}
+	
+	public void setCurriculumID(int curriculumID) {
+		this.curriculumID = curriculumID;
+	}
+	
+	public void setRequiredCourses(RequiredCourses requiredCourses) {
 		this.requiredCourses = requiredCourses;
 	}
 	

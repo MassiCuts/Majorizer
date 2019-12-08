@@ -1,0 +1,99 @@
+ -  
+   universityID: '0668364'
+   firstName: Massimiliano
+   lastName: Cutugno
+   username: cutugnma
+   password: abc123
+   isNewStudent: No
+   startSemester: Fall 2016
+   curriculums:
+     - 
+        name: Computer Science
+        type: Major
+     -
+        name: Computer Engineering
+        type: Major
+     - 
+        name: Mathematics
+        type: Minor
+        
+   takenCourses:
+     - 
+        semester: Fall 2016
+        courses:
+          - CM131
+          - FY100
+          - MA132
+          - PH131
+          - UNIV190
+     -  
+        semester: Spring 2017
+        courses:
+          - CM132
+          - ES100
+          - ES110
+          - MA232
+          - PH132
+     -  
+        semester: Fall 2017
+        courses:
+          - EE221
+          - PH250
+          - PH260
+          - MA211
+          - MA231
+          - STAT383
+     -  
+        semester: Spring 2018
+        courses:
+          - PH211
+          - PH264
+          - PH361
+          - PH339
+     -  
+        semester: Fall 2018
+        courses:
+          - CS242
+          - CS341
+          - CS345
+          - EE321
+          - EE363
+          - EE365
+     -  
+        semester: Spring 2019
+        courses:
+          - CS344
+          - CS445
+          - CS469
+          - EE316
+          - EE360
+          - EE462
+     -  
+        semester: Fall 2019
+        courses:
+          - CS350
+          - CS499
+          - EE341
+          - EE416
+          - EE464
+          - EE466
+     -  
+        semester: Spring 2020
+        courses:
+          - CS444
+          - CS449
+          - CS451
+ -  
+   universityID: '0668365'
+   firstName: Heet
+   lastName: Dave
+   username: davehr
+   password: GOAT
+   isNewStudent: No
+   startSemester: Fall 2016
+   curriculums:
+     - 
+        name: Computer Science
+        type: Major
+        
+   takenCourses: []

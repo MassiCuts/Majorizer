@@ -1,0 +1,19 @@
+ -  
+   universityID: '0'
+   firstName: Alexis
+   lastName: Maciel
+   username: alexis
+   password: greatMan
+   advisees:
+     -  
+       username: cutugnma
+ -  
+   universityID: '0'
+   firstName: Sean
+   lastName: Banerjee
+   username: sbanerje
+   password: alsoGreatMan
+   advisees:
+     -  
+       username: heethr
+      

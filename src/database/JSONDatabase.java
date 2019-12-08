@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -569,12 +570,12 @@ public class JSONDatabase implements DatabaseInterface {
 		JSONObject jsonTable = getJSONTable(table);
 		JSONArray entryData = jsonTable.getJSONArray(ENTRY_DATA);
 		
-		int size = entryData.length();
-		for(int i = 0; i < size; i++) {
-			JSONObject entry = entryData.getJSONObject(i);
+		Iterator<Object> iterator = entryData.iterator();
+		while(iterator.hasNext()) {
+			JSONObject entry = (JSONObject) iterator.next();
 			Map<String, Object> map = entry.toMap();
 			if(predicate.test(map))
-				entryData.remove(i);
+				iterator.remove();
 		}
 		saveJSONTable(table, jsonTable);
 	}

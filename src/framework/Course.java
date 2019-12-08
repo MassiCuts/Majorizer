@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Course {
-	private final int courseID;
+	private int courseID;
 	private final String courseCode;
 	private final String courseName;
 	private ArrayList<String> timesOffered;
-	private final RequiredCourses preRecCourses;
+	private RequiredCourses preRecCourses;
 	
 	public Course(String courseCode, String courseName, ArrayList<String> timesOffered, RequiredCourses requiredCourses) {
 		this(DatabaseManager.REQUEST_NEW_ID, courseCode, courseName, timesOffered, requiredCourses);
@@ -20,6 +20,14 @@ public class Course {
 		this.courseName = courseName;
 		this.timesOffered = timesOffered;
 		this.preRecCourses = requiredCourses;
+	}
+	
+	public void setCourseID(int courseID) {
+		this.courseID = courseID;
+	}
+	
+	public void setPreRecCourses(RequiredCourses preRecCourses) {
+		this.preRecCourses = preRecCourses;
 	}
 	
 	public int getCourseID() {
