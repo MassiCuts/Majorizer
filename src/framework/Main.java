@@ -35,8 +35,10 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
-		testDatabase();
-//		startUI(args);
+//		testDatabase();
+		startUI(args);
+//		testDatabase();
+//		testRequiredCourses();
 //		testSchedulerGraph();
 //		testCourseInfoLoad();
 	}
@@ -93,9 +95,9 @@ public class Main {
 //			}
 //		}
 		
-//		Curriculum c = DatabaseManager.getCurriculum("Computer Science Major");		
-//		if(c != null)
-//			c.getRequiredCourses().printCourseCodes();
+		Course c = DatabaseManager.getCourse("PH131");		
+		if(c != null)
+			c.getRequiredCourses().printCourseCodes();
 	}
 	
 	
@@ -105,8 +107,16 @@ public class Main {
 	}
 	
 	public static void testSchedulerGraph(){
-		Curriculum c = DatabaseManager.getCurriculum("Computer Science Major");
-		SchedulerGraph requirementsGraph = new SchedulerGraph(c.getRequiredCourses());
+//		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
+//		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
+//		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
+//		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
+//		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
+		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
+		System.out.println(ScienceRequirementsGraph.getAsGraphVis());
+		//System.out.println(CSRequirementsGraph.getAsGraphVis());
+		System.out.println("merged");
 	}
 	
 //	public static void testCourseInfoLoad(){

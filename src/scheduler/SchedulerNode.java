@@ -1,6 +1,7 @@
 package scheduler;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 
 public class SchedulerNode {
 	protected ArrayList<SchedulerNode> children;
@@ -9,8 +10,8 @@ public class SchedulerNode {
 	protected boolean isgate;
 	protected boolean root = false;
 	protected String name = null;
-	protected Hashtable<CourseInfo, Integer> courseinfo; //Taken, available, added, dropped, scheduled
-	protected Hashtable<GateInfo, Integer> gateinfo;	//n, k
+	protected Hashtable<CourseInfo, Integer> courseinfo = new Hashtable<CourseInfo, Integer>(); //Taken, available, added, dropped, scheduled
+	protected Hashtable<GateInfo, Integer> gateinfo = new Hashtable<GateInfo, Integer>();	//n, k
 	
 	public SchedulerNode(SchedulerGate gate) {
 		this.children = gate.children;
@@ -98,7 +99,6 @@ public class SchedulerNode {
 	}
 	
 	public float getCost() {
-		//TODO: Overlap calculation
 		float overlap = this.getOverlapScore();
 		if (isNull()) {
 			return 0;
@@ -115,14 +115,33 @@ public class SchedulerNode {
 	}
 	
 	private float getOverlapScore() {
-		this.getDepth();
 		//TODO: traverse parents until at same depth, then analyze the gate. Overlap score = gate.options
+		/*ArrayList<SchedulerNode> temp_nodes = new ArrayList<SchedulerNode>();
+		for(SchedulerNode parent: this.parents) {
+			temp_nodes.add(parent);
+		} 
+		while() {
+			int min_depth = getMinDepth(temp_nodes);
+			for(int i = 0; i < temp_nodes.size(); ++i) {
+				if (temp_nodes.get(i) < min_depth) {
+					temp_nodes.set(i, )
+				}
+			}
+		}*/
 		return this.parents.size();
 	}
 	
-	private float getDepth() {
+	protected int getDepth() {
 		//TODO: largest depth of parents + 1
-		return 0;
+		if (this.root) {
+			return 0;
+		}
+		int max_depth = 0;
+		for (SchedulerNode parent: this.parents) {
+			int depth = parent.getDepth();
+			if (depth > max_depth) {max_depth = depth;}
+		}
+		return max_depth+1;
 	}
 	
 	public boolean equals(SchedulerNode node) {
@@ -153,6 +172,4 @@ public class SchedulerNode {
 		return output;
 		
 	}
-
-	
 };

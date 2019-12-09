@@ -24,7 +24,7 @@ public class SchedulerCourse extends SchedulerNode {
 	}
 	
 	public SchedulerCourse(Course c) {
-		this.name = c.getCourseName();
+		this.name = c.getCourseCode();// Not all courses have names if the class info sheet isn't filled out
 		this.children = new ArrayList<SchedulerNode>();
 		if(this.children == null) {
 			System.out.println("chilldren are null");
@@ -36,11 +36,12 @@ public class SchedulerCourse extends SchedulerNode {
 		this.dropped = 0;
 	}
 	
-	public boolean available(int semester_num) {
-		boolean a = false;
+	public boolean isAvailable(int semester_num) {
 		semester_num %= 4;
 		return ((this.availability >> semester_num) & 1) == 1;
 	}
+	
+	public boolean isDropped(int semester) {return this.dropped == semester;}
 	
 	public void addToSemester(int semester_num) {this.added = semester_num;}
 	public void removeFromSemester(int semester_num) {this.dropped = semester_num;}

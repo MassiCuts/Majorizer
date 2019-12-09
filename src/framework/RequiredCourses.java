@@ -77,6 +77,10 @@ public class RequiredCourses {
 		this.requiredCoursesID = requiredCourseID;
 	}
 	
+	public void setRequiredCoursesID(int id) {
+		this.requiredCoursesID = id;
+	}
+	
 	public int getRequiredCourseID() {
 		return requiredCoursesID;
 	}
