@@ -64,9 +64,9 @@ public class Main {
 		}
 	}
 	
-	public static void startUI(String args[])	{
-		UserInterface.callLaunch(args);
-	}
+	//public static void startUI(String args[])	{
+	//	UserInterface.callLaunch(args);
+	//}
 	
 	public static void testDatabase() {
 //		 Print the database contents
@@ -112,8 +112,14 @@ public class Main {
 	}
 	
 	public static void testSchedulerGraph(){
-		Curriculum c = DatabaseManager.getCurriculum("Computer Science Major");
-		SchedulerGraph requirementsGraph = new SchedulerGraph(c.getRequiredCourses());
+		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
+		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
+		System.out.println("Parsed the first graph");
+		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
+		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
+		System.out.println("Parsed the second graph");
+		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		System.out.println("merged");
 	}
 	
 //	public static void testCourseInfoLoad(){

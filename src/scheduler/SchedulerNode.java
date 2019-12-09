@@ -1,6 +1,7 @@
 package scheduler;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 
 public class SchedulerNode {
 	protected ArrayList<SchedulerNode> children;
@@ -9,8 +10,8 @@ public class SchedulerNode {
 	protected boolean isgate;
 	protected boolean root = false;
 	protected String name = null;
-	protected Hashtable<CourseInfo, Integer> courseinfo; //Taken, available, added, dropped, scheduled
-	protected Hashtable<GateInfo, Integer> gateinfo;	//n, k
+	protected Hashtable<CourseInfo, Integer> courseinfo = new Hashtable<CourseInfo, Integer>(); //Taken, available, added, dropped, scheduled
+	protected Hashtable<GateInfo, Integer> gateinfo = new Hashtable<GateInfo, Integer>();	//n, k
 	
 	public SchedulerNode(SchedulerGate gate) {
 		this.children = gate.children;
@@ -171,6 +172,4 @@ public class SchedulerNode {
 		return output;
 		
 	}
-
-	
 };
