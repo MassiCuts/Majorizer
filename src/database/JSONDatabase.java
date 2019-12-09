@@ -198,9 +198,11 @@ public class JSONDatabase implements DatabaseInterface {
 
 	@Override
 	public void removeTable(DatabaseTable table) {
-		File file = getTableDirectory(table);
-		if(file.exists())
-			deleteFile(file);
+		try {
+			File file = getTableDirectory(table);
+			if(file.exists())
+				deleteFile(file);
+		} catch (Exception e) {}
 	}
 	
 	private boolean deleteFile(File root) {

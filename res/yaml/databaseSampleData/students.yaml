@@ -97,3 +97,81 @@
         type: Major
         
    takenCourses: []
+ -  
+   universityID: '0755050'
+   firstName: Lorenzo
+   lastName: Villani
+   username: villanlj
+   password: password
+   isNewStudent: No
+   startSemester: Fall 2017
+   curriculums:
+     - 
+        name: Computer Science Major
+        type: Major
+     -
+        name: Computer Engineering Major
+        type: Major
+     - 
+        name: Mathematics Minor
+        type: Minor
+        
+   takenCourses:
+     - 
+        semester: Fall 2017
+        courses:
+          - CS141
+          - FY100
+          - MA132
+          - PH131
+          - UNIV190
+     -  
+        semester: Spring 2018
+        courses:
+          - CS142
+          - ES100
+          - ES110
+          - MA211
+          - PH132
+     -  
+        semester: Fall 2018
+        courses:
+          - CM131
+          - CS242
+          - EC150
+          - EE264
+          - ES250
+          - MA232
+     -  
+        semester: Spring 2019
+        courses:
+          - CS344
+          - EE211
+          - EE221
+          - EE260
+          - MA231
+          - STAT383
+     -  
+        semester: Fall 2019
+        courses:
+          - CS350
+          - EE262
+          - EE321
+          - EE341
+          - EE365
+          - MA339
+     -  
+        semester: Spring 2020
+        courses:
+          - CS444
+          - CS451
+          - EE361
+          - EE462
+          - EE466
+          - HIST341
+     -  
+        semester: Fall 2020
+        courses:
+     -  
+        semester: Spring 2021
+        courses:
