@@ -5,10 +5,10 @@
   requirements:
     -  name: common
        amtReq: 2
-       requirements: 
+       requirements:
          - FY100
          - UNIV190
-         
+
     -  name: core
        amtReq: 14
        requirements:
@@ -29,18 +29,18 @@
             requirements:
               - MA339
               - MA239
-              
+
          -  name: probability
             amtReq: 1
             requirements:
               - STAT383
               - STAT381
-              
+
     -  name: professional
        amtReq: 1
        requirements:
          - CS499
-    
+
     -  name: electives I
        amtReq: 3
        requirements:
@@ -60,7 +60,7 @@
          - CS461
          - CS464
          - CS465
-     
+
     -  name: electives II
        amtReq: 2
        requirements:
@@ -86,7 +86,7 @@
          - EE368
          - EE466
          - IS3144
-    
+
     -  name: science electives
        amtReq: 1
        requirements:
@@ -115,4 +115,13 @@
               - PH101
               - CM100
 
-
+-
+  name: Computer Engineering Major
+  type: Major
+  amtReq: 1
+  requirements:
+    -  name: core
+       amtReq: 2
+       requirements:
+         - CS141
+         - EE221 # what is linear

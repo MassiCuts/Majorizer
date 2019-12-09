@@ -24,7 +24,7 @@ public class SchedulerCourse extends SchedulerNode {
 	}
 	
 	public SchedulerCourse(Course c) {
-		this.name = c.getCourseName();
+		this.name = c.getCourseCode();// Not all courses have names if the class info sheet isn't filled out
 		this.children = new ArrayList<SchedulerNode>();
 		if(this.children == null) {
 			System.out.println("chilldren are null");
