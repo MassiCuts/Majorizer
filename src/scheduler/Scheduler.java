@@ -31,15 +31,12 @@ public class Scheduler {
 		for (int i = 0; i < this.num_semesters; ++i) {
 			sched.add(new ArrayList<String>());
 			if (i < current_semester) {
-				//Add all the classes taken during this semester then skip
+				//TODO: Add all the classes taken during this semester then skip
 			}
 			int added_this_semester=0;
-			//TODO: Go through added courses to see if any were added this semester
-			
 			for(SchedulerCourse c : requested_adds) {
-				//Do we want the required_courses object to be Course or SchedulerCourse?
 				if (c.added == i) {
-					if(!c.available(i)) {throw new Exception("this course isn't available for the semester it was added to");}
+					if(!c.isAvailable(i)) {throw new Exception("this course isn't available for the semester it was added to");}
 					sched.get(i).add(c.name);
 					continue;
 				}
@@ -59,7 +56,7 @@ public class Scheduler {
 						//since we know the child isn't satisfied due to the while condition, move to child node
 						course = (SchedulerCourse) node;
 						next_node = course.getChild();
-						if (!course.available(i) || this.dropped(i)){
+						if (!course.isAvailable(i) || course.isDropped(i)){
 							++attempt;
 							next_node = this.graph.root;
 							if (attempt > MAX_ATTEMPTS) {

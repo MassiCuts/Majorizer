@@ -36,11 +36,13 @@ public class SchedulerCourse extends SchedulerNode {
 		this.dropped = 0;
 	}
 	
-	public boolean available(int semester_num) {
+	public boolean isAvailable(int semester_num) {
 		boolean a = false;
 		semester_num %= 4;
 		return ((this.availability >> semester_num) & 1) == 1;
 	}
+	
+	public boolean isDropped(int semester) {return this.dropped == semester;}
 	
 	public void addToSemester(int semester_num) {this.added = semester_num;}
 	public void removeFromSemester(int semester_num) {this.dropped = semester_num;}

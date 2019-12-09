@@ -61,7 +61,11 @@ public class SchedulerGraph {
 			System.out.println("Course name" + course);
 			SchedulerCourse newCourse = new SchedulerCourse(course);
 			System.out.println(newCourse);
-			this.all_courses.add(newCourse);
+			boolean alreadyAdded = false;
+			for(SchedulerCourse c: this.all_courses) {
+				if (c == newCourse) {alreadyAdded = true;}
+			}
+			if (!alreadyAdded) {this.all_courses.add(newCourse);}
 			newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
 			newCourse.getChild().addParent(newCourse);
 			return newCourse;
