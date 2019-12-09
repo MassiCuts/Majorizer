@@ -93,35 +93,104 @@
          -  name: chem bio
             amtReq: 3
             requirements:
-              - CM100
-              - CM101
-              - BY100
+              - CM131
+              - CM132
+              - BY131
          -  name: chem phys
             amtReq: 3
             requirements:
-              - CM100
-              - CM101
-              - PH100
+              - CM131
+              - CM132
+              - PH131
          -  name: phys bio
             amtReq: 3
             requirements:
-              - PH100
-              - PH101
-              - BY100
+              - PH131
+              - PH132
+              - BY131
          -  name: phys chem
             amtReq: 3
             requirements:
-              - PH100
-              - PH101
-              - CM100
+              - PH131
+              - PH132
+              - CM131
 
 -
   name: Computer Engineering Major
   type: Major
-  amtReq: 1
+  amtReq: 3 #TODO change this
   requirements:
-    -  name: core
+    -  name: common
        amtReq: 2
        requirements:
+         - FY100
+         - UNIV190
+
+    -  name: common
+       amtReq: 8
+       requirements:
+         - CM131
          - CS141
-         - EE221 # what is linear
+         - ES100
+         - ES110
+         - MA131
+         - MA132
+         - PH131
+         - PH132
+
+    -  name: core
+       amtReq: 20
+       requirements:
+         - EE211
+         - EE221
+         - EE260
+         - EE262
+         - EE264
+         - EE316
+         - EE321
+         - EE341
+         - EE361
+         - EE363
+         - EE365
+         - EE416
+         - EE462
+         - EE464
+         - EE466
+         - ES250
+         - MA211
+         - MA231
+         - MA232
+         - STAT383
+
+    # I'm not including knowledge areas
+
+
+-
+  name: Test Science Major
+  type: Major
+  amtReq: 1
+  requirements:
+    -  name: chem bio
+       amtReq: 3
+       requirements:
+         - CM131
+         - CM132
+         - BY131
+    -  name: chem phys
+       amtReq: 3
+       requirements:
+         - CM131
+         - CM132
+         - PH131
+    -  name: phys bio
+       amtReq: 3
+       requirements:
+         - PH131
+         - PH132
+         - BY131
+    -  name: phys chem
+       amtReq: 3
+       requirements:
+         - PH131
+         - PH132
+         - CM132

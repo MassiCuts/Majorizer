@@ -112,14 +112,15 @@ public class Main {
 	}
 	
 	public static void testSchedulerGraph(){
-		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
-		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
-		System.out.println("Parsed the first graph");
-		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
-		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-		System.out.println("Parsed the second graph");
-		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
-		System.out.println(CSRequirementsGraph.getAsGraphVis());
+//		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
+//		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
+//		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
+//		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
+//		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
+		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
+		System.out.println(ScienceRequirementsGraph.getAsGraphVis());
+		//System.out.println(CSRequirementsGraph.getAsGraphVis());
 		System.out.println("merged");
 	}
 	

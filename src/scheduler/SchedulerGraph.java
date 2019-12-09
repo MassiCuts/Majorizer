@@ -67,6 +67,7 @@ public class SchedulerGraph {
 				newCourse = all_courses_int_map.get(course_ID);// This really shouldn't be adding the same course twice
 			}else {
 				Course course = DatabaseManager.getCourse(((RequiredCourse)subCurriculum).getNodeID());// This really shouldn't be adding the same course twice
+				System.out.println("course is " + course);
 				newCourse = new SchedulerCourse(course);
 				newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
 				//System.out.println(newCourse);
@@ -113,19 +114,27 @@ public class SchedulerGraph {
 	
 	public String printElements(SchedulerNode node) {
 		// If it is a group, you return a course group, which will involve a recursive call to create it
-		if(node instanceof SchedulerGate) {
-			// Create a new gate to avoid modifying the old one
+		if(node instanceof SchedulerCourse) {
 			String output_string = "";
 			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
-			for( SchedulerNode c : ((SchedulerGate) node).children){
+			for( SchedulerNode c : node.children){
+				// Add the edge from parent to child
+				if(((SchedulerGate)c).required != 0) { // Do not visualize terminal gates with no requirements
+					output_string += node.name.replaceAll("\\s+","") + "->" + c.name.replaceAll("\\s+","") + "\n";// The replace all remove spaces
+					output_string += printElements(c);// Recursive call
+				}
+			}
+			return output_string;
+		}else {
+			String output_string = "";
+			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
+			for( SchedulerNode c : node.children){
 				// Add the edge from parent to child
 				output_string += node.name.replaceAll("\\s+","") + "->" + c.name.replaceAll("\\s+","") + "\n";// The replace all remove spaces
 				output_string += printElements(c);// Recursive call
 				// Add the recursive call
 			}
 			return output_string;
-		} else {
-			return "";// This does nothing since parents are responsible for connecting children
 		}
 	}
 	
