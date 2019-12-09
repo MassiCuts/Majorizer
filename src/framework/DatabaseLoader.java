@@ -144,7 +144,12 @@ public class DatabaseLoader {
 		RequiredCourseNode root = loadPreRecs(map);
 		RequiredCourses requiredCourses = new RequiredCourses(root);
 		
-		Course course = new Course(courseCode, courseName, timesOffered, requiredCourses);
+		int id = DatabaseManager.REQUEST_NEW_ID;
+		Course storedCourse = DatabaseManager.getCourse(courseCode);
+		if(storedCourse != null)
+			id = storedCourse.getCourseID();
+		
+		Course course = new Course(id, courseCode, courseName, timesOffered, requiredCourses);
 		DatabaseManager.saveCourse(course);
 	}
 	
