@@ -12,9 +12,9 @@ public class SchedulerGate extends SchedulerNode {
 		numberOfGates += 1;
 	}
 	
-	public SchedulerGate(SchedulerNode node) {
+	public SchedulerGate(SchedulerNode node) throws Exception{
 		if (node.gateinfo.isEmpty()) {
-			//Throw some error so we know this shouldn't have been happened
+			throw new Exception("Tried to initialize a gate with a node that was not a gate");//Throw some error so we know this shouldn't have been happened
 		}
 		this.children = node.children;
 		this.parents = node.parents;
@@ -25,6 +25,7 @@ public class SchedulerGate extends SchedulerNode {
 	
 	public SchedulerGate(int options, int required, ArrayList<SchedulerNode> children) {
 		this(options, required);
+		this.name = "GATE " + Integer.toString(numberOfGates);
 		if(children == null) {
 			System.out.println("chilldren are null");
 		}
@@ -75,6 +76,9 @@ public class SchedulerGate extends SchedulerNode {
 	}
 	
 	public SchedulerNode getBestChild(int semesters_remaining) {
+		assert(selfcheck());
+		System.out.println("Gate name: " + this.name);
+		System.out.println("Selecting best child from " + this.required + " required courses out of " + this.options + " options");
 		ArrayList<Integer> choices = this.getChoices( semesters_remaining);
 		int index = this.getLongestChoice( choices, 0, semesters_remaining);
 		SchedulerNode next_node = this.getChild(index);
@@ -82,6 +86,7 @@ public class SchedulerGate extends SchedulerNode {
 	}
 	
 	public SchedulerNode getGoodChild(int semesters_remaining) {
+		assert(selfcheck());
 		ArrayList<Integer> choices = this.getChoices(semesters_remaining);
 		int index = this.getLongestChoice(choices, 1, semesters_remaining);
 		SchedulerNode next_node = this.getChild(index);

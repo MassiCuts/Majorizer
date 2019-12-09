@@ -11,20 +11,12 @@ public class Scheduler {
 	private int num_courses=6;
 	private int num_semesters=8;
 	private int current_semester=0;
-	private SchedulerGraph graph;
 	static int MAX_ATTEMPTS = 100;
 	
-	public Scheduler(SchedulerGraph graph) {
-		this.graph = graph;
-	}
+	public Scheduler() {}
 	
-	public Scheduler(SchedulerGraph graph, int num_courses, int num_semesters) {
-		this.num_courses = num_courses;
-		this.num_semesters = num_semesters;
-		this.graph = graph;
-	}
-	
-
+	public void setNumSemesters(int num_semesters) {this.num_semesters = num_semesters;}
+	public void setNumCourses(int num_courses) {this.num_courses = num_courses;}
 	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops) throws Exception {
 		SchedulerCourse course = null;
 		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
@@ -43,11 +35,13 @@ public class Scheduler {
 			}
 			
 			for(int j = 0; j < this.num_courses-added_this_semester; ++j) {
-				SchedulerNode node = this.graph.root;
-				SchedulerNode next_node = this.graph.root;
+				SchedulerNode node = graph.root;
+				SchedulerNode next_node = graph.root;
 				int attempt = 0;
 				do {
 					node = next_node;
+					System.out.println("traversing node" + node.name + " Of class: " + node.getClass().getSimpleName());
+					System.out.println("isGate" + node.isGate());
 					if (node.isGate()) {
 						//Select which path to take (Longest path of the k shortest plausible paths)
 						SchedulerGate gate = (SchedulerGate) node;
@@ -58,15 +52,16 @@ public class Scheduler {
 						next_node = course.getChild();
 						if (!course.isAvailable(i) || course.isDropped(i)){
 							++attempt;
-							next_node = this.graph.root;
+							next_node = graph.root;
 							if (attempt > MAX_ATTEMPTS) {
-								throw new RuntimeException("Your stupid program cant find a feasible schedule you dumb fuck");
+								throw new RuntimeException("Cannot find a feasible schedule");
 							}
 						}
 					}
 				} while (!next_node.isSatisfied());
 				node.courseinfo.put(CourseInfo.SCHEDULED, i);
 				sched.get(i).add(node.name);
+				System.out.println("Added course" + node.name + " to semester " + i);
 			}
 		}
 		if (!graph.root.isSatisfied()) {

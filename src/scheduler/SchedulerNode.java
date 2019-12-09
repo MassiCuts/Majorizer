@@ -14,6 +14,7 @@ public class SchedulerNode {
 	protected Hashtable<GateInfo, Integer> gateinfo = new Hashtable<GateInfo, Integer>();	//n, k
 	
 	public SchedulerNode(SchedulerGate gate) {
+		System.out.println("Making a gate");
 		this.children = gate.children;
 		this.parents = gate.parents;
 		this.isgate = true;
@@ -24,6 +25,7 @@ public class SchedulerNode {
 	}
 	
 	public SchedulerNode(SchedulerCourse course) {
+		System.out.println("Making a course");
 		this.children = course.children;
 		this.parents = course.parents;
 		this.isgate = false;
@@ -51,7 +53,9 @@ public class SchedulerNode {
 	
 	public String getName() {return this.name;}
 	public ArrayList<SchedulerNode> getChildren(){return this.children;}
-	public boolean isGate() { return this.isgate;}
+	public boolean isGate() { 
+		String classname = this.getClass().getSimpleName();
+		return classname.contentEquals("SchedulerGate");}//this.isgate;}
 	
 	public boolean isSatisfied() {
 		/*
@@ -69,7 +73,7 @@ public class SchedulerNode {
 					++counter;
 				}
 			}
-			if (counter > this.gateinfo.get(GateInfo.REQUIRED)) {
+			if (counter >= this.gateinfo.get(GateInfo.REQUIRED)) {
 				return true;
 			} else { return false;}
 		} else {
@@ -90,7 +94,7 @@ public class SchedulerNode {
 	public float getPathLength() {
 		if (isNull()) {
 			return 0;
-		} else if (isGate()) {
+		} else if (this.isGate()) {
 			return 1 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE).getPathLength();
 		} else {
 			return 1 + ((SchedulerCourse) this).getChild().getPathLength();
@@ -102,7 +106,7 @@ public class SchedulerNode {
 		float overlap = this.getOverlapScore();
 		if (isNull()) {
 			return 0;
-		}else if(isGate()) {
+		}else if(this.isGate()) {
 			SchedulerGate gate = (SchedulerGate) this;
 			float cost = 0;
 			for (int idx : gate.getChoices(Integer.MAX_VALUE)) {
@@ -145,7 +149,7 @@ public class SchedulerNode {
 	}
 	
 	public boolean equals(SchedulerNode node) {
-		if (this.isgate) {
+		if (this.isGate()) {
 			return (SchedulerGate) this == node;
 		} else {
 			return (SchedulerCourse) this == node;
@@ -170,6 +174,5 @@ public class SchedulerNode {
 			output += res;
 		}
 		return output;
-		
 	}
 };
