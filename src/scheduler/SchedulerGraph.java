@@ -74,7 +74,6 @@ public class SchedulerGraph {
 				this.all_course_string_map.put(course.getCourseCode(), newCourse);
 				this.all_courses.add(newCourse);
 			}
-			newCourse.getChild().addParent(newCourse);
 			return newCourse;
 		}
 	}
