@@ -38,7 +38,6 @@ public class Main {
 		}
 		
 //		testDatabase();
-
 		startUI(args);
 //		testRequiredCourses();
 //		testSchedulerGraph();
