@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import database.DatabaseTable;
+import gui.UserInterface;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import scheduler.Scheduler;
 import scheduler.SchedulerGraph;
 import utils.ResourceLoader;
@@ -34,8 +37,10 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
-		testDatabase();
-
+//		testDatabase();
+		startUI(args);
+		
+		
 //		testRequiredCourses();
 		testSchedulerGraph();
 //		testCourseInfoLoad();
@@ -59,6 +64,10 @@ public class Main {
 			System.err.println("--Loading Error--");
 			e.printStackTrace();
 		}
+	}
+	
+	public static void startUI(String args[])	{
+		UserInterface.callLaunch(args);
 	}
 	
 	public static void testDatabase() {

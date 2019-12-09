@@ -276,9 +276,22 @@ public class DatabaseManager {
 	
 	
 	public static User authenticate(String username, String password) {
+		ArrayList<Map<String, Object>> userResults;
+		userResults = DATABASE.queryEntry(USERS_TABLE, (m) -> {
+			if(m.get("username").equals(username))
+				return true;
+			return false;
+		});
+		
+		
+		if(userResults.size() == 0)
+			return null;
+		
+		int id = (int) userResults.get(0).get("userID");
+		
 		ArrayList<Map<String, Object>> advisorResults;
 		advisorResults = DATABASE.queryEntry(ADVISORS_TABLE, (m) -> {
-			if(m.get("username").equals(username))
+			if(m.get("userID").equals(id))
 				return true;
 			return false;
 		});
