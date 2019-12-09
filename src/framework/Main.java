@@ -34,10 +34,10 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
-		testDatabase();
+//		testDatabase();
 
 //		testRequiredCourses();
-		testSchedulerGraph();
+//		testSchedulerGraph();
 //		testCourseInfoLoad();
 	}
 	
@@ -83,8 +83,10 @@ public class Main {
 		for(String semester : semesterSet) {
 			System.out.println("  ->  " + semester);
 			ArrayList<Integer> selectedCourseIDs = courseIDMap.get(semester);
-			for(Integer courseID : selectedCourseIDs)
-				System.out.println("  --->  " + courseID);
+			for(Integer courseID : selectedCourseIDs) {
+				String courseCode = DatabaseManager.getCourse(courseID).getCourseCode();
+				System.out.println("  --->  " + courseCode);
+			}
 		}
 		
 	}
