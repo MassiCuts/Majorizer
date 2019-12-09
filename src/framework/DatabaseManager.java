@@ -744,6 +744,8 @@ public class DatabaseManager {
 		ArrayList<Map<String, Object>> storedadvisorStudentsMapsMaps = loadMaps(ADVISOR_STUDENTS_TABLE, "advisorID", advisor.getUserID());
 		saveIdenticalMaps(ADVISOR_STUDENTS_TABLE, advisorStudentsMaps, storedadvisorStudentsMapsMaps, "advisorID", "studentID");
 		
+		
+		
 		return true;
 	}
 	
