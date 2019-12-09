@@ -335,14 +335,11 @@ public class UserInterface extends Application{
 			logoutButtonBox.setPadding(new Insets(5));
 			logoutButtonBox.getStyleClass().add("logoutbuttontheme");
 			
-			
 			topPane.add(name, 0, 0);
 			topPane.add(studentID, 0, 1);
 			topPane.add(logoutButtonBox, 1, 0);
 			topPane.setMargin(logoutButtonBox, new Insets(20, 0, 0, 0));
 			topPane.getColumnConstraints().add(constraints);
-			
-
 			
 			//Schedule Pane
 			GridPane schedulePane = new GridPane();
@@ -350,7 +347,6 @@ public class UserInterface extends Application{
 			//Header label for Schedule Pane
 			Label header = newStyledLabel("Course Schedule", "fonttitle");
 			schedulePane.add(header, 0, 0);
-			
 			
 			//Schedule
 			GridPane scheduleBox = new GridPane();
@@ -369,7 +365,6 @@ public class UserInterface extends Application{
 			
 			actionPane.setPrefWidth((screenSize.getWidth()*(2/3.0)));
 			actionPane.getColumnConstraints().add(constraints);
-
 			
 			//Majors and Minors Pane
 			GridPane curriculumPane = new GridPane();
@@ -389,7 +384,6 @@ public class UserInterface extends Application{
 			curriculumPane.add(curriculumHeader, 0, 0);
 			curriculumPane.add(addCurriculumButton, 1, 0);
 			curriculumPane.add(curriculumScroll, 0, 1);
-			
 			
 			ArrayList<Integer> curriculae = ((Student)Majorizer.getUser()).getAcademicPlan().getDegreeIDs();
 			for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
@@ -416,9 +410,6 @@ public class UserInterface extends Application{
 					
 				});
 			}
-
-			
-			
 			
 			
 			actionPane.add(curriculumPane, 0, 0);
@@ -447,8 +438,6 @@ public class UserInterface extends Application{
 			actionPane.setHgap(10);
 			
 
-			
-			
 			//Search Header Pane
 			GridPane searchHeaderPane = new GridPane();
 			searchHeaderPane.getColumnConstraints().add(constraints);
@@ -854,7 +843,6 @@ public class UserInterface extends Application{
 		}
 		
 		return studentScreen;
-		 
 		 
 */
 	}

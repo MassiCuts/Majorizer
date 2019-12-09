@@ -1,6 +1,6 @@
 -
    courseCode: CS141
-   courseName: Intro to Programming I
+   courseName: Intro to Comp Sci I
    timesOffered:
      - Fall 2014
      - Fall 2015
@@ -19,7 +19,7 @@
    amtReq: 0
 -     
    courseCode: CS142
-   courseName: Intro to Programming II
+   courseName: Into to Comp Sci II
    timesOffered:
      - Spring 2014
      - Spring 2015
@@ -79,7 +79,7 @@
      -  
         requirements:
           - MA211
-          - MA1411
+          - MA141
         amtReq: 1
    amtReq: 2
 -  
@@ -103,7 +103,7 @@
    amtReq: 0
 -  
    courseCode: MA141
-   courseName: Calc I
+   courseName: Calculus I
    timesOffered:
      - Fall 2014
      - Fall 2015
@@ -118,5 +118,746 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CM131
+   courseName: General Chemistry I
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: FY100
+   courseName: First Year Seminar
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: MA132
+   courseName: Calculus II
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: PH131
+   courseName: Physics I
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: UNIV190
+   courseName: The Clarkson Seminar
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CM132
+   courseName: General Chemistry II
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: ES100
+   courseName: Int to Eng Use of Computer
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: ES110
+   courseName: Eng and Society
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: MA232
+   courseName: Elementary Differential Eq
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: PH132
+   courseName: Physics II
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE221
+   courseName: Linear Circuits
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: ES250
+   courseName: Electrical Science
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: ES260
+   courseName: Materials Science & Eng I
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: MA231
+   courseName: Calculus III
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: STAT383
+   courseName: Probability & Statistics
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE211
+   courseName: ECE Laboratory I
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE264
+   courseName: Intro to Digital Design
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE361
+   courseName: Fundamentals of Software Eng
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: MA339
+   courseName: Applied Linear Algebra
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS242
+   courseName: Adv Prog Concepts in Java
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS341
+   courseName: Programming Languages
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS345
+   courseName: Automata Theory & Form Lang
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE321
+   courseName: Systems and Signals Processing
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE363
+   courseName: Software Comp & Generic Prog
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE365
+   courseName: Adv Digital Circuit Design
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS445
+   courseName: Compiler Construction
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS469
+   courseName: Quantum Info & Computation
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE316
+   courseName: Computer Eng Junior Lab
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE360
+   courseName: Microprocessors
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE462
+   courseName: Software System Architecture
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS350
+   courseName: Software Design & Developement
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS499
+   courseName: Professional Experience
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE341
+   courseName: Microelectronics
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE416
+   courseName: Computer Eng Senior Lab
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE464
+   courseName: Digital Systems Design
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: EE466
+   courseName: Computer Architecture
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS444
+   courseName: Operating systems
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS449
+   courseName: Computational Learning
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements: []
+   amtReq: 0
+-  
+   courseCode: CS451
+   courseName: Artificial Intelligence
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
    requirements: []
    amtReq: 0
