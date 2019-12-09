@@ -38,9 +38,9 @@ public class Main {
 		}
 		
 //		testDatabase();
-		startUI(args);
+		//startUI(args);
 //		testRequiredCourses();
-//		testSchedulerGraph();
+		testSchedulerGraph();
 //		testCourseInfoLoad();
 	}
 	
@@ -119,6 +119,7 @@ public class Main {
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
 		System.out.println("Parsed the second graph");
 		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		System.out.println(CSRequirementsGraph.getAsGraphVis());
 		System.out.println("merged");
 	}
 	
