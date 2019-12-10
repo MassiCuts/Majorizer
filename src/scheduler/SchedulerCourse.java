@@ -9,7 +9,6 @@ import framework.Course;
 
 public class SchedulerCourse extends SchedulerNode {
 	protected int availability, taken, scheduled, added, dropped;
-	
 	public SchedulerCourse(SchedulerNode node) {
 		this.name = node.name;
 		if (node.courseinfo.isEmpty()) {
@@ -50,11 +49,10 @@ public class SchedulerCourse extends SchedulerNode {
 		return available;
 	}
 	
-	public boolean isDropped(int semester) {return this.dropped == semester;}
+	public boolean isDropped(int semester) {return this.courseinfo.get(CourseInfo.DROPPED)== semester;}
 	
-	public void addToSemester(int semester_num) {this.added = semester_num;}
-	public void removeFromSemester(int semester_num) {this.dropped = semester_num;}
-	
+	public void addToSemester(int semester_num) {this.courseinfo.put(CourseInfo.ADDED, semester_num); }
+	public void removeFromSemester(int semester_num) {this.courseinfo.put(CourseInfo.DROPPED, semester_num);}	
 	public SchedulerNode getChild() {
 		return this.children.get(0);	//Only one child because this is a course
 	}

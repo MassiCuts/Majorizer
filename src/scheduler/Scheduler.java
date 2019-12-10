@@ -29,7 +29,7 @@ public class Scheduler {
 		}
 		return list;
 	}
-	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops) throws Exception {
+	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops, ArrayList<SchedulerCourse> taken_courses) throws Exception {
 		
 		//return makeList(new String[][] {new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
 		SchedulerCourse course = null;
@@ -38,12 +38,20 @@ public class Scheduler {
 			sched.add(new ArrayList<String>());
 			if (i < current_semester) {
 				//TODO: Add all the classes taken during this semester then skip
+				for(SchedulerCourse c: taken_courses) {
+					if(c.taken == i) {
+						graph.setCourseAttribute(c.name, CourseInfo.TAKEN, i);
+						sched.get(i).add(c.name);
+					}
+				}
+				continue;
 			}
 			int added_this_semester=0;
 			for(SchedulerCourse c : requested_adds) {
 				if (c.added == i) {
 					if(!c.isAvailable(i)) {throw new Exception("this course isn't available for the semester it was added to");}
 					sched.get(i).add(c.name);
+					graph.setCourseAttribute(c.name, CourseInfo.SCHEDULED, i);
 					continue;
 				}
 			}
@@ -88,6 +96,11 @@ public class Scheduler {
 				node.courseinfo.put(CourseInfo.SCHEDULED, i);
 				sched.get(i).add(node.name);
 				System.out.println("Added course" + node.name + " to semester " + i);
+				graph.setCourseAttribute(node.name, CourseInfo.SCHEDULED, i);
+			}
+			for (String name : sched.get(i)) {
+				SchedulerCourse c = graph.getCourse(name);
+				System.out.println("Course: " + c.name + "Scheduled for semester: " + c.courseinfo.get(CourseInfo.SCHEDULED));
 			}
 			if (graph.root.isSatisfied(i)) {break;}
 		}
