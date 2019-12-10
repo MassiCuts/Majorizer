@@ -85,7 +85,12 @@ public class SchedulerNode {
 				return true;
 			} else if (taken >= 0) {
 				return true;
-			} else {return false;}
+			} else {
+				//if (this.getChildren().get(0).isSatisfied(semester_num)) {
+					//System.out.println("Not satisfied as of semester" + semester_num + ": " + this.name);
+				//}
+				return false;
+			}
 		}
 	}
 	

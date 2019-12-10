@@ -37,7 +37,7 @@ public class Main {
 		}
 		
 //		testDatabase();
-		startUI(args);
+//		startUI(args);
 //		testRequiredCourses();
 		SchedulerGraph graph = testSchedulerGraph();
 		testScheduler(graph);
@@ -108,11 +108,12 @@ public class Main {
 		Scheduler scheduler = new Scheduler();
 		ArrayList<SchedulerCourse> added = new ArrayList<SchedulerCourse>();
 		ArrayList<SchedulerCourse> dropped = new ArrayList<SchedulerCourse>();
+		ArrayList<SchedulerCourse> taken = new ArrayList<SchedulerCourse>();
 		System.out.println(graph.root.getName());
 		scheduler.setNumCourses(5);
-		scheduler.setNumSemesters(10);
+		scheduler.setNumSemesters(50);
 		try{
-			System.out.println(scheduler.schedule(graph, added, dropped));
+			System.out.println(scheduler.schedule(graph, added, dropped, taken));
 			System.out.print("Finished Schedule");
 		} catch (Exception e) {
 			System.out.println("Failed to create schedule because" + e);
@@ -125,9 +126,9 @@ public class Main {
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-		//CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
-		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
-		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
+		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		//Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
+		//SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
 		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
 		System.out.println(CSRequirementsGraph.getAsGraphVis());
 		System.out.println("merged");

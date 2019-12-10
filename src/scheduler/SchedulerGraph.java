@@ -109,8 +109,24 @@ public class SchedulerGraph {
 		SchedulerNode newRequiredPath = traverseRequiredCourses(sgraph.root);
 		//The root now requires that you take all of the old requirements in addition to all the new requirements
 		root = new SchedulerGate(2, 2, new ArrayList<SchedulerNode>(Arrays.asList(root, newRequiredPath)));
+	}
+	
+	public void setCourseAttribute(String course_code, CourseInfo attribute, int value) throws Exception {
+		if (this.all_course_string_map.containsValue(null)) {
+			throw new Exception("AAAAAAAAA");
+		}
+		SchedulerCourse c = this.all_course_string_map.get(course_code);
 		
-		
+		System.out.println(this.all_course_string_map);
+		System.out.println(c);
+		System.out.println(c.name);
+		System.out.println(c.courseinfo);
+		c.courseinfo.get(attribute);
+		c.courseinfo.put(attribute, value);
+	}
+	
+	public SchedulerCourse getCourse(String course_code) {
+		return this.all_course_string_map.get(course_code);
 	}
 	
 	public String printElements(SchedulerNode node) {
