@@ -166,8 +166,8 @@
 
 
 -
-  name: Test Science Major
-  type: Major
+  name: Test Science Minor
+  type: Minor
   amtReq: 1
   requirements:
     -  name: chem bio
