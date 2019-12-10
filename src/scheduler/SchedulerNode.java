@@ -57,7 +57,7 @@ public class SchedulerNode {
 		String classname = this.getClass().getSimpleName();
 		return classname.contentEquals("SchedulerGate");}//this.isgate;}
 	
-	public boolean isSatisfied() {
+	public boolean isSatisfied(int semester_num) {
 		/*
 		 * Return True:
 		 * 	If it is a gate and k out of the n children are satisfied
@@ -69,7 +69,7 @@ public class SchedulerNode {
 		if (isGate()) {
 			int counter = 0;
 			for (int i = 0; i < children.size(); ++i) {
-				if (children.get(i).isSatisfied()) {
+				if (children.get(i).isSatisfied(semester_num)) {
 					++counter;
 				}
 			}
@@ -77,11 +77,13 @@ public class SchedulerNode {
 				return true;
 			} else { return false;}
 		} else {
+			int scheduled = this.courseinfo.get(CourseInfo.SCHEDULED);
+			int taken = this.courseinfo.get(CourseInfo.TAKEN);
 			if (isNull()) {
 				return true;
-			} else if (this.courseinfo.get(CourseInfo.SCHEDULED) >= 0){
+			} else if (scheduled >= 0 && scheduled <= semester_num){
 				return true;
-			} else if (this.courseinfo.get(CourseInfo.TAKEN) >= 0) {
+			} else if (taken >= 0) {
 				return true;
 			} else {return false;}
 		}
@@ -91,30 +93,30 @@ public class SchedulerNode {
 		return (this.name==null && !isGate());
 	}
 	
-	public float getPathLength() throws Exception {
-		if (isSatisfied()) {
+	public float getPathLength(int semester_num) throws Exception {
+		if (isSatisfied(semester_num)) {
 			return 0;
 		} else if (this.isGate()) {
-			return 1 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE).getPathLength();
+			return 1 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE, semester_num).getPathLength(semester_num);
 		} else {
-			return 1 + ((SchedulerCourse) this).getChild().getPathLength();
+			return 1 + ((SchedulerCourse) this).getChild().getPathLength(semester_num);
 		}
 		
 	}
 	
-	public float getCost() throws Exception {
+	public float getCost(int semester_num) throws Exception {
 		float overlap = this.getOverlapScore();
 		if (isNull()) {
 			return 0;
 		}else if(this.isGate()) {
 			SchedulerGate gate = (SchedulerGate) this;
 			float cost = 0;
-			for (int idx : gate.getChoices(Integer.MAX_VALUE)) {
-				cost += gate.getChild(idx).getCost();
+			for (int idx : gate.getChoices(Integer.MAX_VALUE, semester_num)) {
+				cost += gate.getChild(idx).getCost(semester_num);
 			}
 			return cost / overlap;
 		} else {
-			return 1 + ((SchedulerCourse) this).getChild().getCost();
+			return 1 + ((SchedulerCourse) this).getChild().getCost(semester_num);
 		}
 	}
 	

@@ -65,4 +65,9 @@ public class SchedulerCourse extends SchedulerNode {
 		}
 		return false;
 	}
+	
+	public boolean canBeScheduled(int semester_num) {
+		SchedulerNode child_node = this.getChild();
+		return  child_node.isSatisfied(semester_num-1);
+	}
 };
