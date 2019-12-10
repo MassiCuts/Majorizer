@@ -129,6 +129,7 @@ public class Main {
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
+		CERequirementsGraph.mergeGraphs(CSRequirementsGraph);
 		System.out.println(CSRequirementsGraph.getAsGraphVis());
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Press any key to continue");
