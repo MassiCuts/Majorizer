@@ -317,7 +317,7 @@ public class DatabaseManager {
 		ArrayList<Course> courses = new ArrayList<>();
 		ArrayList<Map<String, Object>> courseResults = new ArrayList<>();
 		courseResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
-			String retrievedCourse 		= (String) m.get("curriculumName");
+			String retrievedCourse 		= (String) m.get("courseName");
 			String retrievedCourseCode 	= (String) m.get("courseCode");
 			if(retrievedCourse.contains(searchString) || retrievedCourseCode.contains(searchString)) 
 				return true;
