@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 import database.DatabaseTable;
@@ -37,10 +38,13 @@ public class Main {
 		}
 		
 //		testDatabase();
-		startUI(args);
 //		testRequiredCourses();
-		SchedulerGraph graph = testSchedulerGraph();
-		testScheduler(graph);
+		if(args[2].equals("UI")) {
+			startUI(args);
+		}else {
+			SchedulerGraph graph = testSchedulerGraph();
+			testScheduler(graph);
+		}
 
 //		testCourseInfoLoad();
 	}
@@ -125,14 +129,14 @@ public class Main {
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-		//CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
-		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
-		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
-		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
 		System.out.println(CSRequirementsGraph.getAsGraphVis());
-		System.out.println("merged");
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Press any key to continue");
+		String i = sc.next();
+		/* will wait for input then assign it to the variable,
+		 * in this case it will wait for an int.
+		 */
 		return CSRequirementsGraph;
-		//return ScienceRequirementsGraph;
 	}
 	
 //	public static void testCourseInfoLoad(){
