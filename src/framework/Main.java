@@ -10,8 +10,6 @@ import java.util.Set;
 
 import database.DatabaseTable;
 import gui.UserInterface;
-import javafx.application.Application;
-import javafx.stage.Stage;
 import scheduler.Scheduler;
 import scheduler.SchedulerGraph;
 import scheduler.SchedulerCourse;
@@ -40,7 +38,7 @@ public class Main {
 		
 		testDatabase();
 //		startUI(args);
-		testRequiredCourses();
+//		testRequiredCourses();
 		SchedulerGraph graph = testSchedulerGraph();
 		testScheduler(graph);
 
@@ -67,9 +65,9 @@ public class Main {
 		}
 	}
 	
-	//public static void startUI(String args[])	{
-	//	UserInterface.callLaunch(args);
-	//}
+	public static void startUI(String args[])	{
+		UserInterface.callLaunch(args);
+	}
 	
 	public static void testDatabase() {
 //		 Print the database contents
@@ -78,37 +76,33 @@ public class Main {
 			DatabaseManager.printTable(table);
 			System.out.println();
 		}
+//		
+//		System.out.println("Getting student with username: cutugnma");
+//		Student student = DatabaseManager.getStudent("cutugnma");
+//		AcademicPlan pl = student.getAcademicPlan();
+//		ArrayList<Integer> degreeIDs = pl.getDegreeIDs();
+//		System.out.println("DegreeIDs:");
+//		for(Integer ids : degreeIDs)
+//			System.out.println("  ->  " + ids);
+//		System.out.println();
+//		Map<String, ArrayList<Integer>> courseIDMap = pl.getSelectedCourseIDs();
+//		Set<String> semesterSet = courseIDMap.keySet();
+//		System.out.println("Course setup: ");
+//		for(String semester : semesterSet) {
+//			System.out.println("  ->  " + semester);
+//			ArrayList<Integer> selectedCourseIDs = courseIDMap.get(semester);
+//			for(Integer courseID : selectedCourseIDs) {
+//				String courseCode = DatabaseManager.getCourse(courseID).getCourseCode();
+//				System.out.println("  --->  " + courseCode);
+//			}
+//		}
 		
-		System.out.println("Getting student with username: cutugnma");
-		Student student = DatabaseManager.getStudent("cutugnma");
-		AcademicPlan pl = student.getAcademicPlan();
-		ArrayList<Integer> degreeIDs = pl.getDegreeIDs();
-		System.out.println("DegreeIDs:");
-		for(Integer ids : degreeIDs)
-			System.out.println("  ->  " + ids);
-		System.out.println();
-		Map<String, ArrayList<Integer>> courseIDMap = pl.getSelectedCourseIDs();
-		Set<String> semesterSet = courseIDMap.keySet();
-		System.out.println("Course setup: ");
-		for(String semester : semesterSet) {
-			System.out.println("  ->  " + semester);
-			ArrayList<Integer> selectedCourseIDs = courseIDMap.get(semester);
-			for(Integer courseID : selectedCourseIDs) {
-				String courseCode = DatabaseManager.getCourse(courseID).getCourseCode();
-				System.out.println("  --->  " + courseCode);
-			}
-		}
-		
+		Course c = DatabaseManager.getCourse("PH131");		
+		if(c != null)
+			c.getRequiredCourses().printCourseCodes();
 	}
 	
-	public static void testRequiredCourses() {
-		try {
-			File f = ResourceLoader.getYAMLFile("computer_science_major.yaml");
-			RequiredCourses required = RequiredCourses.load(f);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	
 	public static void testScheduler(SchedulerGraph graph) throws Exception {
 		Scheduler scheduler = new Scheduler();

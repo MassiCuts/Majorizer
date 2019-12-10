@@ -744,6 +744,8 @@ public class DatabaseManager {
 		ArrayList<Map<String, Object>> storedadvisorStudentsMapsMaps = loadMaps(ADVISOR_STUDENTS_TABLE, "advisorID", advisor.getUserID());
 		saveIdenticalMaps(ADVISOR_STUDENTS_TABLE, advisorStudentsMaps, storedadvisorStudentsMapsMaps, "advisorID", "studentID");
 		
+		
+		
 		return true;
 	}
 	
@@ -782,12 +784,13 @@ public class DatabaseManager {
 		Map<String, Object> coursePreRec = coursePreReqToMap(course);
 		ArrayList<Map<String, Object>> storedCourseRecsMaps = loadMaps(COURSE_PREREC_TABLE, "preRecID", course.getRequiredCourses().getRequiredCourseID());
 		saveUniqueMap(COURSE_PREREC_TABLE, coursePreRec, storedCourseRecsMaps, "preRecID");
-		
+		int preRecID = (int) coursePreRec.get("preRecID");
+		course.getRequiredCourses().setRequiredCoursesID(preRecID);
 
 		MapMap<String, Object> nodeDependacies = new MapMap<>();
 		MapArrayMap<String, Object> branchDependacies = new MapArrayMap<>();
 		Two<ArrayList<Map<String, Object>>> coursePreRecs = coursePreReqToMaps(course, nodeDependacies, branchDependacies);
-		Two<ArrayList<Map<String, Object>>> storedPreRecs = loadTreeMap(PREREC_TABLE, "preRecID", PREREC_COURSE_SELECTION_TABLE, "preRecCourseID", PRE_REC_TYPE_LIST, course.getRequiredCourses().getRequiredCourseID());
+		Two<ArrayList<Map<String, Object>>> storedPreRecs = loadTreeMap(PREREC_TABLE, "preRecID", PREREC_COURSE_SELECTION_TABLE, "preRecCourseID", PRE_REC_TYPE_LIST, preRecID);
 		saveTreeMapNodes(PREREC_TABLE, new Two<>(coursePreRecs.first, storedPreRecs.first), nodeDependacies, branchDependacies, "preRecID", "preRecCourseID");
 		saveIdenticalMaps(PREREC_COURSE_SELECTION_TABLE, coursePreRecs.second, storedPreRecs.second, "preRecID", "type", "preRecCourseID");
 		RequiredCourses rc = getCoursePreRecs(course.getCourseID());

@@ -1,16 +1,12 @@
 package framework;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import org.yaml.snakeyaml.Yaml;
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 
 public class RequiredCourses {
 	
@@ -19,40 +15,40 @@ public class RequiredCourses {
 	private String requiredCourseString;
 	
 	
-	public static RequiredCourses load(File yamlFile) {
-		final String ROOT_NAME = "grad"; // It is assumed that this will always be the root of the requirements graph
-		
-		Yaml yaml = new Yaml(); // Create the parser
-		try (
-			InputStream is = new FileInputStream(yamlFile);	
-		) {
-			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(is);// Parse the YAML representation
-			RequiredCourseNode root = traverseRequirements(specification, ROOT_NAME);
-			return new RequiredCourses(root);
-		} catch (IOException e) {
-			System.out.println(yamlFile.getAbsolutePath() + " could not be loaded or parsed correctly");
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	
-	private static RequiredCourseNode traverseRequirements(LinkedHashMap<String, LinkedHashMap> description, String tag){
-		if(description.containsKey(tag)) {//This means it must be a course, as they don't have requirements
-			LinkedHashMap newNode = (LinkedHashMap) description.get(tag);// Get the new node from the description
-			ArrayList<String> requirementNames = (ArrayList) newNode.get("requirements");// Get all the names of things it depends on
-			int numRequired = (int) newNode.get("num");
-			ArrayList<RequiredCourseNode> createdRequirements = new ArrayList<RequiredCourseNode>();
-			for (String rec : requirementNames) { 
-	            createdRequirements.add(traverseRequirements(description, rec));// Add all of the requirements recursively
-			}
-			return new RequiredCourseGroup(numRequired, createdRequirements);
-		} else {
-			Course c = DatabaseManager.getCourse(tag);
-			return new RequiredCourse(c.getCourseID());		
-		}
-		
-    } 
+//	public static RequiredCourses load(File yamlFile) {
+//		final String ROOT_NAME = "grad"; // It is assumed that this will always be the root of the requirements graph
+//		
+//		Yaml yaml = new Yaml(); // Create the parser
+//		try (
+//			InputStream is = new FileInputStream(yamlFile);	
+//		) {
+//			LinkedHashMap<String, LinkedHashMap> specification = yaml.load(is);// Parse the YAML representation
+//			RequiredCourseNode root = traverseRequirements(specification, ROOT_NAME);
+//			return new RequiredCourses(root);
+//		} catch (IOException e) {
+//			System.out.println(yamlFile.getAbsolutePath() + " could not be loaded or parsed correctly");
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
+//	
+//	
+//	private static RequiredCourseNode traverseRequirements(LinkedHashMap<String, LinkedHashMap> description, String tag){
+//		if(description.containsKey(tag)) {//This means it must be a course, as they don't have requirements
+//			LinkedHashMap newNode = (LinkedHashMap) description.get(tag);// Get the new node from the description
+//			ArrayList<String> requirementNames = (ArrayList) newNode.get("requirements");// Get all the names of things it depends on
+//			int numRequired = (int) newNode.get("num");
+//			ArrayList<RequiredCourseNode> createdRequirements = new ArrayList<RequiredCourseNode>();
+//			for (String rec : requirementNames) { 
+//	            createdRequirements.add(traverseRequirements(description, rec));// Add all of the requirements recursively
+//			}
+//			return new RequiredCourseGroup(numRequired, createdRequirements);
+//		} else {
+//			Course c = DatabaseManager.getCourse(tag);
+//			return new RequiredCourse(c.getCourseID());		
+//		}
+//		
+//    } 
 	
 	// TraverseRequirements is assumed to be called first 
 	// I'm not sure it makes sense to encode the prerequisites here
@@ -80,6 +76,10 @@ public class RequiredCourses {
 	public RequiredCourses(int requiredCourseID, RequiredCourseNode root) {
 		this.root = root;
 		this.requiredCoursesID = requiredCourseID;
+	}
+	
+	public void setRequiredCoursesID(int id) {
+		this.requiredCoursesID = id;
 	}
 	
 	public int getRequiredCourseID() {
@@ -116,6 +116,41 @@ public class RequiredCourses {
 	public int hashCode() {
 		return Objects.hash(root);
 	}
+	
+	public void printCourseCodes() {
+		print((id) -> {
+			Course c = DatabaseManager.getCourse(id);
+			if(c != null)
+				return c.getCourseCode();
+			return DatabaseManager.NULL_ENTRY_STRING;
+		});
+	}
+	
+	public void print(Function<Integer, String> courseIDToString) {
+		if(hasRequirements())
+			print(root, courseIDToString, 0);
+	}
+	
+	private static void print(RequiredCourseNode node,  Function<Integer, String> courseIDToString, int tabOffset) {
+		char[] tabList = new char[tabOffset];
+		for(int i = 0; i < tabOffset; i++)
+			tabList[i] = '\t';
+		String tabs = new String(tabList);
+		
+		if(node instanceof RequiredCourseGroup) {
+			RequiredCourseGroup courseGroup = (RequiredCourseGroup) node;
+			System.out.println(tabs + "*");
+			for(RequiredCourseNode child : courseGroup)
+				print(child, courseIDToString, tabOffset + 1);			
+		} else {
+			RequiredCourse course = (RequiredCourse) node;
+			String value = courseIDToString.apply(course.getNodeID());
+			System.out.println(tabs + value);
+		}
+		
+	}
+	
+	
 	
 	// nested classes:
 	

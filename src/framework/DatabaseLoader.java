@@ -143,13 +143,16 @@ public class DatabaseLoader {
 		ArrayList<String> timesOffered = (ArrayList<String>) map.get("timesOffered");
 		RequiredCourseNode root = loadPreRecs(map);
 		RequiredCourses requiredCourses = new RequiredCourses(root);
-		
+
 		int id = DatabaseManager.REQUEST_NEW_ID;
 		Course storedCourse = DatabaseManager.getCourse(courseCode);
 		if(storedCourse != null)
 			id = storedCourse.getCourseID();
 		
 		Course course = new Course(id, courseCode, courseName, timesOffered, requiredCourses);
+		if(courseCode.equals("PH131")) {
+			System.out.println("Here");
+		}
 		DatabaseManager.saveCourse(course);
 	}
 	
