@@ -91,8 +91,8 @@ public class SchedulerNode {
 		return (this.name==null && !isGate());
 	}
 	
-	public float getPathLength() {
-		if (isNull()) {
+	public float getPathLength() throws Exception {
+		if (isSatisfied()) {
 			return 0;
 		} else if (this.isGate()) {
 			return 1 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE).getPathLength();
@@ -102,7 +102,7 @@ public class SchedulerNode {
 		
 	}
 	
-	public float getCost() {
+	public float getCost() throws Exception {
 		float overlap = this.getOverlapScore();
 		if (isNull()) {
 			return 0;

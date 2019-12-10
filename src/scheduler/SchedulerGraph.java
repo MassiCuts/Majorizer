@@ -39,9 +39,9 @@ public class SchedulerGraph {
 	
 	public SchedulerGraph(RequiredCourses curriculum) {
 		System.out.println("Creating a scheduler graph from a curriculum");
-		System.out.println("Root node:" + curriculum.getRootCourseNode());
+		//System.out.println("Root node:" + curriculum.getRootCourseNode());
 		root = traverseRequiredCourses(curriculum.getRootCourseNode());
-		System.out.println(root);
+		//System.out.println(root);
 	}
 	
 	private SchedulerNode traverseRequiredCourses(RequiredCourseNode subCurriculum) {
@@ -61,20 +61,20 @@ public class SchedulerGraph {
 			}
 			return gatenode;
 		} else {
-			System.out.println();
 			int course_ID = ((RequiredCourse)subCurriculum).getNodeID();// This really shouldn't be adding the same course twice
 			SchedulerCourse newCourse;
 			if(all_courses_int_map.containsKey(course_ID)) {
 				newCourse = all_courses_int_map.get(course_ID);// This really shouldn't be adding the same course twice
 			}else {
 				Course course = DatabaseManager.getCourse(((RequiredCourse)subCurriculum).getNodeID());// This really shouldn't be adding the same course twice
-				System.out.println("Course name" + course);
+				System.out.println("course is " + course);
 				newCourse = new SchedulerCourse(course);
 				newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
 				System.out.println(newCourse);
 				this.all_courses_int_map.put(course_ID, newCourse);//For easy access later
 				this.all_course_string_map.put(course.getCourseCode(), newCourse);
 				this.all_courses.add(newCourse);
+				System.out.println(course_ID + ":" + course.getCourseCode());
 			}
 			return newCourse;
 		}
@@ -95,10 +95,8 @@ public class SchedulerGraph {
 			return newGate;
 		} else {
 			if(this.all_course_string_map.containsKey(subCurriculum.name)){
-				System.out.println(subCurriculum.name + " is a duplicate course");
 				return this.all_course_string_map.get(subCurriculum.name);// This is the course in the original tree
 			}else {
-				System.out.println(subCurriculum.name + " is not in the set of keys: " + this.all_course_string_map.keySet());
 				return subCurriculum;// This is the new course
 			}
 		}
@@ -115,4 +113,38 @@ public class SchedulerGraph {
 		
 	}
 	
+	public String printElements(SchedulerNode node) {
+		// If it is a group, you return a course group, which will involve a recursive call to create it
+		if(node instanceof SchedulerCourse) {
+			String output_string = "";
+			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
+			for( SchedulerNode c : node.children){
+				// Add the edge from parent to child
+				if(((SchedulerGate)c).required != 0) { // Do not visualize terminal gates with no requirements
+					output_string += node.name.replaceAll("\\s+","") + "->" + c.name.replaceAll("\\s+","") + "\n";// The replace all remove spaces
+					output_string += printElements(c);// Recursive call
+				}
+			}
+			return output_string;
+		}else {
+			String output_string = "";
+			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
+			for( SchedulerNode c : node.children){
+				// Add the edge from parent to child
+				output_string += node.name.replaceAll("\\s+","") + "->" + c.name.replaceAll("\\s+","") + "\n";// The replace all remove spaces
+				output_string += printElements(c);// Recursive call
+				// Add the recursive call
+			}
+			return output_string;
+		}
+	}
+	
+	public String getAsGraphVis() {
+		return "Go to https://dreampuf.github.io/GraphvizOnline to visualize\n"
+				+ "digraph G {\n"  
+				+ "ROOT[label=< <B>ROOT NODE</B>>]\n" 
+				+ "ROOT -> " + root.name.replaceAll("\\s+", "")+ "\n" 
+				+ this.printElements(root)  
+				+ "}";
+	}
 }

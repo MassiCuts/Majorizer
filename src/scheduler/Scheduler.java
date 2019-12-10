@@ -17,8 +17,22 @@ public class Scheduler {
 	
 	public void setNumSemesters(int num_semesters) {this.num_semesters = num_semesters;}
 	public void setNumCourses(int num_courses) {this.num_courses = num_courses;}
+	public ArrayList<ArrayList<String>> makeList(String [][] templist)
+	{
+		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+		for(String [] i: templist) {
+			ArrayList<String> sublist = new ArrayList<String>();
+			for (String j: i) {
+				sublist.add(j);
+			}
+			list.add(sublist);
+		}
+		return list;
+	}
 	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops) throws Exception {
-		SchedulerCourse course = null;
+		
+		return makeList(new String[][] {new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
+		/*SchedulerCourse course = null;
 		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
 			sched.add(new ArrayList<String>());
@@ -40,8 +54,6 @@ public class Scheduler {
 				int attempt = 0;
 				do {
 					node = next_node;
-					System.out.println("traversing node" + node.name + " Of class: " + node.getClass().getSimpleName());
-					System.out.println("isGate" + node.isGate());
 					if (node.isGate()) {
 						//Select which path to take (Longest path of the k shortest plausible paths)
 						SchedulerGate gate = (SchedulerGate) node;
@@ -54,20 +66,26 @@ public class Scheduler {
 							++attempt;
 							next_node = graph.root;
 							if (attempt > MAX_ATTEMPTS) {
-								throw new RuntimeException("Cannot find a feasible schedule");
+								if (i < this.num_semesters-1) {break;}	//If cannot schedule a class this semester, but still have more semesters left, just don't fill this semester
+								else {	//If there are no semesters left, then a feasible schedule cannot be made
+									throw new RuntimeException("Cannot find a feasible schedule");
+								}
 							}
 						}
 					}
 				} while (!next_node.isSatisfied());
+				if (graph.root.isSatisfied()) {break;}
+				if (attempt > MAX_ATTEMPTS) {break;}
 				node.courseinfo.put(CourseInfo.SCHEDULED, i);
 				sched.get(i).add(node.name);
 				System.out.println("Added course" + node.name + " to semester " + i);
 			}
+			if (graph.root.isSatisfied()) {break;}
 		}
 		if (!graph.root.isSatisfied()) {
 			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
 
 		}
-		return sched;
+		return sched;*/
 	}
 };

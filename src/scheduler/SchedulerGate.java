@@ -1,5 +1,6 @@
 package scheduler;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Random;
 
 public class SchedulerGate extends SchedulerNode {
@@ -30,6 +31,9 @@ public class SchedulerGate extends SchedulerNode {
 			System.out.println("chilldren are null");
 		}
 		this.children = children;
+		this.gateinfo = new Hashtable<GateInfo, Integer>();// Otherwise you'll get an error when inserting
+		this.gateinfo.put(GateInfo.OPTIONS, this.options);
+		this.gateinfo.put(GateInfo.REQUIRED, this.required);
 	}
 
 	public SchedulerGate(int options, int required) {
@@ -40,7 +44,7 @@ public class SchedulerGate extends SchedulerNode {
 		this.parents  = new ArrayList<SchedulerNode>();
 	}
 	
-	public ArrayList<Float> getPathLengths() {
+	public ArrayList<Float> getPathLengths() throws Exception {
 		assert(selfcheck());
 		ArrayList<Float> scores = new ArrayList<Float>();
 		for (int i = 0; i < this.children.size(); ++i) {
@@ -49,11 +53,11 @@ public class SchedulerGate extends SchedulerNode {
 		return scores;
 	}
 	
-	public float getSinglePathLength() {
+	public float getSinglePathLength() throws Exception {
 		return this.getBestChild(Integer.MAX_VALUE).getPathLength();
 	}
 	
-	public ArrayList<Float> getCosts() {
+	public ArrayList<Float> getCosts() throws Exception {
 		assert(selfcheck());
 		ArrayList<Float> scores = new ArrayList<Float>();
 		for (SchedulerNode node : this.children) {
@@ -62,7 +66,7 @@ public class SchedulerGate extends SchedulerNode {
 		return scores;
 	}
 	
-	public float getCost() {
+	public float getCost() throws Exception {
 		/*
 		 * Returns the sum of the k smallest price scores
 		 */
@@ -75,17 +79,15 @@ public class SchedulerGate extends SchedulerNode {
 		return sum;
 	}
 	
-	public SchedulerNode getBestChild(int semesters_remaining) {
+	public SchedulerNode getBestChild(int semesters_remaining) throws Exception {
 		assert(selfcheck());
-		System.out.println("Gate name: " + this.name);
-		System.out.println("Selecting best child from " + this.required + " required courses out of " + this.options + " options");
 		ArrayList<Integer> choices = this.getChoices( semesters_remaining);
 		int index = this.getLongestChoice( choices, 0, semesters_remaining);
 		SchedulerNode next_node = this.getChild(index);
 		return next_node;
 	}
 	
-	public SchedulerNode getGoodChild(int semesters_remaining) {
+	public SchedulerNode getGoodChild(int semesters_remaining) throws Exception {
 		assert(selfcheck());
 		ArrayList<Integer> choices = this.getChoices(semesters_remaining);
 		int index = this.getLongestChoice(choices, 1, semesters_remaining);
@@ -97,7 +99,7 @@ public class SchedulerGate extends SchedulerNode {
 		return this.children.get(index);
 	}
 	
-	protected ArrayList<Integer> getChoices(int semesters_remaining) {
+	protected ArrayList<Integer> getChoices(int semesters_remaining) throws Exception {
 		/*
 		 * Get the k smallest prices that are feasible to complete, given the semesters left
 		 * Returns size k list of ints representing indexes of the k smallest scores
@@ -115,13 +117,16 @@ public class SchedulerGate extends SchedulerNode {
 					min_idx = j;
 				}
 			}
+			if (min_idx == -1) {
+				throw new Exception("No way to satisfy this gate in required remaining semesters");
+			} 
 			choices.add(min_idx);
 			costs.set(min_idx, (float) Integer.MAX_VALUE);
 		}
 		return choices;
 	}
 	
-	private int getLongestChoice( ArrayList<Integer> choices, int attempt, int semesters_remaining) {
+	private int getLongestChoice( ArrayList<Integer> choices, int attempt, int semesters_remaining) throws Exception {
 		/*
 		 * If attempt = 0, get the longest path value
 		 * If attempt != 0, get a random path value unless semesters_remaining = longest_path, in which case you must take longest path

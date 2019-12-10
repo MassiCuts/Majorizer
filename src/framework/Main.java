@@ -43,6 +43,7 @@ public class Main {
 		testRequiredCourses();
 		SchedulerGraph graph = testSchedulerGraph();
 		testScheduler(graph);
+
 //		testCourseInfoLoad();
 	}
 	
@@ -114,24 +115,28 @@ public class Main {
 		ArrayList<SchedulerCourse> added = new ArrayList<SchedulerCourse>();
 		ArrayList<SchedulerCourse> dropped = new ArrayList<SchedulerCourse>();
 		System.out.println(graph.root.getName());
-		//try{
+		try{
 			System.out.println(scheduler.schedule(graph, added, dropped));
-		//} catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("Failed to create schedule because");
-		//	System.out.print(e);
-		//}
+			throw(e);
+		}
 	}
 	
+
 	public static SchedulerGraph testSchedulerGraph(){
 		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
-		System.out.println("Parsed the first graph");
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-		System.out.println("Parsed the second graph");
 		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
+		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
+		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
+		System.out.println(CSRequirementsGraph.getAsGraphVis());
 		System.out.println("merged");
 		return CSRequirementsGraph;
+		//return ScienceRequirementsGraph;
 	}
 	
 //	public static void testCourseInfoLoad(){
