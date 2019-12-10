@@ -11,7 +11,7 @@ public class Scheduler {
 	private int num_courses=6;
 	private int num_semesters=8;
 	private int current_semester=0;
-	static int MAX_ATTEMPTS = 100;
+	static int MAX_ATTEMPTS = 1000;
 	
 	public Scheduler() {}
 	
@@ -67,7 +67,7 @@ public class Scheduler {
 						course = (SchedulerCourse) node;
 						next_node = course.getChild();
 						if (next_node.isSatisfied(i)) {
-							if (!course.isAvailable(i) || course.isDropped(i) || course.canBeScheduled(i)){
+							if (!course.isAvailable(i) || course.isDropped(i) || this.containsString(sched, course.name) || !next_node.isSatisfied(i-1)){
 								++attempt;
 								next_node = graph.root;
 								if (attempt > MAX_ATTEMPTS) {
@@ -76,6 +76,9 @@ public class Scheduler {
 										throw new RuntimeException("Cannot find a feasible schedule");
 									}
 								}
+							} else {
+								System.out.println(next_node.name);
+								System.out.println(sched);
 							}
 						}
 					}
@@ -93,5 +96,12 @@ public class Scheduler {
 
 		}
 		return sched;
+	}
+	
+	private boolean containsString(ArrayList<ArrayList<String>> doublelist, String s){
+		for (ArrayList<String> list: doublelist) {
+			if (list.contains(s)){return true;}
+		}
+		return false;
 	}
 };

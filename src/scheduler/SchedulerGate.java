@@ -156,6 +156,13 @@ public class SchedulerGate extends SchedulerNode {
 				return actual_longest_choice;
 			}
 			int choice_idx = rand.nextInt(choices.size());
+			int attempts = 0;
+			while(this.getChild(choices.get(choice_idx)).getPathLength(semester_num) == 0 && attempts < 1000) {
+				choices.remove(choice_idx);
+				choice_idx = rand.nextInt(choices.size());
+				attempts += 1;
+			}
+			if ( attempts == 1000) {throw new Exception("Dear god why");}
 			return (int) choices.get(choice_idx);
 		}
 	}
