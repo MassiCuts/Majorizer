@@ -70,10 +70,11 @@ public class SchedulerGraph {
 				System.out.println("course is " + course);
 				newCourse = new SchedulerCourse(course);
 				newCourse.addChild(traverseRequiredCourses(course.getRequiredCourses().getRootCourseNode()));
-				//System.out.println(newCourse);
+				System.out.println(newCourse);
 				this.all_courses_int_map.put(course_ID, newCourse);//For easy access later
 				this.all_course_string_map.put(course.getCourseCode(), newCourse);
 				this.all_courses.add(newCourse);
+				System.out.println(course_ID + ":" + course.getCourseCode());
 			}
 			return newCourse;
 		}

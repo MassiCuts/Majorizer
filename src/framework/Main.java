@@ -12,11 +12,12 @@ import database.DatabaseTable;
 import gui.UserInterface;
 import scheduler.Scheduler;
 import scheduler.SchedulerGraph;
+import scheduler.SchedulerCourse;
 import utils.ResourceLoader;
 
 public class Main {
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws Exception {
 		// Describe the command line args
 		System.out.println("Main [database_file [create_database]]\n"
 				+ "Enter arguments on the command line or using Run->Run Configurations->Arguments\n"
@@ -35,11 +36,12 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
-//		testDatabase();
-		startUI(args);
-//		testDatabase();
+		testDatabase();
+//		startUI(args);
 //		testRequiredCourses();
-//		testSchedulerGraph();
+		SchedulerGraph graph = testSchedulerGraph();
+		testScheduler(graph);
+
 //		testCourseInfoLoad();
 	}
 	
@@ -102,21 +104,33 @@ public class Main {
 	
 	
 	
-	public static void testScheduler() {
-		Scheduler scheduler = new Scheduler(null);
+	public static void testScheduler(SchedulerGraph graph) throws Exception {
+		Scheduler scheduler = new Scheduler();
+		ArrayList<SchedulerCourse> added = new ArrayList<SchedulerCourse>();
+		ArrayList<SchedulerCourse> dropped = new ArrayList<SchedulerCourse>();
+		System.out.println(graph.root.getName());
+		try{
+			System.out.println(scheduler.schedule(graph, added, dropped));
+		} catch (Exception e) {
+			System.out.println("Failed to create schedule because");
+			throw(e);
+		}
 	}
 	
-	public static void testSchedulerGraph(){
-//		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
-//		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
-//		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
-//		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-//		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+
+	public static SchedulerGraph testSchedulerGraph(){
+		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
+		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
+		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
+		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
+		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
 		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
 		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
-		System.out.println(ScienceRequirementsGraph.getAsGraphVis());
-		//System.out.println(CSRequirementsGraph.getAsGraphVis());
+		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
+		System.out.println(CSRequirementsGraph.getAsGraphVis());
 		System.out.println("merged");
+		return CSRequirementsGraph;
+		//return ScienceRequirementsGraph;
 	}
 	
 //	public static void testCourseInfoLoad(){

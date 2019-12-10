@@ -12,6 +12,7 @@ public class RequiredCourses {
 	
 	private RequiredCourseNode root = null;
 	private int requiredCoursesID;
+	private String requiredCourseString;
 	
 	
 //	public static RequiredCourses load(File yamlFile) {

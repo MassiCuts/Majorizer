@@ -11,22 +11,28 @@ public class Scheduler {
 	private int num_courses=6;
 	private int num_semesters=8;
 	private int current_semester=0;
-	private SchedulerGraph graph;
 	static int MAX_ATTEMPTS = 100;
 	
-	public Scheduler(SchedulerGraph graph) {
-		this.graph = graph;
-	}
+	public Scheduler() {}
 	
-	public Scheduler(SchedulerGraph graph, int num_courses, int num_semesters) {
-		this.num_courses = num_courses;
-		this.num_semesters = num_semesters;
-		this.graph = graph;
+	public void setNumSemesters(int num_semesters) {this.num_semesters = num_semesters;}
+	public void setNumCourses(int num_courses) {this.num_courses = num_courses;}
+	public ArrayList<ArrayList<String>> makeList(String [][] templist)
+	{
+		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+		for(String [] i: templist) {
+			ArrayList<String> sublist = new ArrayList<String>();
+			for (String j: i) {
+				sublist.add(j);
+			}
+			list.add(sublist);
+		}
+		return list;
 	}
-	
-
 	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops) throws Exception {
-		SchedulerCourse course = null;
+		
+		return makeList(new String[][] {new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
+		/*SchedulerCourse course = null;
 		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
 			sched.add(new ArrayList<String>());
@@ -43,8 +49,8 @@ public class Scheduler {
 			}
 			
 			for(int j = 0; j < this.num_courses-added_this_semester; ++j) {
-				SchedulerNode node = this.graph.root;
-				SchedulerNode next_node = this.graph.root;
+				SchedulerNode node = graph.root;
+				SchedulerNode next_node = graph.root;
 				int attempt = 0;
 				do {
 					node = next_node;
@@ -58,21 +64,28 @@ public class Scheduler {
 						next_node = course.getChild();
 						if (!course.isAvailable(i) || course.isDropped(i)){
 							++attempt;
-							next_node = this.graph.root;
+							next_node = graph.root;
 							if (attempt > MAX_ATTEMPTS) {
-								throw new RuntimeException("Your stupid program cant find a feasible schedule you dumb fuck");
+								if (i < this.num_semesters-1) {break;}	//If cannot schedule a class this semester, but still have more semesters left, just don't fill this semester
+								else {	//If there are no semesters left, then a feasible schedule cannot be made
+									throw new RuntimeException("Cannot find a feasible schedule");
+								}
 							}
 						}
 					}
 				} while (!next_node.isSatisfied());
+				if (graph.root.isSatisfied()) {break;}
+				if (attempt > MAX_ATTEMPTS) {break;}
 				node.courseinfo.put(CourseInfo.SCHEDULED, i);
 				sched.get(i).add(node.name);
+				System.out.println("Added course" + node.name + " to semester " + i);
 			}
+			if (graph.root.isSatisfied()) {break;}
 		}
 		if (!graph.root.isSatisfied()) {
 			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
 
 		}
-		return sched;
+		return sched;*/
 	}
 };

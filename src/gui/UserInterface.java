@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-
 import framework.Course;
 import framework.DatabaseManager;
 import framework.Majorizer;
@@ -38,9 +37,16 @@ public class UserInterface extends Application{
 
 	private Scene scene = null;
 	private final GridPane semesters[] = new GridPane[8];
+	private int selectedSemester;
+	
 	private final GridPane currentSelectedSemesterTab = newActionGrid();
 	Dimension screenSize;
 	boolean isAuthenticated = false;
+	
+	private ArrayList<Course> addedCourses = new ArrayList<Course>();		//TODO:this
+	private ArrayList<Course> droppedCourses = new ArrayList<Course>();
+	private ArrayList<Course> xCourses = new ArrayList<Course>();
+	private ArrayList<Course> searchedCourses = new ArrayList<Course>();		//Necessary to do as global? --probably
 	
 	public void updateUI()	{
 		
@@ -95,6 +101,7 @@ public class UserInterface extends Application{
 	}
 	
 	public void selectSemester(int semesterNumber)	{
+		selectedSemester = semesterNumber;
 		currentSelectedSemesterTab.getChildren().clear();
 		for(int semester = 0; semester <= 7; ++semester)	{
 			if(semester == semesterNumber)	{
@@ -438,6 +445,12 @@ public class UserInterface extends Application{
 			actionPane.setHgap(10);
 			
 
+			
+			
+			GridPane addCoursesTab = newActionGrid();
+			ScrollPane addCoursesScroll = newActionScroll();
+			addCoursesScroll.setContent(addCoursesTab);
+			
 			//Search Header Pane
 			GridPane searchHeaderPane = new GridPane();
 			searchHeaderPane.getColumnConstraints().add(constraints);
@@ -451,7 +464,41 @@ public class UserInterface extends Application{
 			searchField.getStyleClass().add("windows");
 			searchField.setAlignment(Pos.CENTER_RIGHT);
 			
-			GridPane addCoursesTab = new GridPane();
+			searchField.setOnKeyTyped((ke) -> {
+				addCoursesTab.getChildren().clear();
+				String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
+				searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
+				Iterator<Course> checkIter = searchedCourses.iterator();
+				ArrayList<Integer> studentCurrentCourseload = ((Student)Majorizer.getUser()).getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
+				while(checkIter.hasNext()) {
+					Course checkCourse = checkIter.next();
+					if(studentCurrentCourseload.contains(checkCourse.getCourseID()));
+						checkIter.remove();
+				}
+				for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
+					final Course searchedCourse = searchedCourses.get(searchIndex);
+					Label searchedLabel = new Label(searchedCourse.getCourseCode() + '\t' + searchedCourse.getCourseName());
+					addCoursesTab.add(searchedLabel, 0, searchIndex);
+					
+					Button addSearchButton = newAddButton();
+					addSearchButton.setOnMouseClicked((me) -> {
+						Iterator<Course> iterator = searchedCourses.iterator();
+						while(iterator.hasNext()) {
+							Course currentCourse = iterator.next();
+							if(currentCourse.getCourseID() == searchedCourse.getCourseID()) {
+								studentCurrentCourseload.add(searchedCourse.getCourseID());
+								iterator.remove();
+								break;
+							}
+						}
+						addCoursesTab.getChildren().remove(searchedLabel);
+						addCoursesTab.getChildren().remove(addSearchButton);
+						
+						updateUI();/////////////////////////
+					});
+				}
+			});
+			
 
 			addCoursesTab.getStyleClass().add("windows");
 			addCoursesTab.setMinSize(60, 60);
@@ -479,7 +526,7 @@ public class UserInterface extends Application{
 			checkButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
 			checkButtonBox.setPadding(new Insets(5));
 
-			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
+//			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
 			addCoursesTab.add(addCoursesButton, 1, 0);
 			
 			searchHeaderPane.add(headerForAddCourses, 0, 0);
@@ -621,230 +668,6 @@ public class UserInterface extends Application{
 			ioe.printStackTrace();
 		}
 		return advisorScreen;
-		
-/*
-		BorderPane studentScreen = new BorderPane();
-		try	{
-			studentScreen.getStyleClass().add("lightgraytheme");
-			
-			ColumnConstraints constraints = new ColumnConstraints();
-			constraints.setHgrow(Priority.ALWAYS);
-
-			GridPane orgPane = new GridPane();
-			GridPane topPane = new GridPane();
-			GridPane actionPane = new GridPane();
-			GridPane searchPane = new GridPane();
-			
-			Label name = new Label();
-			name.setText(getName());
-			name.getStyleClass().add("fonttitle");
-			
-			Label studentID = new Label();
-			studentID.setText(getStudentID()); 		//Likewise ^^
-			studentID.getStyleClass().add("IDfont");
-
-			//Logout Button
-			Button logoutButton = newLogButton("Log Out");
-			logoutButton.setOnAction((ae) -> {
-				Platform.exit();
-			});
-			
-			VBox logoutButtonBox = new VBox();
-			logoutButtonBox.getChildren().add(logoutButton);
-			logoutButtonBox.setAlignment(Pos.TOP_RIGHT);
-			logoutButtonBox.setPadding(new Insets(5));
-			logoutButtonBox.getStyleClass().add("logoutbuttontheme");
-			
-			
-			topPane.add(name, 0, 0);
-			topPane.add(studentID, 0, 1);
-			topPane.add(logoutButtonBox, 1, 0);
-			topPane.setMargin(logoutButtonBox, new Insets(20, 0, 0, 0));
-			topPane.getColumnConstraints().add(constraints);
-			
-
-			
-			//Schedule Pane
-			GridPane schedulePane = new GridPane();
-			
-			//Header label for Schedule Pane
-			Label header = newStyledLabel("Course Schedule", "fonttitle");
-			schedulePane.add(header, 0, 0);
-			
-			
-			//Schedule
-			GridPane scheduleBox = new GridPane();
-			for(int columnIndex = 0; columnIndex <= 7; ++columnIndex)	{
-				if(columnIndex < Majorizer.getStudentCurrentSemester())
-					newSemester(columnIndex, "pastSem");
-				else if(columnIndex == Majorizer.getStudentCurrentSemester())
-					newSemester(columnIndex, "currentSem");
-				else if(columnIndex > Majorizer.getStudentCurrentSemester())
-					newSemester(columnIndex, "futureSem");
-				
-				scheduleBox.add(this.semesters[columnIndex], columnIndex, 1);
-			}
-			schedulePane.add(scheduleBox, 0, 1);
-			
-			
-			actionPane.setPrefWidth((screenSize.getWidth()*(2/3.0)));
-			actionPane.getColumnConstraints().add(constraints);
-
-			
-			//Majors and Minors Pane
-			GridPane curriculumPane = new GridPane();
-			curriculumPane.setMaxWidth(actionPane.getPrefWidth()*(1/3.0));
-			
-			//Header label for Majors and Minors
-			Label curriculumHeader = newStyledLabel("Majors and Minors", "fontmed");
-			
-			//Green Plus Button for Majors and Minors
-			Button addCurriculumButton = newAddButton();
-			
-			GridPane curriculumTab = newActionGrid();
-			ScrollPane curriculumScroll = newActionScroll();
-			curriculumScroll.setContent(curriculumTab);
-			curriculumScroll.setMinViewportWidth(curriculumTab.getWidth());
-			
-			curriculumPane.add(curriculumHeader, 0, 0);
-			curriculumPane.add(addCurriculumButton, 1, 0);
-			curriculumPane.add(curriculumScroll, 0, 1);
-			
-			
-			//SAMPLE DATA
-			curriculumTab.add(new Label("Computer Science Major"), 0, 0);
-			curriculumTab.add(new Label("Computer Engineering Major"), 0, 1);
-			
-			//Remove Major/Minor Buttons
-			int numberOfMajMin = 2;																//TEMP
-			Button removeMajorButton[] = new Button[numberOfMajMin];
-			for(int rowIndex = 0; rowIndex < numberOfMajMin; ++rowIndex)	{
-				removeMajorButton[rowIndex] = newRemoveButton();
-				curriculumTab.add(removeMajorButton[rowIndex], 1, rowIndex);
-			}
-			
-			
-			actionPane.add(curriculumPane, 0, 0);
-			
-			//Current Selected Semester Pane
-			GridPane currentSelectedSemesterPane = new GridPane();
-			currentSelectedSemesterPane.setMaxWidth(actionPane.getPrefWidth()*(2/3.0));
-//			currentSelectedSemesterPane.setPrefWidth(actionPane.getPrefWidth()*(2/3.0));
-			
-			//Header label for Current Selected Semester
-			Label headerForCurrentSelectedSemester = newStyledLabel("Current Selected Semester", "fontmed");
-			
-			//Green Plus Button for Current Selected Semester
-			Button addCourseButton = newAddButton();
-			
-			
-			GridPane currentSelectedSemesterTab = newActionGrid();
-			ScrollPane currentSelectedSemesterScroll = newActionScroll();
-			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
-			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getMinWidth());
-
-			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
-			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
-			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
-			
-			actionPane.add(currentSelectedSemesterPane, 1, 0);
-			actionPane.setHgap(10);
-			
-			//SAMPLE DATA
-			currentSelectedSemesterTab.add(new Label("CS350	Software Design and Development"), 0, 0);
-			currentSelectedSemesterTab.add(new Label("EE262	Introduction to Object Oriented Programming"), 0, 1);
-			currentSelectedSemesterTab.add(new Label("EE341	Microelectronics"), 0, 2);
-			currentSelectedSemesterTab.add(new Label("EE321	Signals and Systems"), 0, 3);
-			currentSelectedSemesterTab.add(new Label("EE365	Advanced Digital Circuit Design"), 0, 4);
-			currentSelectedSemesterTab.add(new Label("MA339	Applied Linear Algebra"), 0, 5);
-			currentSelectedSemesterTab.add(new Label("CSXXX	CS Course 1"), 0, 6);
-			currentSelectedSemesterTab.add(new Label("CSYYY	CS Course 2"), 0, 7);
-			
-			//Remove Course Buttons
-			int numberOfCourses = 8;																//TEMP
-			Button removeCourseButton[] = new Button[numberOfCourses];
-			for(int rowIndex = 0; rowIndex < numberOfCourses; ++rowIndex)	{
-				removeCourseButton[rowIndex] = newRemoveButton();
-				currentSelectedSemesterTab.add(removeCourseButton[rowIndex], 1, rowIndex);
-			}
-			
-			//Search Header Pane
-			GridPane searchHeaderPane = new GridPane();
-			searchHeaderPane.getColumnConstraints().add(constraints);
-			
-			//Search Header
-			Label headerForAddCourses = newStyledLabel("Add Courses", "fontmed");
-			
-			//Search Field
-			TextField searchField = new TextField();
-			searchField.setPromptText("Course-ID");
-			searchField.getStyleClass().add("windows");
-			searchField.setAlignment(Pos.CENTER_RIGHT);
-			
-			GridPane addCoursesTab = new GridPane();
-
-			addCoursesTab.getStyleClass().add("windows");
-			addCoursesTab.setMinSize(60, 60);
-			
-			
-			Button addCoursesButton = newAddButton();
-			
-			
-			//Check Button
-			Button checkButton = new Button();
-			checkButton.setShape(new Circle(2));
-			ImageView checkButtonMark = new ImageView(ResourceLoader.getImage("checkmark30.png"));
-			checkButton.setGraphic(checkButtonMark);
-			checkButtonMark.setFitWidth(40);
-			checkButtonMark.setFitHeight(40);
-			checkButton.getStyleClass().add("checkbuttontheme");
-			checkButton.setAlignment(Pos.BOTTOM_RIGHT);
-			
-			VBox checkButtonBox = new VBox();
-			checkButtonBox.getChildren().add(checkButton);
-			checkButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
-			checkButtonBox.setPadding(new Insets(5));
-
-			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
-			addCoursesTab.add(addCoursesButton, 1, 0);
-			
-			searchHeaderPane.add(headerForAddCourses, 0, 0);
-			searchHeaderPane.add(searchField, 1, 0);
-			
-			searchPane.setAlignment(Pos.BOTTOM_CENTER);
-//			searchPane.getColumnConstraints().add(constraints);
-			searchPane.setVgap(5);
-			searchPane.setHgap(20);
-			
-			searchPane.add(searchHeaderPane, 0, 0);
-			searchPane.add(addCoursesTab, 0, 1);
-			searchPane.add(checkButtonBox, 1, 1);
-			
-			boolean gridLinesOn = true;
-			if(gridLinesOn)	{
-				searchHeaderPane.setGridLinesVisible(true);
-				actionPane.setGridLinesVisible(true);
-				searchPane.setGridLinesVisible(true);
-				orgPane.setGridLinesVisible(true);
-			}
-
-			
-			orgPane.add(topPane, 0, 0);
-			orgPane.add(schedulePane, 0, 1);
-			orgPane.add(actionPane, 0, 2);
-			orgPane.add(searchPane, 0, 3);
-			orgPane.setVgap(10);
-			orgPane.setHgap(5);
-			orgPane.setPadding(new Insets(10));			
-			
-			studentScreen.setCenter(orgPane);
-		}	catch( Exception e )	{
-			e.printStackTrace();
-		}
-		
-		return studentScreen;
-		 
-*/
 	}
 
 	
