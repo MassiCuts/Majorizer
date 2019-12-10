@@ -369,13 +369,15 @@ public class UserInterface extends Application{
 			}
 			schedulePane.add(scheduleBox, 0, 1);
 			
+			final double tabWidth = 1/2.0;
 			
 			actionPane.setPrefWidth((screenSize.getWidth()*(2/3.0)));
-			actionPane.getColumnConstraints().add(constraints);
+//			actionPane.getColumnConstraints().add(constraints);
 			
 			//Majors and Minors Pane
 			GridPane curriculumPane = new GridPane();
-			curriculumPane.setMaxWidth(actionPane.getPrefWidth()*(1/3.0));
+			curriculumPane.setMaxWidth(screenSize.getWidth()*(2/3.0)*tabWidth-50.0);
+			curriculumPane.setMinWidth(screenSize.getWidth()*(2/3.0)*tabWidth-50.0);
 			
 			//Header label for Majors and Minors
 			Label curriculumHeader = newStyledLabel("Majors and Minors", "fontmed");
@@ -423,8 +425,8 @@ public class UserInterface extends Application{
 			
 			//Current Selected Semester Pane
 			GridPane currentSelectedSemesterPane = new GridPane();
-			currentSelectedSemesterPane.setMaxWidth(actionPane.getPrefWidth()*(2/3.0));
-//			currentSelectedSemesterPane.setPrefWidth(actionPane.getPrefWidth()*(2/3.0));
+			currentSelectedSemesterPane.setMaxWidth(actionPane.getPrefWidth()*(2/3.0)*tabWidth);
+			currentSelectedSemesterPane.setMinWidth(actionPane.getPrefWidth()*(2/3.0)*tabWidth);
 			
 			//Header label for Current Selected Semester
 			Label headerForCurrentSelectedSemester = newStyledLabel("Current Selected Semester", "fontmed");
@@ -432,10 +434,11 @@ public class UserInterface extends Application{
 			//Green Plus Button for Current Selected Semester
 			Button addCourseButton = newAddButton();
 			
-			
 			ScrollPane currentSelectedSemesterScroll = newActionScroll();
 			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
-			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getMinWidth());
+//			currentSelectedSemesterScroll.setMinViewportWidth(currentSelectedSemesterTab.getMinWidth());
+			currentSelectedSemesterScroll.setMaxWidth(actionPane.getPrefWidth()*tabWidth);
+			currentSelectedSemesterScroll.setMinWidth(actionPane.getPrefWidth()*tabWidth);
 
 			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
 			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
@@ -449,7 +452,6 @@ public class UserInterface extends Application{
 			
 			GridPane addCoursesTab = newActionGrid();
 			ScrollPane addCoursesScroll = newActionScroll();
-			addCoursesScroll.setContent(addCoursesTab);
 			
 			//Search Header Pane
 			GridPane searchHeaderPane = new GridPane();
@@ -460,21 +462,25 @@ public class UserInterface extends Application{
 			
 			//Search Field
 			TextField searchField = new TextField();
-			searchField.setPromptText("Course-ID");
+			searchField.setPromptText("search");
 			searchField.getStyleClass().add("windows");
 			searchField.setAlignment(Pos.CENTER_RIGHT);
 			
 			searchField.setOnKeyTyped((ke) -> {
-				addCoursesTab.getChildren().clear();
+				if(searchField.getText().equals(null) || searchField.getText().equals(""))	{
+					addCoursesTab.getChildren().clear();
+					return;
+				}
 				String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
 				searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
 				Iterator<Course> checkIter = searchedCourses.iterator();
 				ArrayList<Integer> studentCurrentCourseload = ((Student)Majorizer.getUser()).getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
 				while(checkIter.hasNext()) {
 					Course checkCourse = checkIter.next();
-					if(studentCurrentCourseload.contains(checkCourse.getCourseID()));
+					if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
 						checkIter.remove();
 				}
+				addCoursesTab.getChildren().clear();
 				for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
 					final Course searchedCourse = searchedCourses.get(searchIndex);
 					Label searchedLabel = new Label(searchedCourse.getCourseCode() + '\t' + searchedCourse.getCourseName());
@@ -495,16 +501,21 @@ public class UserInterface extends Application{
 						addCoursesTab.getChildren().remove(addSearchButton);
 						
 						updateUI();/////////////////////////
+						selectSemester(selectedSemester);
 					});
+					addCoursesTab.add(addSearchButton, 1, searchIndex);
 				}
 			});
 			
-
+			final double tabWidthTwo = 3/4.0;
 			addCoursesTab.getStyleClass().add("windows");
-			addCoursesTab.setMinSize(60, 60);
+			addCoursesTab.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+			addCoursesTab.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+			addCoursesScroll.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+			addCoursesScroll.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+			addCoursesScroll.setContent(addCoursesTab);
 			
 			
-			Button addCoursesButton = newAddButton();
 			
 			
 			//Check Button
@@ -526,22 +537,19 @@ public class UserInterface extends Application{
 			checkButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
 			checkButtonBox.setPadding(new Insets(5));
 
-//			addCoursesTab.add(new Label("CS141	Introduction to Computer Science I"), 0, 0);
-			addCoursesTab.add(addCoursesButton, 1, 0);
 			
 			searchHeaderPane.add(headerForAddCourses, 0, 0);
 			searchHeaderPane.add(searchField, 1, 0);
 			
 			searchPane.setAlignment(Pos.BOTTOM_CENTER);
-//			searchPane.getColumnConstraints().add(constraints);
 			searchPane.setVgap(5);
 			searchPane.setHgap(20);
 			
 			searchPane.add(searchHeaderPane, 0, 0);
-			searchPane.add(addCoursesTab, 0, 1);
+			searchPane.add(addCoursesScroll, 0, 1);
 			searchPane.add(checkButtonBox, 1, 1);
 			
-			boolean gridLinesOn = true;
+			boolean gridLinesOn = false;
 			if(gridLinesOn)	{
 				searchHeaderPane.setGridLinesVisible(true);
 				actionPane.setGridLinesVisible(true);

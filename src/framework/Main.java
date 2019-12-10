@@ -36,8 +36,8 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
-		testDatabase();
-//		startUI(args);
+//		testDatabase();
+		startUI(args);
 //		testRequiredCourses();
 		SchedulerGraph graph = testSchedulerGraph();
 		testScheduler(graph);
