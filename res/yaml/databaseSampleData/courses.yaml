@@ -511,8 +511,10 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS142
+     - EE262
+   amtReq: 2
 -
    courseCode: CS341
    courseName: Programming Languages
@@ -530,8 +532,11 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS142
+     - EE262
+   amtReq: 2
+
 -
    courseCode: CS345
    courseName: Automata Theory & Form Lang
@@ -549,8 +554,10 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS142
+     - MA211
+   amtReq: 2
 -
    courseCode: EE321
    courseName: Systems and Signals Processing
@@ -587,8 +594,9 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE262
+   amtReq: 1
 -
    courseCode: EE365
    courseName: Adv Digital Circuit Design
@@ -606,8 +614,9 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE264
+   amtReq: 1
 -
    courseCode: CS445
    courseName: Compiler Construction
@@ -625,8 +634,12 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements: 
+     - CS344
+     - CS345
+     - CS241
+     - CS341
+   amtReq: 4
 -
    courseCode: CS469
    courseName: Quantum Info & Computation
@@ -644,8 +657,10 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements: 
+     - CS344
+     - MA232 # or MA339
+   amtReq: 2
 -
    courseCode: EE316
    courseName: Computer Eng Junior Lab
@@ -663,8 +678,11 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE211
+     - EE363
+     - EE365
+   amtReq: 3
 -
    courseCode: EE360
    courseName: Microprocessors
@@ -682,8 +700,9 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements: 
+     - EE264
+   amtReq: 1
 -
    courseCode: EE462
    courseName: Software System Architecture
@@ -701,8 +720,9 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE261 # or 142
+   amtReq: 1
 -
    courseCode: CS350
    courseName: Software Design & Developement
@@ -720,8 +740,9 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS344 # CS242
+   amtReq: 1
 -
    courseCode: CS499
    courseName: Professional Experience
@@ -758,8 +779,9 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements: 
+     - ES250
+   amtReq: 1
 -
    courseCode: EE416
    courseName: Computer Eng Senior Lab
@@ -777,8 +799,10 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE316
+     - EE360
+   amtReq: 2
 -
    courseCode: EE464
    courseName: Digital Systems Design
@@ -796,8 +820,10 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE316
+     - EE360
+   amtReq: 2
 -
    courseCode: EE466
    courseName: Computer Architecture
@@ -815,8 +841,9 @@
      - Fall 2024
      - Fall 2025
      - Fall 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - EE264
+   amtReq: 1
 -
    courseCode: CS444
    courseName: Operating systems
@@ -834,8 +861,10 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS344
+     - CS241 # or EE360 or EE264
+   amtReq: 2
 -
    courseCode: CS449
    courseName: Computational Learning
@@ -853,8 +882,9 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS344 # or CS345
+   amtReq: 1
 -
    courseCode: CS451
    courseName: Artificial Intelligence
@@ -872,5 +902,6 @@
      - Spring 2024
      - Spring 2025
      - Spring 2026
-   requirements: []
-   amtReq: 0
+   requirements:
+     - CS344
+   amtReq: 1

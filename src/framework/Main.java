@@ -109,10 +109,13 @@ public class Main {
 		ArrayList<SchedulerCourse> added = new ArrayList<SchedulerCourse>();
 		ArrayList<SchedulerCourse> dropped = new ArrayList<SchedulerCourse>();
 		System.out.println(graph.root.getName());
+		scheduler.setNumCourses(8);
+		scheduler.setNumSemesters(70);
 		try{
 			System.out.println(scheduler.schedule(graph, added, dropped));
+			System.out.print("Finished Schedule");
 		} catch (Exception e) {
-			System.out.println("Failed to create schedule because");
+			System.out.println("Failed to create schedule because" + e);
 			throw(e);
 		}
 	}
