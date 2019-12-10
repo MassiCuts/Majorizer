@@ -97,7 +97,7 @@ public class SchedulerNode {
 		if (isSatisfied(semester_num)) {
 			return 0;
 		} else if (this.isGate()) {
-			return 1 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE, semester_num).getPathLength(semester_num);
+			return 0 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE, semester_num).getPathLength(semester_num);
 		} else {
 			return 1 + ((SchedulerCourse) this).getChild().getPathLength(semester_num);
 		}

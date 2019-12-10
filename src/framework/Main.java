@@ -109,8 +109,8 @@ public class Main {
 		ArrayList<SchedulerCourse> added = new ArrayList<SchedulerCourse>();
 		ArrayList<SchedulerCourse> dropped = new ArrayList<SchedulerCourse>();
 		System.out.println(graph.root.getName());
-		scheduler.setNumCourses(8);
-		scheduler.setNumSemesters(70);
+		scheduler.setNumCourses(5);
+		scheduler.setNumSemesters(10);
 		try{
 			System.out.println(scheduler.schedule(graph, added, dropped));
 			System.out.print("Finished Schedule");
@@ -120,13 +120,12 @@ public class Main {
 		}
 	}
 	
-
 	public static SchedulerGraph testSchedulerGraph(){
 		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
+		//CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
 		Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
 		SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
 		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());

@@ -152,7 +152,7 @@ public class SchedulerGate extends SchedulerNode {
 			return max_index;
 		} else {
 			int actual_longest_choice = this.getLongestChoice(choices, 0, semesters_remaining, semester_num);
-			if (semesters_remaining == actual_longest_choice) {
+			if (semesters_remaining == this.children.get(actual_longest_choice).getPathLength(semester_num)) {
 				return actual_longest_choice;
 			}
 			int choice_idx = rand.nextInt(choices.size());
