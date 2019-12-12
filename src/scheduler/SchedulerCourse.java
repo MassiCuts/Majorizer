@@ -14,11 +14,11 @@ public class SchedulerCourse extends SchedulerNode {
 		if (node.courseinfo.isEmpty()) {
 			//Throw some error so we know this shouldn't have been initialized
 		}
-		this.availability = node.courseinfo.get(CourseInfo.AVAILABILITY);
-		this.taken = node.courseinfo.get(CourseInfo.TAKEN);
-		this.scheduled = node.courseinfo.get(CourseInfo.SCHEDULED);
-		this.added = node.courseinfo.get(CourseInfo.ADDED);
-		this.dropped = node.courseinfo.get(CourseInfo.DROPPED);
+		this.courseinfo.put(CourseInfo.TAKEN, node.courseinfo.get(CourseInfo.TAKEN));
+		this.courseinfo.put(CourseInfo.AVAILABILITY, node.courseinfo.get(CourseInfo.AVAILABILITY));
+		this.courseinfo.put(CourseInfo.SCHEDULED, node.courseinfo.get(CourseInfo.SCHEDULED));
+		this.courseinfo.put(CourseInfo.ADDED, node.courseinfo.get(CourseInfo.ADDED));
+		this.courseinfo.put(CourseInfo.DROPPED, node.courseinfo.get(CourseInfo.DROPPED));
 		this.children = node.children;
 		this.parents = node.parents;
 	}
@@ -30,11 +30,11 @@ public class SchedulerCourse extends SchedulerNode {
 			System.out.println("chilldren are null");
 		}
 		this.parents  = new ArrayList<SchedulerNode>();
-		this.availability = 0b1111;
-		this.taken = -1;
-		this.scheduled = -1;
-		this.added = -1;
-		this.dropped = -1;
+		availability = 0b1111;
+		taken = -1;
+		scheduled = -1;
+		added = -1;
+		dropped = -1;
 		this.courseinfo = new Hashtable<CourseInfo, Integer>();// Otherwise you'll get an error when inserting
 		this.courseinfo.put(CourseInfo.TAKEN, this.taken);
 		this.courseinfo.put(CourseInfo.AVAILABILITY, this.availability);

@@ -20,8 +20,8 @@ public class SchedulerNode {
 		this.isgate = true;
 		this.name = gate.name;
 		this.gateinfo = new Hashtable<GateInfo, Integer>();// Otherwise you'll get an error when inserting
-		this.gateinfo.put(GateInfo.OPTIONS, gate.options);
-		this.gateinfo.put(GateInfo.REQUIRED, gate.required);
+		this.gateinfo.put(GateInfo.OPTIONS, gate.gateinfo.get(GateInfo.OPTIONS));
+		this.gateinfo.put(GateInfo.REQUIRED, gate.gateinfo.get(GateInfo.REQUIRED));
 	}
 	
 	public SchedulerNode(SchedulerCourse course) {
@@ -99,14 +99,18 @@ public class SchedulerNode {
 	}
 	
 	public float getPathLength(int semester_num) throws Exception {
+		float plength;
 		if (isSatisfied(semester_num)) {
+			plength = 0;
 			return 0;
 		} else if (this.isGate()) {
-			return 0 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE, semester_num).getPathLength(semester_num);
+			plength = 0 + ((SchedulerGate) this).getBestChild(Integer.MAX_VALUE, semester_num).getPathLength(semester_num);
 		} else {
-			return 1 + ((SchedulerCourse) this).getChild().getPathLength(semester_num);
+			assert(this.children.size() <= 1);
+			plength = 1 + ((SchedulerCourse) this).getChild().getPathLength(semester_num);
 		}
-		
+		if (this.name.contentEquals("MA132") && plength == 0) { System.out.println("MA132 has path length 0");}
+		return plength;
 	}
 	
 	public float getCost(int semester_num) throws Exception {
@@ -121,6 +125,7 @@ public class SchedulerNode {
 			}
 			return cost / overlap;
 		} else {
+			assert(this.children.size() <= 1);
 			return 1 + ((SchedulerCourse) this).getChild().getCost(semester_num);
 		}
 	}

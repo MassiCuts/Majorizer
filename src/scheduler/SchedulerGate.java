@@ -4,8 +4,6 @@ import java.util.Hashtable;
 import java.util.Random;
 
 public class SchedulerGate extends SchedulerNode {
-	public int options;
-	public int required;
 	private Random rand = new Random();
 
 	static int numberOfGates = 0;
@@ -20,8 +18,9 @@ public class SchedulerGate extends SchedulerNode {
 		this.children = node.children;
 		this.parents = node.parents;
 		this.name = node.name;
-		this.options = node.gateinfo.get(GateInfo.OPTIONS);
-		this.required = node.gateinfo.get(GateInfo.REQUIRED);
+		this.gateinfo = new Hashtable<GateInfo, Integer>();// Otherwise you'll get an error when inserting
+		this.gateinfo.put(GateInfo.OPTIONS, node.gateinfo.get(GateInfo.OPTIONS));
+		this.gateinfo.put(GateInfo.REQUIRED, node.gateinfo.get(GateInfo.REQUIRED));
 	}
 	
 	public SchedulerGate(int options, int required, ArrayList<SchedulerNode> children) {
@@ -32,16 +31,17 @@ public class SchedulerGate extends SchedulerNode {
 		}
 		this.children = children;
 		this.gateinfo = new Hashtable<GateInfo, Integer>();// Otherwise you'll get an error when inserting
-		this.gateinfo.put(GateInfo.OPTIONS, this.options);
-		this.gateinfo.put(GateInfo.REQUIRED, this.required);
+		this.gateinfo.put(GateInfo.OPTIONS, options);
+		this.gateinfo.put(GateInfo.REQUIRED, required);
 	}
 
 	public SchedulerGate(int options, int required) {
 		this.name = "GATE " + Integer.toString(numberOfGates);
-		this.options = options;
-		this.required = required;
 		this.children = new ArrayList<SchedulerNode>();
 		this.parents  = new ArrayList<SchedulerNode>();
+		this.gateinfo = new Hashtable<GateInfo, Integer>();// Otherwise you'll get an error when inserting
+		this.gateinfo.put(GateInfo.OPTIONS, options);
+		this.gateinfo.put(GateInfo.REQUIRED, required);
 	}
 	
 	public ArrayList<Float> getPathLengths(int semester_num) throws Exception {
@@ -108,7 +108,8 @@ public class SchedulerGate extends SchedulerNode {
 		ArrayList<Float> lengths = this.getPathLengths(semester_num);
 		ArrayList<Float> costs = this.getCosts(semester_num);
 		ArrayList<Integer> choices = new ArrayList<>();
-		for (int i = 0; i < this.required; ++i) {
+		//for (int i = 0; i < this.required; ++i) {
+		for (int i = 0; i < this.gateinfo.get(GateInfo.REQUIRED); ++i) {
 			int min_idx = -1;
 			float min_val = (float) Integer.MAX_VALUE;
 			for (int j = 0; j < costs.size(); ++j) {
@@ -121,7 +122,31 @@ public class SchedulerGate extends SchedulerNode {
 				System.out.println(this.name + " ");
 				System.out.println(semesters_remaining + " " + semester_num);
 				for(SchedulerNode child: this.children) {
-					System.out.println(child.name + ":" + child.getPathLength(semester_num));
+					float plength = child.getPathLength(semester_num);
+					System.out.print(child.name + ":" + child.getPathLength(semester_num));
+					if (child.isGate()) {
+						System.out.println("\t" + child.gateinfo.get(GateInfo.REQUIRED));
+					} else {System.out.println();}
+					if (plength > semesters_remaining) {
+						for (SchedulerNode child2: child.children) {
+							System.out.print("\t" + child2.name + ":" + child2.getPathLength(semester_num));
+							if (child2.isGate()) {
+								System.out.println("\t" + child2.gateinfo.get(GateInfo.REQUIRED));
+							} else {System.out.println();}
+							for (SchedulerNode child3: child2.children) {
+								System.out.print("\t\t" + child3.name + ":" + child3.getPathLength(semester_num));
+								if (child3.isGate()) {
+									System.out.println("\t" + child3.gateinfo.get(GateInfo.REQUIRED));
+								} else {System.out.println();}
+								for (SchedulerNode child4: child3.children) {
+									System.out.print("\t\t\t" + child4.name + ":" + child4.getPathLength(semester_num));
+									if (child4.isGate()) {
+										System.out.println("\t" + child4.gateinfo.get(GateInfo.REQUIRED));
+									} else {System.out.println();}
+								}
+							}
+						}
+					}
 				}
 				throw new Exception("No way to satisfy this gate in required remaining semesters");
 			}
@@ -134,9 +159,10 @@ public class SchedulerGate extends SchedulerNode {
 	private int getLongestChoice( ArrayList<Integer> choices, int attempt, int semesters_remaining, int semester_num) throws Exception {
 		/*
 		 * If attempt = 0, get the longest path value
-		 * If attempt != 0, get a random path value unless semesters_remaining = longest_path, in which case you must take longest path
+		 * If attempt != 0, get a random path value with probability skewed toward longer paths, unless semesters_remaining == longest_path, in which case you must take longest path
 		 * Returns the best index in scores, given that the indexes are in choices
 		 */
+		//TODO: calculate probability of path selection so randomness is actually kinda smart instead of very dumb
 		ArrayList<Float> scores = this.getPathLengths(semester_num);
 		if (attempt==0) {
 			float max_length = 0;
@@ -163,6 +189,7 @@ public class SchedulerGate extends SchedulerNode {
 				attempts += 1;
 			}
 			if ( attempts == 1000) {throw new Exception("Dear god why");}
+			//if (this.name.contentEquals("GATE 170")) {System.out.println("GATE 170: Longest choice is index " + choices.get(choice_idx) + " which has path length " + this.getChild(choices.get(choice_idx)).getPathLength(semester_num));}
 			return (int) choices.get(choice_idx);
 		}
 	}
@@ -172,7 +199,8 @@ public class SchedulerGate extends SchedulerNode {
 		 * Makes sure that all incoming edges have been attached.
 		 * Otherwise, the gate is not ready for use
 		 */
-		return this.options == this.children.size();
+		//return this.options == this.children.size();
+		return this.gateinfo.get(GateInfo.OPTIONS) == this.children.size();
 	}
 	
 	public boolean equals(SchedulerNode node) {

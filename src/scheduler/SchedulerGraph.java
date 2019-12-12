@@ -87,20 +87,29 @@ public class SchedulerGraph {
 		if(subCurriculum instanceof SchedulerGate) {
 			// Create a new gate to avoid modifying the old one
 			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
-			for( SchedulerNode s : ((SchedulerGate) subCurriculum).children){
-				children.add(traverseRequiredCourses(s, sgraph_course_string_map));
+			for( SchedulerNode s : ((SchedulerGate) subCurriculum).children){ 
+				SchedulerNode new_node = traverseRequiredCourses(s, sgraph_course_string_map); 
+				children.add(new_node);
+				new_node.parents.add(s);
 			}
-			int options =((SchedulerGate)subCurriculum).options;
-			int required =((SchedulerGate)subCurriculum).required;
+			int options =((SchedulerGate)subCurriculum).gateinfo.get(GateInfo.OPTIONS);
+			int required =((SchedulerGate)subCurriculum).gateinfo.get(GateInfo.REQUIRED);
 			SchedulerGate newGate = new SchedulerGate(options, required, children);// TODO we shouldn't create duplicate gates if all children are the same
 			return newGate;
 		} else {
 			if(this.all_course_string_map.containsKey(subCurriculum.name)){
-				return this.all_course_string_map.get(subCurriculum.name);// This is the course in the original tree
+				SchedulerNode course = this.all_course_string_map.get(subCurriculum.name);// This is the course in the original tree
+				if (course.name.contentEquals("MA132")) {System.out.println("MA132 in map has hash id: " + System.identityHashCode(course));}
+				return course;
 			}else {
-				
-				SchedulerCourse newCourse = sgraph_course_string_map.get(subCurriculum.name);
+				SchedulerNode new_node = traverseRequiredCourses(subCurriculum.getChildren().get(0), sgraph_course_string_map);
+				subCurriculum.children.set(0, new_node);
+				new_node.parents.add(subCurriculum);
+				if (new_node.name.contentEquals("MA132")) {
+					System.out.println("MA132 being added hash id: " + System.identityHashCode(new_node));
+				}
 				//this.all_courses_int_map.put(subCurriculum.name, newCourse);//For easy access later
+				SchedulerCourse newCourse = sgraph_course_string_map.get(subCurriculum.name);
 				this.all_course_string_map.put(subCurriculum.name, newCourse);
 				this.all_courses.add(newCourse);
 				return subCurriculum;// This is the new course
@@ -112,9 +121,12 @@ public class SchedulerGraph {
 		// If called on itself this should yield a graph which is functionally equivilent
 		// The biggest issue is making sure that there are not duplicate classes in the graph
 		System.out.println("Merging the graphs ");
+		System.out.println(this.all_course_string_map);
+		System.out.println(sgraph.all_course_string_map);
 		SchedulerNode newRequiredPath = traverseRequiredCourses(sgraph.root, sgraph.all_course_string_map);
 		//The root now requires that you take all of the old requirements in addition to all the new requirements
 		root = new SchedulerGate(2, 2, new ArrayList<SchedulerNode>(Arrays.asList(root, newRequiredPath)));
+		System.out.println(this.all_course_string_map);
 	}
 	
 	public void setCourseAttribute(String course_code, CourseInfo attribute, int value) throws Exception {
@@ -148,7 +160,7 @@ public class SchedulerGraph {
 			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
 			for( SchedulerNode c : node.children){
 				// Add the edge from parent to child
-				if(((SchedulerGate)c).required != 0) { // Do not visualize terminal gates with no requirements
+				if(((SchedulerGate)c).gateinfo.get(GateInfo.REQUIRED) != 0) { // Do not visualize terminal gates with no requirements
 					output_string += node.name.replaceAll("\\s+","") + "->" + c.name.replaceAll("\\s+","") + "\n";// The replace all remove spaces
 					output_string += printElements(c);// Recursive call
 				}
