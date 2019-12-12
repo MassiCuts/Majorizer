@@ -38,14 +38,10 @@ public class Main {
 		}
 		
 //		testDatabase();
-<<<<<<< HEAD
-//		startUI(args);
-=======
->>>>>>> 89ac1b6452bab99d16425a1340fbfc8840a4019e
-//		testRequiredCourses();
+
 		if(args.length == 3 && args[2].equals("UI")) {
 			startUI(args);
-		}else {
+		} else {
 			SchedulerGraph graph = testSchedulerGraph();
 			testScheduler(graph);
 		}
@@ -134,17 +130,11 @@ public class Main {
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
-<<<<<<< HEAD
 		CERequirementsGraph.mergeGraphs(CSRequirementsGraph);
-=======
-<<<<<<< HEAD
 		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
 		//Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
 		//SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
 		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
-=======
->>>>>>> 89ac1b6452bab99d16425a1340fbfc8840a4019e
->>>>>>> a1385270df586629868df201bb666fbca76d1fa6
 		System.out.println(CSRequirementsGraph.getAsGraphVis());
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Press any key to continue");

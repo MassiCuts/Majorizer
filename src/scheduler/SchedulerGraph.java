@@ -41,7 +41,7 @@ public class SchedulerGraph {
 		System.out.println("Creating a scheduler graph from a curriculum");
 		//System.out.println("Root node:" + curriculum.getRootCourseNode());
 		root = traverseRequiredCourses(curriculum.getRootCourseNode());
-		//System.out.println(root);
+		System.out.println(this.all_course_string_map);
 	}
 	
 	private SchedulerNode traverseRequiredCourses(RequiredCourseNode subCurriculum) {
@@ -75,19 +75,20 @@ public class SchedulerGraph {
 				this.all_course_string_map.put(course.getCourseCode(), newCourse);
 				this.all_courses.add(newCourse);
 				System.out.println(course_ID + ":" + course.getCourseCode());
+				System.out.println(this.all_course_string_map);
 			}
 			return newCourse;
 		}
 	}
 	
-	private SchedulerNode traverseRequiredCourses(SchedulerNode subCurriculum) {
+	private SchedulerNode traverseRequiredCourses(SchedulerNode subCurriculum, HashMap<String, SchedulerCourse> sgraph_course_string_map) {
 		// If it is a course, then you simply return a course node with that course
 		// If it is a group, you return a course group, which will involve a recursive call to create it
 		if(subCurriculum instanceof SchedulerGate) {
 			// Create a new gate to avoid modifying the old one
 			ArrayList<SchedulerNode> children = new ArrayList<SchedulerNode>();
 			for( SchedulerNode s : ((SchedulerGate) subCurriculum).children){
-				children.add(traverseRequiredCourses(s));
+				children.add(traverseRequiredCourses(s, sgraph_course_string_map));
 			}
 			int options =((SchedulerGate)subCurriculum).options;
 			int required =((SchedulerGate)subCurriculum).required;
@@ -97,6 +98,11 @@ public class SchedulerGraph {
 			if(this.all_course_string_map.containsKey(subCurriculum.name)){
 				return this.all_course_string_map.get(subCurriculum.name);// This is the course in the original tree
 			}else {
+				
+				SchedulerCourse newCourse = sgraph_course_string_map.get(subCurriculum.name);
+				//this.all_courses_int_map.put(subCurriculum.name, newCourse);//For easy access later
+				this.all_course_string_map.put(subCurriculum.name, newCourse);
+				this.all_courses.add(newCourse);
 				return subCurriculum;// This is the new course
 			}
 		}
@@ -106,19 +112,25 @@ public class SchedulerGraph {
 		// If called on itself this should yield a graph which is functionally equivilent
 		// The biggest issue is making sure that there are not duplicate classes in the graph
 		System.out.println("Merging the graphs ");
-		SchedulerNode newRequiredPath = traverseRequiredCourses(sgraph.root);
+		SchedulerNode newRequiredPath = traverseRequiredCourses(sgraph.root, sgraph.all_course_string_map);
 		//The root now requires that you take all of the old requirements in addition to all the new requirements
 		root = new SchedulerGate(2, 2, new ArrayList<SchedulerNode>(Arrays.asList(root, newRequiredPath)));
 	}
 	
 	public void setCourseAttribute(String course_code, CourseInfo attribute, int value) throws Exception {
 		if (this.all_course_string_map.containsValue(null)) {
-			throw new Exception("AAAAAAAAA");
+			throw new Exception("AAAAAAAAA (null inside our map wtf");
+		}
+		if (!this.all_course_string_map.containsKey(course_code)) {
+			throw new Exception(course_code + " is not in the map " + this.all_course_string_map);
 		}
 		SchedulerCourse c = this.all_course_string_map.get(course_code);
 		
 		System.out.println(this.all_course_string_map);
 		System.out.println(c);
+		if (c == null) {
+			throw new Exception ("AAAAAAHHH (c is null wtf");
+		}
 		System.out.println(c.name);
 		System.out.println(c.courseinfo);
 		c.courseinfo.get(attribute);
