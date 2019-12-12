@@ -39,7 +39,7 @@ public class Main {
 		
 //		testDatabase();
 
-		if(args.length == 3 && args[2].equals("UI")) {
+		if(args.length == 2 && args[1].equals("UI")) {
 			startUI(args);
 		} else {
 			SchedulerGraph graph = testSchedulerGraph();
