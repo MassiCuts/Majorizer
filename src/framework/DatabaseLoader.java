@@ -150,9 +150,6 @@ public class DatabaseLoader {
 			id = storedCourse.getCourseID();
 		
 		Course course = new Course(id, courseCode, courseName, timesOffered, requiredCourses);
-		if(courseCode.equals("PH131")) {
-			System.out.println("Here");
-		}
 		DatabaseManager.saveCourse(course);
 	}
 	

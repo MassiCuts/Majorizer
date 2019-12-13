@@ -5,15 +5,13 @@ package framework;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 import database.DatabaseTable;
 import gui.UserInterface;
 import scheduler.Scheduler;
-import scheduler.SchedulerGraph;
 import scheduler.SchedulerCourse;
+import scheduler.SchedulerGraph;
 import utils.ResourceLoader;
 
 public class Main {
@@ -37,16 +35,12 @@ public class Main {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 		}
 		
-//		testDatabase();
-
 		if(args.length == 2 && args[1].equals("UI")) {
 			startUI(args);
 		} else {
 			SchedulerGraph graph = testSchedulerGraph();
 			testScheduler(graph);
 		}
-
-//		testCourseInfoLoad();
 	}
 	
 	public static void loadSampleData() {
@@ -101,7 +95,7 @@ public class Main {
 //			}
 //		}
 		
-		Course c = DatabaseManager.getCourse("PH131");		
+		Course c = DatabaseManager.getCourse("PH132");		
 		if(c != null)
 			c.getRequiredCourses().printCourseCodes();
 	}
@@ -144,18 +138,5 @@ public class Main {
 		 */
 		return CSRequirementsGraph;
 	}
-	
-//	public static void testCourseInfoLoad(){
-//		try {
-//			File f = ResourceLoader.getYAMLFile("course_info.yaml");
-//			System.out.println(f);
-//			DatabaseManager database = new DatabaseManager();
-//			database.loadStudents(f);
-//			System.out.println("Loaded students");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
 	
 }
