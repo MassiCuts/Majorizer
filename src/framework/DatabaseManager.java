@@ -372,6 +372,13 @@ public class DatabaseManager {
 		return curriculums;
 	}
 	
+//	private static String genContainsIgnoreCaseRegex(String comparingString) {
+//		if (comparingString == null || comparingString.equals(""))
+//			return null;
+//		for(int i = 0; i < comparingString.length(); i++) {
+//			int index = i * 4;
+//		}
+//	}
 	
 	
 	

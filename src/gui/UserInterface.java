@@ -467,44 +467,61 @@ public class UserInterface extends Application{
 			searchField.setAlignment(Pos.CENTER_RIGHT);
 			
 			searchField.setOnKeyTyped((ke) -> {
-				if(searchField.getText().equals(null) || searchField.getText().equals(""))	{
-					addCoursesTab.getChildren().clear();
-					return;
-				}
-				String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
-				searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
-				Iterator<Course> checkIter = searchedCourses.iterator();
-				ArrayList<Integer> studentCurrentCourseload = ((Student)Majorizer.getUser()).getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
-				while(checkIter.hasNext()) {
-					Course checkCourse = checkIter.next();
-					if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
-						checkIter.remove();
-				}
-				addCoursesTab.getChildren().clear();
-				for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
-					final Course searchedCourse = searchedCourses.get(searchIndex);
-					Label searchedLabel = new Label(searchedCourse.getCourseCode() + '\t' + searchedCourse.getCourseName());
-					addCoursesTab.add(searchedLabel, 0, searchIndex);
-					
-					Button addSearchButton = newAddButton();
-					addSearchButton.setOnMouseClicked((me) -> {
-						Iterator<Course> iterator = searchedCourses.iterator();
-						while(iterator.hasNext()) {
-							Course currentCourse = iterator.next();
-							if(currentCourse.getCourseID() == searchedCourse.getCourseID()) {
-								studentCurrentCourseload.add(searchedCourse.getCourseID());
-								iterator.remove();
-								break;
-							}
-						}
-						addCoursesTab.getChildren().remove(searchedLabel);
-						addCoursesTab.getChildren().remove(addSearchButton);
+				
+				// set request to another thread "searchThread"
+				searchThread.setSearchRequest(()-> {
+					if(searchField.getText().equals(null) || searchField.getText().equals(""))	{
+						// nothing to search, clear previous search results from addCoursesTab
 						
-						updateUI();/////////////////////////
-						selectSemester(selectedSemester);
+						// GUI changes must be on main thread
+						Platform.runLater(() -> {
+							addCoursesTab.getChildren().clear();
+						});
+						
+						return; // no need to do anything further, end lambda functionality here
+					}
+					
+					// Search (Takes forever)
+					String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
+					searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
+					Iterator<Course> checkIter = searchedCourses.iterator();
+					ArrayList<Integer> studentCurrentCourseload = ((Student)Majorizer.getUser()).getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
+					while(checkIter.hasNext()) {
+						Course checkCourse = checkIter.next();
+						if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
+							checkIter.remove();
+					}
+					// End of search
+					
+					// GUI changes must be on main thread
+					Platform.runLater(() -> {
+						addCoursesTab.getChildren().clear();
+						for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
+							final Course searchedCourse = searchedCourses.get(searchIndex);
+							Label searchedLabel = new Label(searchedCourse.getCourseCode() + '\t' + searchedCourse.getCourseName());
+							addCoursesTab.add(searchedLabel, 0, searchIndex);
+							
+							Button addSearchButton = newAddButton();
+							addSearchButton.setOnMouseClicked((me) -> {
+								Iterator<Course> iterator = searchedCourses.iterator();
+								while(iterator.hasNext()) {
+									Course currentCourse = iterator.next();
+									if(currentCourse.getCourseID() == searchedCourse.getCourseID()) {
+										studentCurrentCourseload.add(searchedCourse.getCourseID());
+										iterator.remove();
+										break;
+									}
+								}
+								addCoursesTab.getChildren().remove(searchedLabel);
+								addCoursesTab.getChildren().remove(addSearchButton);
+								
+								updateUI();/////////////////////////
+								selectSemester(selectedSemester);
+							});
+							addCoursesTab.add(addSearchButton, 1, searchIndex);
+						}
 					});
-					addCoursesTab.add(addSearchButton, 1, searchIndex);
-				}
+				});
 			});
 			
 			final double tabWidthTwo = 3/4.0;
@@ -679,11 +696,60 @@ public class UserInterface extends Application{
 	}
 
 	
+	// used for search thread
+	private SearchThread searchThread;
+	private boolean windowOpen = true; // true when program starts up
+	private static final int SEARCH_WAIT_TIME_MILI = 100;
+	
+	// used for search thread
+	private class SearchThread extends Thread {
+		private Runnable searchRunnable;
+		
+		@Override
+		public void run() {
+			while (windowOpen) {
+				if(searchRunnable != null) {
+					Runnable toExecute;
+					synchronized (getInstance()) {
+						toExecute = searchRunnable;
+						searchRunnable = null;
+					}
+					
+					toExecute.run();
+				}
+				try {
+					Thread.sleep(SEARCH_WAIT_TIME_MILI);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		public void setSearchRequest(Runnable run) {
+			synchronized (getInstance()) {
+				this.searchRunnable = run;
+			}
+		}
+	}
+	
+	// used for search thread
+	public UserInterface getInstance() {
+		return this;
+	}
+	
+	
 	@Override
 	public void start(Stage primaryStage)	{
 		try	{		
 			updateUI();
-
+			
+			searchThread = new SearchThread();
+			searchThread.start();
+			
+			primaryStage.setOnCloseRequest((e) -> {
+				windowOpen = false; // used to exit out of while loop of search thread
+			});
+			
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Majorizer");
 			primaryStage.getIcons().add(ResourceLoader.getImage("favicon.png"));

@@ -26,20 +26,22 @@ public class Main {
 		// Initialize the database based on the args
 		if(args.length >= 1) {
 			DatabaseManager.connect(args[0]);
-			if(args.length >= 2 && args[1].equals("create")) {
+			if(args.length >= 2) {
+				if(args[1].equals("create")) {
 					// create the database
 					DatabaseManager.initializeDatabase();
 					loadSampleData();
+				} else if (args[1].equals("UI")) {
+					// open client majorizer
+					startUI(args);
+				} else if (args[1].equals("schedulerTest")) {
+					// test scheduler graph
+					SchedulerGraph graph = testSchedulerGraph();
+					testScheduler(graph);
+				}
 			}
 		} else {
 			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
-		}
-		
-		if(args.length == 2 && args[1].equals("UI")) {
-			startUI(args);
-		} else {
-			SchedulerGraph graph = testSchedulerGraph();
-			testScheduler(graph);
 		}
 	}
 	
@@ -130,7 +132,7 @@ public class Main {
 		//SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
 		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
 		System.out.println(CSRequirementsGraph.getAsGraphVis());
-		Scanner sc = new Scanner(System.in);
+		Scanner sc = new Scanner(System.in);                 
 		System.out.println("Press any key to continue");
 		String i = sc.next();
 		/* will wait for input then assign it to the variable,
