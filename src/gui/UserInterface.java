@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+
 import framework.Course;
 import framework.DatabaseManager;
 import framework.Majorizer;
 import framework.Student;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -35,6 +38,10 @@ import utils.ResourceLoader;
 
 public class UserInterface extends Application{
 
+	public static final int NO_SEMESTER_SELECTED = -1;
+	
+	
+	
 	private Scene scene = null;
 	private final GridPane semesters[] = new GridPane[8];
 	private int selectedSemester;
@@ -74,11 +81,11 @@ public class UserInterface extends Application{
 	
 	
 	public String getName()	{
-		return Majorizer.getUser().getFirstName() + ' ' + Majorizer.getUser().getLastName();
+		return Majorizer.getStudent().getFirstName() + ' ' + Majorizer.getStudent().getLastName();
 	}
 
 	public String getStudentID()	{
-		return Majorizer.getUser().getUniversityID();
+		return Majorizer.getStudent().getUniversityID();
 	}
 
 	public void addToCurrentSelectedSemester(Student student, Course course)	{
@@ -106,7 +113,7 @@ public class UserInterface extends Application{
 		for(int semester = 0; semester <= 7; ++semester)	{
 			if(semester == semesterNumber)	{
 				this.semesters[semester].setStyle("-fx-border-color: yellow; -fx-border-width: 3px; outline: solid;");
-				updateSemesterShown(semester);
+				populateSemesterShown(semester);
 			}
 			else	{
 				this.semesters[semester].setStyle("-fx-border-color: black; -fx-border-width: 1px; outline: solid;");
@@ -115,26 +122,41 @@ public class UserInterface extends Application{
 		}
 	}
 
-	public void updateSemesterShown(int semester)	{
-		String semesterStr = Majorizer.getStudentCurrentSemesterString(semester);
-		
-		Map<String, ArrayList<Integer>> courses = ((Student)Majorizer.getUser()).getAcademicPlan().getSelectedCourseIDs();
-		ArrayList<Integer> currentSemCourses = courses.get(semesterStr);
+	public void populateSemesterShown(int semester)	{
+		ArrayList<Integer> currentSemCourses = getCurrentSemesterCourses();
 		
 		for(int courseIdx = 0; courseIdx < currentSemCourses.size(); ++courseIdx)	{
 			final int courseID = currentSemCourses.get(courseIdx);
 			Course course = DatabaseManager.getCourse(courseID);
-			String courseName = course.getCourseName();
-			String courseCode = course.getCourseCode();
-			
-			Label cLabel = new Label(courseCode + '\t' + courseName);
-			currentSelectedSemesterTab.add(cLabel, 0, courseIdx);
+			addCourseToCurrentSemester(course);
+		}
+	}
+	
+	private synchronized void addCourseToCurrentSemester(Course c) {
+		if(selectedSemester == NO_SEMESTER_SELECTED)
+			return;
+		
+		String courseName = c.getCourseName();
+		String courseCode = c.getCourseCode();
+		final int courseID = c.getCourseID();
+		
+		int currentSemester = Majorizer.getStudentCurrentSemesterIndex();
 
-			Button removeCourseButton = newRemoveButton();
-			currentSelectedSemesterTab.add(removeCourseButton, 1, courseIdx);
+		final Label cLabel = new Label(courseCode + '\t' + courseName);
+		
+		final ObservableList<Node> nodes = currentSelectedSemesterTab.getChildren();
+		
+		if(selectedSemester < currentSemester) {
+			int numElements = nodes.size();
+			currentSelectedSemesterTab.add(cLabel, 0, numElements);
+		} else {
+			int numElements = nodes.size() / 2;
+			currentSelectedSemesterTab.add(cLabel, 0, numElements);
+			final Button removeCourseButton = newRemoveButton();
+			currentSelectedSemesterTab.add(removeCourseButton, 1, numElements);
 
 			removeCourseButton.setOnMouseClicked((me) -> {
-				Iterator<Integer> iterator = currentSemCourses.iterator();
+				Iterator<Integer> iterator = getCurrentSemesterCourses().iterator();
 				while(iterator.hasNext()) {
 					Integer id = iterator.next();
 					if(id == courseID) {
@@ -142,14 +164,21 @@ public class UserInterface extends Application{
 						break;
 					}
 				}
-				currentSelectedSemesterTab.getChildren().remove(cLabel);
-				currentSelectedSemesterTab.getChildren().remove(removeCourseButton);
-				
+				nodes.remove(cLabel);
+				nodes.remove(removeCourseButton);
 			});
 		}
-
 	}
 	
+	private ArrayList<Integer> getCurrentSemesterCourses() {
+		if(selectedSemester == NO_SEMESTER_SELECTED)
+			return new ArrayList<>();
+		Map<String, ArrayList<Integer>> courses = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs();
+		String selectedSemesterString = Majorizer.getStudentCurrentSemesterString(selectedSemester);
+		return courses.get(selectedSemesterString);
+	}
+	
+
 //REUSABLE ELEMENTS===========================
 	public Button newRemoveButton()	{
 		Button removeButton = new Button();
@@ -299,7 +328,7 @@ public class UserInterface extends Application{
 			loginScreen.setCenter(login);
 			loginScreen.setTop(logoBox);
 			
-			loginScreen.setMargin(login, new Insets(100));
+			GridPane.setMargin(login, new Insets(100));
 
 		}	catch( IOException ioe)	{
 			ioe.printStackTrace();
@@ -345,7 +374,7 @@ public class UserInterface extends Application{
 			topPane.add(name, 0, 0);
 			topPane.add(studentID, 0, 1);
 			topPane.add(logoutButtonBox, 1, 0);
-			topPane.setMargin(logoutButtonBox, new Insets(20, 0, 0, 0));
+			GridPane.setMargin(logoutButtonBox, new Insets(20, 0, 0, 0));
 			topPane.getColumnConstraints().add(constraints);
 			
 			//Schedule Pane
@@ -358,11 +387,11 @@ public class UserInterface extends Application{
 			//Schedule
 			GridPane scheduleBox = new GridPane();
 			for(int columnIndex = 0; columnIndex <= 7; ++columnIndex)	{
-				if(columnIndex < Majorizer.getStudentCurrentSemester())
+				if(columnIndex < Majorizer.getStudentCurrentSemesterIndex())
 					newSemester(columnIndex, "pastSem");
-				else if(columnIndex == Majorizer.getStudentCurrentSemester())
+				else if(columnIndex == Majorizer.getStudentCurrentSemesterIndex())
 					newSemester(columnIndex, "currentSem");
-				else if(columnIndex > Majorizer.getStudentCurrentSemester())
+				else if(columnIndex > Majorizer.getStudentCurrentSemesterIndex())
 					newSemester(columnIndex, "futureSem");
 				
 				scheduleBox.add(this.semesters[columnIndex], columnIndex, 1);
@@ -394,7 +423,7 @@ public class UserInterface extends Application{
 			curriculumPane.add(addCurriculumButton, 1, 0);
 			curriculumPane.add(curriculumScroll, 0, 1);
 			
-			ArrayList<Integer> curriculae = ((Student)Majorizer.getUser()).getAcademicPlan().getDegreeIDs();
+			ArrayList<Integer> curriculae = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
 			for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
 				final int curriculumID = curriculae.get(curriculumIdx);
 				String curriculumName = DatabaseManager.getCurriculum(curriculumID).getName();
@@ -485,7 +514,7 @@ public class UserInterface extends Application{
 					String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
 					searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
 					Iterator<Course> checkIter = searchedCourses.iterator();
-					ArrayList<Integer> studentCurrentCourseload = ((Student)Majorizer.getUser()).getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
+					ArrayList<Integer> studentCurrentCourseload = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
 					while(checkIter.hasNext()) {
 						Course checkCourse = checkIter.next();
 						if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
@@ -514,9 +543,7 @@ public class UserInterface extends Application{
 								}
 								addCoursesTab.getChildren().remove(searchedLabel);
 								addCoursesTab.getChildren().remove(addSearchButton);
-								
-								updateUI();/////////////////////////
-								selectSemester(selectedSemester);
+								addCourseToCurrentSemester(searchedCourse);
 							});
 							addCoursesTab.add(addSearchButton, 1, searchIndex);
 						}
@@ -546,7 +573,7 @@ public class UserInterface extends Application{
 			checkButton.setAlignment(Pos.BOTTOM_RIGHT);
 			
 			checkButton.setOnMouseClicked((me) -> {
-				DatabaseManager.saveStudent((Student)Majorizer.getUser());
+				DatabaseManager.saveStudent(Majorizer.getStudent());
 			});
 			
 			VBox checkButtonBox = new VBox();
@@ -744,7 +771,7 @@ public class UserInterface extends Application{
 			updateUI();
 			
 			searchThread = new SearchThread();
-			searchThread.start();
+			searchThread.start();   // thread will be running in the background waiting for search requests
 			
 			primaryStage.setOnCloseRequest((e) -> {
 				windowOpen = false; // used to exit out of while loop of search thread
