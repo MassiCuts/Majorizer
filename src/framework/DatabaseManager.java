@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 
 import database.DatabaseColumn;
 import database.DatabaseColumn.ColumnType;
@@ -314,14 +315,22 @@ public class DatabaseManager {
 	
 	
 	public static ArrayList<Course> searchCourse(String searchString, String ... dates) {
+		final String searchStringMod = makeIgnoreCaseRegex(searchString);
+		if(searchStringMod == null)
+			return new ArrayList<>();
+		
 		ArrayList<Course> courses = new ArrayList<>();
 		ArrayList<Map<String, Object>> courseResults = new ArrayList<>();
 		courseResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
 			String retrievedCourse 		= (String) m.get("courseName");
 			String retrievedCourseCode 	= (String) m.get("courseCode");
-			if(retrievedCourse.contains(searchString) || retrievedCourseCode.contains(searchString)) 
-				return true;
-			return false;
+			boolean matchedName = false;
+			boolean matchedCode = false;
+			try {
+				matchedName = retrievedCourse.matches(searchStringMod);
+				matchedCode = retrievedCourseCode.matches(searchStringMod);
+			} catch (PatternSyntaxException e) {}
+			return matchedName || matchedCode;
 		});
 		
 		for(Map<String, Object> result : courseResults) {
@@ -353,32 +362,67 @@ public class DatabaseManager {
 	
 	
 	public static ArrayList<Curriculum> searchCurriculum(String searchString) {
+		final String searchStringMod = makeIgnoreCaseRegex(searchString);
+		if(searchStringMod == null)
+			return new ArrayList<>();
+		
 		ArrayList<Curriculum> curriculums = new ArrayList<>();
 		ArrayList<Map<String, Object>> curriculumResults = new ArrayList<>();
 		curriculumResults = DATABASE.queryEntry(CURRICULUMS_TABLE, (m) -> {
 			if(m.get("type").equals(CURRICULUM_TYPE_LIST)) 
 				return false;
 			String retrievedCurriculums = (String) m.get("curriculumName");
-			if(retrievedCurriculums.contains(searchString)) 
-				return true;
-			return false;
+			boolean nameMatches = false;
+			try {
+				nameMatches = retrievedCurriculums.matches(searchStringMod);
+			} catch (PatternSyntaxException e) {}
+			return nameMatches;
 		});
-		
 		for(Map<String, Object> result : curriculumResults) {
 			Curriculum curriculum = mapToCurriculum(result);
 			curriculums.add(curriculum);
 		}
-		
 		return curriculums;
 	}
 	
-//	private static String genContainsIgnoreCaseRegex(String comparingString) {
-//		if (comparingString == null || comparingString.equals(""))
-//			return null;
-//		for(int i = 0; i < comparingString.length(); i++) {
-//			int index = i * 4;
-//		}
-//	}
+	private static String makeIgnoreCaseRegex(String comparingString) {
+		if (comparingString == null || comparingString.equals(""))
+			return null;
+		
+		int stringLength = comparingString.length();
+		int alphabeticalChars = 0;
+		for(int i = 0; i < stringLength; i++) {
+			char c = comparingString.charAt(i);
+			if(Character.isAlphabetic(c))
+				alphabeticalChars++;
+		}
+		int length = alphabeticalChars * 4 + stringLength - alphabeticalChars + 4;
+		char[] regexChars = new char[length];
+		
+		
+		int regexIndex = 0;
+		int stringIndex = 0;
+		regexChars[regexIndex++] = '.';
+		regexChars[regexIndex++] = '*';
+
+		while(regexIndex < length - 2) {
+			char c = comparingString.charAt(stringIndex++);
+			if(Character.isAlphabetic(c)) {
+				char lower = Character.toLowerCase(c);
+				char upper = Character.toUpperCase(c);
+				regexChars[regexIndex++] = '[';
+				regexChars[regexIndex++] = lower;
+				regexChars[regexIndex++] = upper;
+				regexChars[regexIndex++] = ']';
+			} else {
+				regexChars[regexIndex++] = c;
+			}
+		}
+		regexChars[regexIndex++] = '.';
+		regexChars[regexIndex++] = '*';
+		
+		return new String(regexChars);
+	}
 	
 	
 	
