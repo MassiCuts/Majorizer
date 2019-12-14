@@ -39,6 +39,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import utils.ResourceLoader;
+import utils.Single;
 
 public class UserInterface extends Application{
 
@@ -183,7 +184,14 @@ public class UserInterface extends Application{
 			return new ArrayList<>();
 		Map<String, ArrayList<Integer>> courses = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs();
 		String selectedSemesterString = Majorizer.getStudentCurrentSemesterString(selectedSemester);
-		return courses.get(selectedSemesterString);
+		ArrayList<Integer> semCourses = courses.get(selectedSemesterString);
+		if(semCourses == null) {
+			synchronized (this) {
+				semCourses = new ArrayList<Integer>();
+				courses.put(selectedSemesterString, semCourses);
+			}
+		}
+		return semCourses;
 	}
 	
 
@@ -513,9 +521,12 @@ public class UserInterface extends Application{
 						// nothing to search, clear previous search results from addCoursesTab
 						
 						// GUI changes must be on main thread
+						final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
 						Platform.runLater(() -> {
 							addCoursesTab.getChildren().clear();
+							waitUntilDoneFlag.single = false;
 						});
+						waitUntilDone(waitUntilDoneFlag);
 						
 						return; // no need to do anything further, end lambda functionality here
 					}
@@ -525,14 +536,18 @@ public class UserInterface extends Application{
 					searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
 					Iterator<Course> checkIter = searchedCourses.iterator();
 					ArrayList<Integer> studentCurrentCourseload = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
-					while(checkIter.hasNext()) {
-						Course checkCourse = checkIter.next();
-						if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
-							checkIter.remove();
+					if(studentCurrentCourseload != null) {
+						while(checkIter.hasNext()) {
+							Course checkCourse = checkIter.next();
+							if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
+								checkIter.remove();
+						}
 					}
 					// End of search
 					
 					// GUI changes must be on main thread
+
+					final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
 					Platform.runLater(() -> {
 						addCoursesTab.getChildren().clear();
 						for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
@@ -557,7 +572,9 @@ public class UserInterface extends Application{
 							});
 							addCoursesTab.add(addSearchButton, 1, searchIndex);
 						}
+						waitUntilDoneFlag.single = true;
 					});
+					waitUntilDone(waitUntilDoneFlag);
 				});
 			});
 			
@@ -676,6 +693,11 @@ public class UserInterface extends Application{
 			
 			Label studentNames = new Label(fullName);
 			studentListTab.add(studentNames, 0, studentIdx);
+			
+			studentNames.setOnMousePressed((me) -> {
+				Majorizer.setStudent(student);
+				studentSide.setCenter(studentView());
+			});
 		}
 		
 		//Requests Pane
@@ -764,6 +786,14 @@ public class UserInterface extends Application{
 			synchronized (getInstance()) {
 				this.searchRunnable = run;
 			}
+		}
+	}
+	
+	public static void waitUntilDone(Single<Boolean> flagSingle) {
+		while(!flagSingle.single) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ie) {}
 		}
 	}
 	
