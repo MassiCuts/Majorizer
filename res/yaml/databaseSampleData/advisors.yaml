@@ -4,16 +4,16 @@
    lastName: Maciel
    username: alexis
    password: greatMan
-   advisees:
-     -  cutugnma
+   advisees: []
        
  -  
    universityID: '1'
    firstName: Sean
    lastName: Banerjee
-   username: sbanerje
-   password: alsoGreatMan
+   username: a #sbanerje
+   password: a #alsoGreatMan
    advisees:
      -  heethr
      -  villanlj
+     -  cutugnma
       

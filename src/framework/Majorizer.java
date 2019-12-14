@@ -1,7 +1,9 @@
 package framework;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import javafx.scene.Node;
 import utils.Pair;
 
 public class Majorizer {
@@ -15,6 +17,9 @@ public class Majorizer {
 
 	public static void setUser(User user)	{
 		Majorizer.user = user;
+		if(user == null) {
+			return;
+		}
 		if(user.isUserIsStudent())
 			student = (Student) user;
 		else
@@ -73,6 +78,34 @@ public class Majorizer {
 		}
 	}
 
+	public static ArrayList<Student> getAdvisees() {
+		ArrayList<Student> students = new ArrayList<>();
+		ArrayList<Integer> adviseeIDS = Majorizer.getAdvisor().getAdviseeIDs();
+		
+		for(int i = 0; i < adviseeIDS.size(); i++) {
+			int id = adviseeIDS.get(i);
+			Student student = DatabaseManager.getStudent(id);
+			if (student != null)
+				students.add(student);
+		}
+		
+		return students;
+	}
+	
+	public static ArrayList<Request> getRequests() {
+		ArrayList<Request> requests = new ArrayList<>();
+		ArrayList<Integer> requestIDs = Majorizer.getAdvisor().getRequestIDs();
+		
+		for(int i=0; i < requestIDs.size(); i++) {
+			int id = requestIDs.get(i);
+			Request request = DatabaseManager.getRequest(id);
+			if(request != null)
+				requests.add(request);
+		}
+		
+		return requests;
+	}
+	
 	
 	public static String getStudentCurrentSemesterString(int sem)	{
 		String startSemester[] = student.getAcademicPlan().getStartSemester().split(" ");

@@ -51,4 +51,12 @@ public class Request {
 	public int hashCode() {
 		return Objects.hash(requestID);
 	}
+	
+	public Student getStudent() {
+		return DatabaseManager.getStudent(studentID);
+	}
+	
+	public Curriculum getCurriculum() {
+		return DatabaseManager.getCurriculum(curriculumID);
+	}
 }

@@ -8,8 +8,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import framework.Course;
+import framework.Curriculum;
 import framework.DatabaseManager;
 import framework.Majorizer;
+import framework.Request;
 import framework.Student;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,11 +20,13 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -57,7 +61,7 @@ public class UserInterface extends Application{
 	
 	public void updateUI()	{
 		
-		BorderPane root = null;
+		Node root = null;
 
 		this.screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
@@ -72,9 +76,9 @@ public class UserInterface extends Application{
 		}
 		
 		if(scene == null)
-			scene = new Scene(root);
+			scene = new Scene((Parent) root);
 		else
-			scene.setRoot(root);
+			scene.setRoot((Parent) root);
 		
 		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 	}
@@ -82,6 +86,10 @@ public class UserInterface extends Application{
 	
 	public String getName()	{
 		return Majorizer.getStudent().getFirstName() + ' ' + Majorizer.getStudent().getLastName();
+	}
+	
+	public String getNameAdvisor() {
+		return Majorizer.getAdvisor().getFirstName() + ' ' + Majorizer.getAdvisor().getLastName();
 	}
 
 	public String getStudentID()	{
@@ -342,6 +350,8 @@ public class UserInterface extends Application{
 		BorderPane studentScreen = new BorderPane();
 		try	{
 			studentScreen.getStyleClass().add("lightgraytheme");
+			
+			
 			
 			ColumnConstraints constraints = new ColumnConstraints();
 			constraints.setHgrow(Priority.ALWAYS);
@@ -618,108 +628,106 @@ public class UserInterface extends Application{
 		return studentScreen;
 	}
 	
-	public BorderPane advisorView()	{
+	public SplitPane advisorView()	{
+		
+		BorderPane advisorSide = new BorderPane();
+		BorderPane studentSide = new BorderPane();
+		SplitPane splitStudentAdvisor = new SplitPane(advisorSide, studentSide);
+		
+		advisorSide.getStyleClass().add("lightgraytheme");
+		
+		ColumnConstraints constraints = new ColumnConstraints();
+		constraints.setHgrow(Priority.ALWAYS);
+		
+		GridPane orgPane = new GridPane();
+		orgPane.getColumnConstraints().add(constraints);
 
-		BorderPane advisorScreen = new BorderPane();
-		try	{
-			if(false)						//TESTING ONLY - DELETE ONCE A FUNCTION IS ADDED THAT THROWS IOE
-				throw new IOException();	//TODO: REMOVE
+		Label name = new Label();
+		name.setText(getNameAdvisor());
+		System.out.println(getNameAdvisor());
+		
+		name.getStyleClass().add("fonttitle");
+		
+		//studentList Pane
+		GridPane studentListPane = new GridPane();
+		studentListPane.setPrefWidth(200);
+		
+		//Header label for studentList
+		Label studentListHeader = newStyledLabel("Students", "fontmed");
+		
+		//Tab for studentList
+		GridPane studentListTab = newActionGrid();
+		
+		//Scroll for studentList
+		ScrollPane studentListScroll = newActionScroll();
+		studentListScroll.setContent(studentListTab);
+		studentListScroll.setMinViewportWidth(200);
+		
+		studentListPane.add(studentListHeader, 0, 0);
+		studentListPane.add(studentListScroll, 0, 1);
+		
+		ArrayList<Student> students = Majorizer.getAdvisees();
+		for(int studentIdx = 0; studentIdx < students.size(); ++studentIdx)	{
+			Student student = students.get(studentIdx); 
+			String firstName = student.getFirstName();
+			String lastName = student.getLastName();
 			
-			BorderPane advisorInfoPane = new BorderPane();
-			BorderPane studentInfoPane = new BorderPane();
+			String fullName = firstName + ' ' + lastName;
 			
-			advisorInfoPane.getStyleClass().add("lightgraytheme");
-
-			ColumnConstraints constraints = new ColumnConstraints();
-			constraints.setHgrow(Priority.ALWAYS);
-
-			//TESTING? -- Sets Student Side
-			studentInfoPane = studentView();
-			
-			GridPane orgPane = new GridPane();
-			
-			Label name = new Label();
-			name.setText("Sean Banerjee");		//getName());
-			name.getStyleClass().add("fonttitle");
-			
-			//studentList Pane
-			GridPane studentListPane = new GridPane();
-			studentListPane.setMaxWidth(orgPane.getPrefWidth()*(1/3.0));
-			
-			//Header label for studentList
-			Label studentListHeader = newStyledLabel("Students", "fontmed");
-			
-			//Tab for studentList
-			GridPane studentListTab = newActionGrid();
-			
-			//Scroll for studentList
-			ScrollPane studentListScroll = newActionScroll();
-			studentListScroll.setContent(studentListTab);
-			studentListScroll.setMinViewportWidth(studentListTab.getWidth());
-			
-			studentListPane.add(studentListHeader, 0, 0);
-			studentListPane.add(studentListScroll, 0, 1);
-			
-			//SAMPLE DATA
-			studentListTab.add(new Label("Lorenzo Villani"), 0, 0);
-			
-			orgPane.add(studentListPane, 0, 0);
-			
-			//Requests Pane
-			GridPane requestsPane = new GridPane();
-			requestsPane.setMaxWidth(orgPane.getPrefWidth()*(1/3.0));
-			
-			//Header label for studentList
-			Label requestsHeader = newStyledLabel("List of Requests", "fontmed");
-			
-			//Tab for studentList
-			GridPane requestsTab = newActionGrid();
-			
-			//Scroll for studentList
-			ScrollPane requestsScroll = newActionScroll();
-			requestsScroll.setContent(requestsTab);
-			requestsScroll.setMinViewportWidth(requestsTab.getWidth());
-			
-			requestsPane.add(requestsHeader, 0, 0);
-			requestsPane.add(requestsScroll, 0, 1);
-			
-			//SAMPLE DATA
-			requestsTab.add(new Label("Heet Dave - Add Business Major"), 0, 0);
-			
-			//Remove Requests Buttons
-			int numberOfRequests = 1;																//TEMP
-			Button removeRequestsButton[] = new Button[numberOfRequests];
-			for(int rowIndex = 0; rowIndex < numberOfRequests; ++rowIndex)	{
-				removeRequestsButton[rowIndex] = newRemoveButton();
-				requestsTab.add(removeRequestsButton[rowIndex], 1, rowIndex);
-			}
-			
-			//Add Requests Buttons
-			Button addRequestsButton[] = new Button[numberOfRequests];
-			for(int rowIndex = 0; rowIndex < numberOfRequests; ++rowIndex)	{
-				addRequestsButton[rowIndex] = newAddButton();
-				requestsTab.add(addRequestsButton[rowIndex], 1, rowIndex);
-			}
-			
-			orgPane.add(requestsPane, 1, 0);
-			
-			//TESTING
-			orgPane.setGridLinesVisible(true);
-			
-			orgPane.getColumnConstraints().add(constraints);
-			orgPane.add(name, 0, 0);
-			orgPane.add(newStyledLabel("Students", "fontmed"), 0, 1);
-//			orgPane.add(name, 0, 0);
-//			orgPane.add(name, 0, 0);
-//			orgPane.add(name, 0, 0);
-			
-			advisorInfoPane.getChildren().add(orgPane);
-			advisorScreen.setLeft(advisorInfoPane);
-			advisorScreen.setRight(studentInfoPane);
-		}	catch( IOException ioe )	{
-			ioe.printStackTrace();
+			Label studentNames = new Label(fullName);
+			studentListTab.add(studentNames, 0, studentIdx);
 		}
-		return advisorScreen;
+		
+		//Requests Pane
+		GridPane requestsPane = new GridPane();
+		requestsPane.setMaxWidth(200);
+		
+		//Header label for studentList
+		Label requestsHeader = newStyledLabel("List of Requests", "fontmed");
+		
+		//Tab for requestsList
+		GridPane requestsTab = newActionGrid();
+		
+		//Scroll for studentList
+		ScrollPane requestsScroll = newActionScroll();
+		requestsScroll.setContent(requestsTab);
+		requestsScroll.setMinViewportWidth(200);
+		
+		requestsPane.add(requestsHeader, 0, 0);
+		requestsPane.add(requestsScroll, 0, 1);
+		
+		ArrayList<Request> requests = Majorizer.getRequests();
+		for(int requestIdx = 0; requestIdx < requests.size(); ++requestIdx) {
+			Request request = requests.get(requestIdx);
+			Student studentName = request.getStudent();
+			Curriculum requestMessage = request.getCurriculum();
+			
+			String firstName = studentName.getFirstName();
+			String lastName = studentName.getLastName();
+			String fullName = firstName + ' ' + lastName;
+			
+			String msg = requestMessage.getName();
+			
+			String fullAddMessage = fullName + " - Add " + msg;
+			String fullRemoveMessage = fullName + " - Remove " + msg;
+			
+			Label studentRequests;
+			if(request.isAdding() == true) {
+				studentRequests = new Label(fullAddMessage);
+			} else {
+				studentRequests = new Label(fullRemoveMessage);
+			}
+			
+			requestsTab.add(studentRequests, 0, requestIdx);
+		}
+		
+		orgPane.add(name, 0, 0);
+		orgPane.add(studentListPane, 0, 1);
+		orgPane.add(requestsPane, 0, 2);
+		
+		advisorSide.setCenter(orgPane);
+		
+		return splitStudentAdvisor;
 	}
 
 	
