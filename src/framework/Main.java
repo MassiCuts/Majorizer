@@ -113,7 +113,7 @@ public class Main {
 		scheduler.setNumCourses(5);
 		scheduler.setNumSemesters(15);
 		try{
-			System.out.println(scheduler.schedule(graph, added, dropped, taken));
+			System.out.println(scheduler.schedule(graph, added, dropped, taken, 0));
 			System.out.print("Finished Schedule");
 		} catch (Exception e) {
 			System.out.println("Failed to create schedule because" + e);

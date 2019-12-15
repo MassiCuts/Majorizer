@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Set;
 
 import scheduler.Scheduler;
 import scheduler.SchedulerCourse;
@@ -69,7 +68,7 @@ public class Majorizer {
 	}
 
 	public static int getStudentCurrentSemesterIndex()	{
-		if(!user.isUserIsStudent())
+		if(student == null)
 			return 0;
 		else {
 			String startSemester[] = student.getAcademicPlan().getStartSemester().split(" ");

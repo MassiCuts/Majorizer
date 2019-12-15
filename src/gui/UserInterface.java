@@ -48,7 +48,20 @@ import utils.Single;
 public class UserInterface extends Application{
 
 	public static final int NO_SEMESTER_SELECTED = -1;
+	public static Image GREEN_PLUS_IMAGE;
+	public static Image MINUS_512;
 	
+	static {
+		try {
+			// loading all images:
+			GREEN_PLUS_IMAGE = ResourceLoader.getImage("NEWgreenPlus.png");
+			MINUS_512 = ResourceLoader.getImage("minus-512.png");
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+	}
 	
 	
 	private Scene scene = null;
@@ -59,10 +72,6 @@ public class UserInterface extends Application{
 	Dimension screenSize;
 	boolean isAuthenticated = false;
 	
-	private ArrayList<Course> addedCourses = new ArrayList<Course>();		//TODO:this
-	private ArrayList<Course> droppedCourses = new ArrayList<Course>();
-	private ArrayList<Course> xCourses = new ArrayList<Course>();
-	private ArrayList<Course> searchedCourses = new ArrayList<Course>();		//Necessary to do as global? --probably
 	
 	public void updateUI()	{
 		
@@ -191,10 +200,8 @@ public class UserInterface extends Application{
 		String selectedSemesterString = Majorizer.getStudentCurrentSemesterString(selectedSemester);
 		ArrayList<Integer> semCourses = courses.get(selectedSemesterString);
 		if(semCourses == null) {
-			synchronized (this) {
-				semCourses = new ArrayList<Integer>();
-				courses.put(selectedSemesterString, semCourses);
-			}
+			semCourses = new ArrayList<Integer>();
+			courses.put(selectedSemesterString, semCourses);
 		}
 		return semCourses;
 	}
@@ -205,11 +212,8 @@ public class UserInterface extends Application{
 		Button removeButton = new Button();
 		removeButton.setShape(new Circle(2));
 		ImageView redMinusMark = null;
-		try {
-			redMinusMark = new ImageView(ResourceLoader.getImage("minus-512.png"));
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+		
+		redMinusMark = new ImageView(MINUS_512);
 		removeButton.setGraphic(redMinusMark);
 		redMinusMark.setFitWidth(10);
 		redMinusMark.setFitHeight(25);
@@ -222,11 +226,7 @@ public class UserInterface extends Application{
 		Button addButton = new Button();
 		addButton.setShape(new Circle(2));
 		ImageView greenPlusMark = null;
-		try {
-			greenPlusMark = new ImageView(ResourceLoader.getImage("NEWgreenPlus.png"));
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+		greenPlusMark = new ImageView(GREEN_PLUS_IMAGE);
 		addButton.setGraphic(greenPlusMark);
 		greenPlusMark.setFitWidth(30);
 		greenPlusMark.setFitHeight(20);
@@ -532,7 +532,7 @@ public class UserInterface extends Application{
 						final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
 						Platform.runLater(() -> {
 							addCoursesTab.getChildren().clear();
-							waitUntilDoneFlag.single = false;
+							waitUntilDoneFlag.single = true;
 						});
 						waitUntilDone(waitUntilDoneFlag);
 						
@@ -541,7 +541,7 @@ public class UserInterface extends Application{
 					
 					// Search (Takes forever)
 					String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
-					searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
+					final ArrayList<Course> searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
 					Iterator<Course> checkIter = searchedCourses.iterator();
 					ArrayList<Integer> studentCurrentCourseload = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
 					if(studentCurrentCourseload != null) {
@@ -767,6 +767,8 @@ public class UserInterface extends Application{
 	private SearchThread searchThread;
 	private boolean windowOpen = true; // true when program starts up
 	private static final int SEARCH_WAIT_TIME_MILI = 100;
+	private static final Object REQUEST_LOCK = new Object();
+	
 	
 	// used for search thread
 	private class SearchThread extends Thread {
@@ -777,7 +779,7 @@ public class UserInterface extends Application{
 			while (windowOpen) {
 				if(searchRunnable != null) {
 					Runnable toExecute;
-					synchronized (this) {
+					synchronized (REQUEST_LOCK) {
 						toExecute = searchRunnable;
 						searchRunnable = null;
 					}
@@ -793,7 +795,7 @@ public class UserInterface extends Application{
 		}
 		
 		public void setSearchRequest(Runnable run) {
-			synchronized (this) {
+			synchronized (REQUEST_LOCK) {
 				this.searchRunnable = run;
 			}
 		}
@@ -814,6 +816,7 @@ public class UserInterface extends Application{
 			updateUI();
 			
 			searchThread = new SearchThread();
+			searchThread.setPriority(1);
 			searchThread.start();   // thread will be running in the background waiting for search requests
 			
 			primaryStage.setOnCloseRequest((e) -> {

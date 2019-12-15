@@ -1,10 +1,7 @@
 package scheduler;
 
 
-import java.util.Random;
 import java.util.ArrayList;
-
-import framework.Course;
 
 public class Scheduler {
 	
