@@ -237,44 +237,13 @@ public class DatabaseManager {
 //	}
 	
 	
-	// database get functions:
-	
-	public static Advisor getAdvisor(String username) {
-		ArrayList<Map<String, Object>> results = DATABASE.queryEntry(USERS_TABLE, (m) -> {
-			if(m.get("username").equals(username))
-				return true;
-			return false;
-		});
-		
-		if(results.size() == 0)
-			return null;
-		
-		Map<String, Object> m = results.get(0);
-		
-		return mapToAdvisor(m);
-	}
 	
 	
 	
 	
-	public static Advisor getAdvisor(int userID) {
-		ArrayList<Map<String, Object>> results = DATABASE.queryEntry(USERS_TABLE, (m) -> {
-			if(m.get("userID").equals(userID))
-				return true;
-			return false;
-		});
-		
-		if(results.size() == 0)
-			return null;
-		
-		Map<String, Object> m = results.get(0);
-		
-		return mapToAdvisor(m);
-	}
 	
 	
-	
-	
+	// database authenticate function
 	
 	public static User authenticate(String username, String password) {
 		ArrayList<Map<String, Object>> userResults;
@@ -312,7 +281,7 @@ public class DatabaseManager {
 	}
 	
 	
-	
+	// database search functions:
 	
 	public static ArrayList<Course> searchCourse(String searchString, String ... dates) {
 		final String searchStringMod = makeIgnoreCaseRegex(searchString);
@@ -423,6 +392,48 @@ public class DatabaseManager {
 		
 		return new String(regexChars);
 	}
+	
+	
+	
+	
+	
+	
+	
+	// database get functions:
+	
+	public static Advisor getAdvisor(String username) {
+		ArrayList<Map<String, Object>> results = DATABASE.queryEntry(USERS_TABLE, (m) -> {
+			if(m.get("username").equals(username))
+				return true;
+			return false;
+		});
+		
+		if(results.size() == 0)
+			return null;
+		
+		Map<String, Object> m = results.get(0);
+		
+		return mapToAdvisor(m);
+	}
+	
+	
+	
+	
+	public static Advisor getAdvisor(int userID) {
+		ArrayList<Map<String, Object>> results = DATABASE.queryEntry(USERS_TABLE, (m) -> {
+			if(m.get("userID").equals(userID))
+				return true;
+			return false;
+		});
+		
+		if(results.size() == 0)
+			return null;
+		
+		Map<String, Object> m = results.get(0);
+		
+		return mapToAdvisor(m);
+	}
+	
 	
 	
 	
@@ -559,7 +570,7 @@ public class DatabaseManager {
 	
 	
 	
-	public static RequiredCourses getCurriculumCourses(int curriculumID) {
+	private static RequiredCourses getCurriculumCourses(int curriculumID) {
 		ArrayList<Map<String, Object>> curriculumResults = DATABASE.queryEntry(CURRICULUMS_TABLE, (m) -> {
 			if(m.get("curriculumID").equals(curriculumID)) return true;
 			return false;
@@ -577,7 +588,7 @@ public class DatabaseManager {
 	
 	
 	
-	public static RequiredCourses getCurriculumCourses(String curriculumName) {
+	private static RequiredCourses getCurriculumCourses(String curriculumName) {
 		ArrayList<Map<String, Object>> curriculumResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
 			if(m.get("curriculumName").equals(curriculumName)) return true;
 			return false;
@@ -675,7 +686,7 @@ public class DatabaseManager {
 	
 	
 	
-	public static RequiredCourses getCoursePreRecs(int courseID) {
+	private static RequiredCourses getCoursePreRecs(int courseID) {
 		ArrayList<Map<String, Object>> preReqResults = DATABASE.queryEntry(COURSE_PREREC_TABLE, (m) -> {
 			if(m.get("courseID").equals(courseID)) return true;
 			return false;
@@ -692,7 +703,7 @@ public class DatabaseManager {
 	
 	
 	
-	public static RequiredCourses getCoursePreRecs(String courseCode) {
+	private static RequiredCourses getCoursePreRecs(String courseCode) {
 		ArrayList<Map<String, Object>> courseResults = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
 			if(m.get("courseCode").equals(courseCode)) return true;
 			return false;

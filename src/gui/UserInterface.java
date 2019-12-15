@@ -13,6 +13,7 @@ import framework.DatabaseManager;
 import framework.Majorizer;
 import framework.Request;
 import framework.Student;
+import framework.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -28,6 +29,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -35,6 +38,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -81,7 +85,12 @@ public class UserInterface extends Application{
 		else
 			scene.setRoot((Parent) root);
 		
-		scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		try {
+			String path = ResourceLoader.getCSSPath("application.css");
+			scene.getStylesheets().add(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -95,10 +104,6 @@ public class UserInterface extends Application{
 
 	public String getStudentID()	{
 		return Majorizer.getStudent().getUniversityID();
-	}
-
-	public void addToCurrentSelectedSemester(Student student, Course course)	{
-		String courseName = course.getCourseName();
 	}
 
 	public void loginPressed(ActionEvent action) {
@@ -267,6 +272,8 @@ public class UserInterface extends Application{
 			
 			VBox login = new VBox();
 			login.getStyleClass().add("roundedRect");
+			login.setEffect(new DropShadow(BlurType.THREE_PASS_BOX, Color.DARKGOLDENROD, 3, 0, -3, -3));
+			
 			
 			login.setMaxSize(400, 300);
 			
@@ -324,6 +331,7 @@ public class UserInterface extends Application{
 	    	 
 	    	
 	    	loginButton.setOnAction((ae) -> {
+	    		User user = Majorizer.authenticate(username.getText(), password.getText());
 	    		Majorizer.setUser(Majorizer.authenticate(username.getText(), password.getText()));
 	    		if(Majorizer.getUser() != null)
 	    			this.isAuthenticated = true;
@@ -548,6 +556,7 @@ public class UserInterface extends Application{
 					// GUI changes must be on main thread
 
 					final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
+					Platform.setImplicitExit(false);
 					Platform.runLater(() -> {
 						addCoursesTab.getChildren().clear();
 						for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
@@ -600,6 +609,7 @@ public class UserInterface extends Application{
 			checkButton.setAlignment(Pos.BOTTOM_RIGHT);
 			
 			checkButton.setOnMouseClicked((me) -> {
+				Majorizer.scheduleForStudent();
 				DatabaseManager.saveStudent(Majorizer.getStudent());
 			});
 			
@@ -767,7 +777,7 @@ public class UserInterface extends Application{
 			while (windowOpen) {
 				if(searchRunnable != null) {
 					Runnable toExecute;
-					synchronized (getInstance()) {
+					synchronized (this) {
 						toExecute = searchRunnable;
 						searchRunnable = null;
 					}
@@ -783,7 +793,7 @@ public class UserInterface extends Application{
 		}
 		
 		public void setSearchRequest(Runnable run) {
-			synchronized (getInstance()) {
+			synchronized (this) {
 				this.searchRunnable = run;
 			}
 		}
@@ -795,11 +805,6 @@ public class UserInterface extends Application{
 				Thread.sleep(100);
 			} catch (InterruptedException ie) {}
 		}
-	}
-	
-	// used for search thread
-	public UserInterface getInstance() {
-		return this;
 	}
 	
 	

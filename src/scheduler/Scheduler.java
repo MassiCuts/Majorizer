@@ -108,6 +108,7 @@ public class Scheduler {
 			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
 
 		}
+		System.out.println("Scheduling Complete!");
 		return sched;
 	}
 	

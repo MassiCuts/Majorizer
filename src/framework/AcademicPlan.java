@@ -10,7 +10,6 @@ public class AcademicPlan {
 	private String startSemester;
 	private ArrayList<Integer> degreeIDs;
 	private Map<String, ArrayList<Integer>> selectedCourseIDs;
-	private SchedulerGraph schedulerGraph;
 	
 	
 	public static AcademicPlan getEmptyPlan(String startSemester) {
@@ -21,7 +20,6 @@ public class AcademicPlan {
 		this.startSemester = startSemester;
 		this.degreeIDs = degreesIDs;
 		this.selectedCourseIDs = selectedCoursesIDs;
-		this.schedulerGraph = schedulerGraph;
 	}
 	
 	public String getStartSemester() {
@@ -36,8 +34,25 @@ public class AcademicPlan {
 		return selectedCourseIDs;
 	}
 	
-	public SchedulerGraph getSchedulerGraph() {
-		return schedulerGraph;
+	public SchedulerGraph getCurriculumSchedulerGraph() {
+		if(degreeIDs.isEmpty())
+			return null;
+		
+		int firstID = degreeIDs.get(0);
+		Curriculum curriculum = DatabaseManager.getCurriculum(firstID);
+		RequiredCourses rc = curriculum.getRequiredCourses();
+		SchedulerGraph root = new SchedulerGraph(rc);
+		
+		for(int i = 1; i < degreeIDs.size(); i++) {
+			int currentID = degreeIDs.get(i);
+			curriculum = DatabaseManager.getCurriculum(currentID);
+			rc = curriculum.getRequiredCourses();
+			SchedulerGraph graph = new SchedulerGraph(rc);
+			root.mergeGraphs(graph);
+		}
+		return root;
 	}
+	
+	
 	
 }

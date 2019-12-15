@@ -17,6 +17,14 @@ public class ResourceLoader {
 		
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
 	
+	
+	public static String getCSSPath(String filename) throws IOException {
+		URL url = ResourceLoader.class.getClassLoader().getResource("css/" + filename);
+		if(url == null)
+			throw new FileNotFoundException("The file \"" + filename + "\" cannot be found in the css folder");
+		return url.toExternalForm();
+	}
+	
 	public static File getYAMLFile(String filename) throws IOException {
 		URL url = ResourceLoader.class.getClassLoader().getResource("yaml/" + filename);
 		if(url == null)

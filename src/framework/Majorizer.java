@@ -1,9 +1,12 @@
 package framework;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import javafx.scene.Node;
+import scheduler.Scheduler;
+import scheduler.SchedulerGraph;
 import utils.Pair;
 
 public class Majorizer {
@@ -14,12 +17,13 @@ public class Majorizer {
 	private static User user = null;
 	private static Advisor advisor = null;
 	private static Student student = null;
-
+	
+	private static Scheduler scheduler = new Scheduler();
+	
 	public static void setUser(User user)	{
 		Majorizer.user = user;
-		if(user == null) {
+		if(user == null)
 			return;
-		}
 		if(user.isUserIsStudent())
 			student = (Student) user;
 		else
@@ -124,16 +128,48 @@ public class Majorizer {
 		return DatabaseManager.authenticate(username, password);
 	}
 	
-	//TESTING ONLY
-	public static void main(String[] args)	{
-		AcademicPlan academicPlanL = new AcademicPlan("SPRING 2017", null, null, null);
-		User Lorenzo = new Student(0, "0755050", "Lorenzo", "Villani", "villanlj", "password", false, academicPlanL);
-		setUser(Lorenzo);
+	
+	public static void scheduleForStudent() {
+		SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
 		
-		for(int i = 0; i <= 7; ++i)
-			getStudentCurrentSemesterString(i);
+		ArrayList<ArrayList<String>> updatedCourses;
+		try {
+			updatedCourses = scheduler.schedule(curriculumGraph, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+		} catch (Exception e) {
+			return;
+		}
 		
-//		System.out.println(getCurrentSemester());
-//		System.out.println(getStudentCurrentSemester());
+		
+		printInfo(updatedCourses, curriculumGraph);
 	}
+	
+	public static void printInfo (ArrayList<ArrayList<String>> updatedCourses, SchedulerGraph curriculumGraph) {
+		File f = new File("C:/Users/Massimiliano Cutugno/Desktop/test.txt");
+		try (
+			FileWriter fw = new FileWriter(f);
+		){
+			
+			fw.append('\n');
+			fw.append('\n');
+			if(curriculumGraph != null)
+				fw.append(curriculumGraph.getAsGraphVis());
+			fw.append('\n');
+			fw.append('\n');
+			if(updatedCourses != null) {
+				for(ArrayList<String> semester : updatedCourses) {
+					fw.append(semester.toString());
+					fw.append('\n');
+				}
+			}
+			fw.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	
+	
+	
 }
