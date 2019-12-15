@@ -10,7 +10,7 @@ public class Scheduler {
 	
 	private int num_courses=6;
 	private int num_semesters=8;
-	private int current_semester=0;
+	//private int current_semester=0;
 	static int MAX_ATTEMPTS = 1000;
 	
 	public Scheduler() {}
@@ -29,9 +29,9 @@ public class Scheduler {
 		}
 		return list;
 	}
-	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops, ArrayList<SchedulerCourse> taken_courses) throws Exception {
-		
-		//return makeList(new String[][] {new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
+	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops, ArrayList<SchedulerCourse> taken_courses, int current_semester) throws Exception {
+		// TODO make sure you don't add courses to a past semester
+		//return makeList(new String[][] /{new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
 		SchedulerCourse course = null;
 		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {

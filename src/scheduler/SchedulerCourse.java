@@ -52,6 +52,7 @@ public class SchedulerCourse extends SchedulerNode {
 	public boolean isDropped(int semester) {return this.courseinfo.get(CourseInfo.DROPPED)== semester;}
 	
 	public void addToSemester(int semester_num) {this.courseinfo.put(CourseInfo.ADDED, semester_num); }
+	public void addTakenSemester(int semester_num) {this.courseinfo.put(CourseInfo.TAKEN, semester_num); }
 	public void removeFromSemester(int semester_num) {this.courseinfo.put(CourseInfo.DROPPED, semester_num);}	
 	public SchedulerNode getChild() {
 		return this.children.get(0);	//Only one child because this is a course
@@ -62,5 +63,10 @@ public class SchedulerCourse extends SchedulerNode {
 			if (this.name == ((SchedulerCourse) node).name) {return true;}
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 };

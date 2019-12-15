@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
+import java.util.Set;
 
 import scheduler.Scheduler;
+import scheduler.SchedulerCourse;
 import scheduler.SchedulerGraph;
 import utils.Pair;
 
@@ -132,13 +135,35 @@ public class Majorizer {
 	public static void scheduleForStudent() {
 		SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
 		
+		ArrayList<SchedulerCourse> takenCourses = new ArrayList<>();
+		ArrayList<SchedulerCourse> addedCourses = new ArrayList<>();
+		
+		Map<String, ArrayList<Integer>> studentCoursesMap = student.getAcademicPlan().getSelectedCourseIDs();
+		int currentSemester = getStudentCurrentSemesterIndex();
+		
+		for (int i = 0; i < 8; i++) {
+			String currentSemesterString = getStudentCurrentSemesterString(i);
+			ArrayList<Integer> courses = studentCoursesMap.get(currentSemesterString);
+			for(int courseID : courses) {
+				Course c = DatabaseManager.getCourse(courseID);
+				SchedulerCourse schedulerCourse = new SchedulerCourse(c);
+				if(i < currentSemester) {
+					schedulerCourse.addTakenSemester(i);
+					takenCourses.add(schedulerCourse);
+				} else {
+					schedulerCourse.addToSemester(i);
+					addedCourses.add(schedulerCourse);
+				}
+			}
+		}
+		
+		
 		ArrayList<ArrayList<String>> updatedCourses;
 		try {
-			updatedCourses = scheduler.schedule(curriculumGraph, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+			updatedCourses = scheduler.schedule(curriculumGraph, addedCourses, new ArrayList<>(), takenCourses, currentSemester);
 		} catch (Exception e) {
 			return;
 		}
-		
 		
 		printInfo(updatedCourses, curriculumGraph);
 	}
