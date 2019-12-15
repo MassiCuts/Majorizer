@@ -208,55 +208,55 @@
         - MA211
         - CS344
 
-   - name: Elective II
-     amtReq: 1
-     requirements:
-        - CS241
-        - CS242
+    - name: Elective II
+      amtReq: 1
+      requirements:
+         - CS241
+         - CS242
 
-   - name: Elective III
-     amtReq: 2
-     requirements:
-        - CS241
-        - CS242
-        - CS341
-        - CS344
-        - CS345
-        - CS350
-  # You need one at least 200 level, at least 300 level, at least 400 level
-   - name: Elective IIII
-     amtReq: 3
-     requirements:
-        - CS241
-        - CS242
-        - CS341
-        - CS344
-        - CS345
-        - CS350
-        - CS444
-        - CS442
-        - CS443
-        - CS445
-        - CS447
-        - CS449
-        - CS451
-        - CS452
-        - CS455
-        - CS456
-        - CS457
-        - CS458
-        - CS459
-        - CS460
-        - CS461
-        - CS464
-        - CS465
+    - name: Elective III
+      amtReq: 2
+      requirements:
+         - CS241
+         - CS242
+         - CS341
+         - CS344
+         - CS345
+         - CS350
+   # You need one at least 200 level, at least 300 level, at least 400 level
+    - name: Elective IIII
+      amtReq: 3
+      requirements:
+         - CS241
+         - CS242
+         - CS341
+         - CS344
+         - CS345
+         - CS350
+         - CS444
+         - CS442
+         - CS443
+         - CS445
+         - CS447
+         - CS449
+         - CS451
+         - CS452
+         - CS455
+         - CS456
+         - CS457
+         - CS458
+         - CS459
+         - CS460
+         - CS461
+         - CS464
+         - CS465
 
 -
   name: Electrical Engineering Minor
   type: Minor
   amtReq: 3
   requirements:
-    - name: core
+    - name: Core
       amtReq: 4
       requirements:
         - ES250
@@ -264,15 +264,15 @@
         - EE331
         - EE381
 
-   - name: Elective II
-     amtReq: 2
-     requirements:
-        - EE221
-        - EE321
-        - EE324
-        - EE333
-        - EE341
-        - EE360
+    - name: Electives
+      amtReq: 2
+      requirements:
+         - EE221
+         - EE321
+         - EE324
+         - EE333
+         - EE341
+         - EE360
 
 
 -

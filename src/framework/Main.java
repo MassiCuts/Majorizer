@@ -122,19 +122,36 @@ public class Main {
 	}
 	
 	public static SchedulerGraph testSchedulerGraph(){
+		Scanner sc = new Scanner(System.in);                 
+		String i;
 		Curriculum cs = DatabaseManager.getCurriculum("Computer Science Major");
 		SchedulerGraph CSRequirementsGraph = new SchedulerGraph(cs.getRequiredCourses());
 		Curriculum ce = DatabaseManager.getCurriculum("Computer Engineering Major");
 		SchedulerGraph CERequirementsGraph = new SchedulerGraph(ce.getRequiredCourses());
+		
+		Curriculum math_minor = DatabaseManager.getCurriculum("Mathematics Minor");
+		SchedulerGraph MathematicsRequirementsGraph = new SchedulerGraph(math_minor.getRequiredCourses());
+		System.out.println(MathematicsRequirementsGraph.getAsGraphVis());
+		System.out.println("Math Minor (Press any key to continue)");
+		i = sc.next();
+		
+		Curriculum ee_minor = DatabaseManager.getCurriculum("Electrical Engineering Minor");
+		SchedulerGraph EEMinorRequirementsGraph = new SchedulerGraph(ee_minor.getRequiredCourses());
+		System.out.println(EEMinorRequirementsGraph.getAsGraphVis());
+		System.out.println("EE Minor (Press any key to continue)");
+		i = sc.next();
+		
+		Curriculum cs_minor = DatabaseManager.getCurriculum("Computer Science Minor");
+		SchedulerGraph CSMinorRequirementsGraph = new SchedulerGraph(cs_minor.getRequiredCourses());
+		System.out.println(CSMinorRequirementsGraph.getAsGraphVis());
+		System.out.println("CS Minor (Press any key to continue)");
+		i = sc.next();
 		//CERequirementsGraph.mergeGraphs(CSRequirementsGraph);
 		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
 		//Curriculum science = DatabaseManager.getCurriculum("Test Science Major");
 		//SchedulerGraph ScienceRequirementsGraph = new SchedulerGraph(science.getRequiredCourses());
 		//System.out.println(ScienceRequirementsGraph.getAsGraphVis());
 		System.out.println(CSRequirementsGraph.getAsGraphVis());
-		Scanner sc = new Scanner(System.in);                 
-		System.out.println("Press any key to continue");
-		String i = sc.next();
 		/* will wait for input then assign it to the variable,
 		 * in this case it will wait for an int.
 		 */

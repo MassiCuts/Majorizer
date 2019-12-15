@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
@@ -180,11 +181,18 @@ public class SchedulerGraph {
 	}
 	
 	public String getAsGraphVis() {
-		return "Go to https://dreampuf.github.io/GraphvizOnline to visualize\n"
+		String output_string = this.printElements(root);
+		String[] lines = output_string.split("\n");
+		String[] unique = new HashSet<String>(Arrays.asList(lines)).toArray(new String[0]);
+		output_string = String.join("\n", unique);
+				
+		output_string ="Go to https://dreampuf.github.io/GraphvizOnline to visualize\n"
 				+ "digraph G {\n"  
 				+ "ROOT[label=< <B>ROOT NODE</B>>]\n" 
 				+ "ROOT -> " + root.name.replaceAll("\\s+", "")+ "\n" 
-				+ this.printElements(root)  
+				+ output_string
 				+ "}";
+	    
+		return output_string; 
 	}
 }
