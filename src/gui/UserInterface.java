@@ -225,6 +225,8 @@ public class UserInterface extends Application{
 		vbox.setPadding(new Insets(2, 5, 2, 5));
 		
 		addButton.setOnAction((ae) -> {
+			requestsTab.getChildren().remove(vbox);
+			DatabaseManager.removeRequest(request);
 			Student fetchedStudent = DatabaseManager.getStudent(student.getUserID());
 			ArrayList<Integer> curriculumIDs = fetchedStudent.getAcademicPlan().getDegreeIDs();
 			if(request.isAdding()) {
@@ -261,16 +263,14 @@ public class UserInterface extends Application{
 				}
 				populateMajors();
 			}
-			DatabaseManager.removeRequest(request);
-			requestsTab.getChildren().remove(vbox);
 		});
 		removeButton.setOnAction((ae) -> {
+			requestsTab.getChildren().remove(vbox);
+			DatabaseManager.removeRequest(request);
 			if(Majorizer.checkIfCurrentStudent(student.getUserID())) {
 				Majorizer.hardRemoveRequest(request);
 				populateMajors();
 			}
-			DatabaseManager.removeRequest(request);
-			requestsTab.getChildren().remove(vbox);
 		});
 		
 		
@@ -1057,7 +1057,8 @@ public class UserInterface extends Application{
 			studentListTab.add(studentNames, 0, studentIdx);
 			
 			studentNames.setOnMousePressed((me) -> {
-				Majorizer.setStudent(student);
+				Student fetchedStudent = DatabaseManager.getStudent(student.getUserID());
+				Majorizer.setStudent(fetchedStudent);
 				Node studentView = studentView();
 				studentView.setVisible(false);
 				studentSide.setCenter(studentView);

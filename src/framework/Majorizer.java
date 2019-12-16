@@ -297,7 +297,7 @@ public class Majorizer {
 			return;
 		}
 		
-		printInfo(updatedCourses, curriculumGraph);
+//		printInfo(updatedCourses, curriculumGraph);
 	}
 	
 	public static void printInfo (ArrayList<ArrayList<String>> updatedCourses, SchedulerGraph curriculumGraph) {
