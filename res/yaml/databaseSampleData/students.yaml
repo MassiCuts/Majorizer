@@ -1,4 +1,21 @@
  -  
+   universityID: '0042069'
+   firstName: Joe
+   lastName: Smoe
+   username: joe
+   password: smoe
+   isNewStudent: No
+   startSemester: Fall 2019
+   curriculums:
+     - 
+        name: Computer Science Major
+        type: Major
+     -
+        name: Computer Engineering Major
+        type: Major
+        
+   takenCourses: []
+ -  
    universityID: '0668364'
    firstName: Massimiliano
    lastName: Cutugno

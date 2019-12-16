@@ -163,8 +163,6 @@ public class Majorizer {
 		}
 		
 		DatabaseManager.saveStudent(student);
-		
-		
 	}
 	
 	public static boolean checkIfCurrentStudent(int studentID) {
@@ -289,6 +287,10 @@ public class Majorizer {
 		for (int i = 0; i < 8; i++) {
 			String currentSemesterString = getStudentCurrentSemesterString(student, i);
 			ArrayList<Integer> courses = studentCoursesMap.get(currentSemesterString);
+			if(courses == null) {
+				courses = new ArrayList<>();
+				studentCoursesMap.put(currentSemesterString, courses);
+			}
 			for(int courseID : courses) {
 				Course c = DatabaseManager.getCourse(courseID);
 				SchedulerCourse schedulerCourse = new SchedulerCourse(c);
