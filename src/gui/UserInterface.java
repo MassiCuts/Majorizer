@@ -73,7 +73,8 @@ public class UserInterface extends Application{
 	private boolean isSeachingCurriculumsVisible = false;
 	private Button addCourseToSemesterButton;
 	
-	private final GridPane currentSelectedSemesterTab = newActionGrid();
+	private GridPane requestsTab = new GridPane();
+	private GridPane currentSelectedSemesterTab = newActionGrid();
 	private GridPane currentSelectedSemesterPane = new GridPane();
 	private GridPane curriculumTab = new GridPane();
 	private GridPane currentCurriculumsPane = new GridPane();
@@ -193,6 +194,105 @@ public class UserInterface extends Application{
 		}
 	}
 
+	public void addRequest(Request request) {
+		Student student = request.getStudent();
+		Curriculum curriculum = request.getCurriculum();
+		int curriculumID = curriculum.getCurriculumID();
+		
+		String firstName = student.getFirstName();
+		String lastName = student.getLastName();
+		String fullName = firstName + ' ' + lastName;
+		
+		String curriculumName = curriculum.getName();
+		
+		Label studentLabel = new Label(fullName);
+		Label actionLabel;
+		if(request.isAdding() == true) {
+			actionLabel = new Label("[REQUEST ADD]");
+			actionLabel.setTextFill(Color.DARKGREEN);
+		} else {
+			actionLabel = new Label("[REQUEST REMOVE]");
+			actionLabel.setTextFill(Color.DARKRED);
+		}
+		Label curriculumLabel = new Label(curriculumName);
+		Button removeButton = newRemoveButton();
+		Button addButton = newAddButton();
+		HBox hbox1 = new HBox(actionLabel, removeButton, addButton);
+		hbox1.setSpacing(5);
+//		HBox hbox2 = new HBox(studentLabel);
+		VBox vbox = new VBox(hbox1, curriculumLabel, studentLabel);
+		vbox.setStyle("-fx-border-color: gray; -fx-border-width: 1px; outline: solid;");
+		vbox.setPadding(new Insets(2, 5, 2, 5));
+		
+		addButton.setOnAction((ae) -> {
+			Student fetchedStudent = DatabaseManager.getStudent(student.getUserID());
+			ArrayList<Integer> curriculumIDs = fetchedStudent.getAcademicPlan().getDegreeIDs();
+			if(request.isAdding()) {
+				if(!curriculumIDs.contains(curriculumID))
+					curriculumIDs.add(curriculumID);
+			} else {
+				Iterator<Integer> iterator = curriculumIDs.iterator();
+				while(iterator.hasNext()) {
+					int currentID = iterator.next();
+					if(currentID == curriculumID) {
+						iterator.remove();
+						break;
+					}
+				}
+			}
+			Majorizer.saveStudent(fetchedStudent);
+			
+			if(Majorizer.checkIfCurrentStudent(student.getUserID())) {
+				Majorizer.hardRemoveRequest(request);
+				Student currentStudent = Majorizer.getStudent();
+				ArrayList<Integer> currentCurriculumIDs = currentStudent.getAcademicPlan().getDegreeIDs();
+				if(request.isAdding()) {
+					if(!currentCurriculumIDs.contains(curriculumID))
+						currentCurriculumIDs.add(curriculumID);
+				} else {
+					Iterator<Integer> iterator = currentCurriculumIDs.iterator();
+					while(iterator.hasNext()) {
+						int currentID = iterator.next();
+						if(currentID == curriculumID) {
+							iterator.remove();
+							break;
+						}
+					}
+				}
+				populateMajors();
+			}
+			DatabaseManager.removeRequest(request);
+			requestsTab.getChildren().remove(vbox);
+		});
+		removeButton.setOnAction((ae) -> {
+			if(Majorizer.checkIfCurrentStudent(student.getUserID())) {
+				Majorizer.hardRemoveRequest(request);
+				populateMajors();
+			}
+			DatabaseManager.removeRequest(request);
+			requestsTab.getChildren().remove(vbox);
+		});
+		
+		
+		int requestSize = requestsTab.getChildren().size();
+		
+		requestsTab.add(vbox, 0, requestSize);
+	}
+	
+	public void populateMajors() {
+		curriculumTab.getChildren().clear();
+		ArrayList<Integer> curriculae = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
+		for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
+			int curriculumID = curriculae.get(curriculumIdx);
+			Curriculum curriculum = DatabaseManager.getCurriculum(curriculumID);
+			addCurriculum(curriculum);
+		}
+		for(Request request : Majorizer.getStudentSaveRequestsIterable())	{
+			Curriculum curriculum = DatabaseManager.getCurriculum(request.getCurriculumID());
+			addCurriculumRequest(curriculum, request.isAdding());
+		}
+	}
+	
 	public void populateSemesterShown(int semester)	{
 		ArrayList<Integer> currentSemCourses = getCurrentSemesterCourses();
 		
@@ -221,20 +321,12 @@ public class UserInterface extends Application{
 		
 		final ObservableList<Node> nodes = curriculumTab.getChildren();
 		int numElements = nodes.size() / 2;
-		curriculumTab.add(cLabel, 0, numElements);
+		curriculumTab.add(box, 0, numElements);
 		final Button removeCurriculumButton = newRemoveButton();
 		curriculumTab.add(removeCurriculumButton, 1, numElements);
 
 		removeCurriculumButton.setOnMouseClicked((me) -> {
-			ArrayList<Integer> curriculums = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
-			Iterator<Integer> iterator = curriculums.iterator();
-			while(iterator.hasNext()) {
-				Integer id = iterator.next();
-				if(id == curriculumID) {
-					iterator.remove();
-					break;
-				}
-			}
+			Majorizer.removeRequest(curriculumID, adding);
 			nodes.remove(box);
 			nodes.remove(removeCurriculumButton);
 		});
@@ -253,17 +345,24 @@ public class UserInterface extends Application{
 		curriculumTab.add(removeCurriculumButton, 1, numElements);
 
 		removeCurriculumButton.setOnMouseClicked((me) -> {
-			ArrayList<Integer> curriculums = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
-			Iterator<Integer> iterator = curriculums.iterator();
-			while(iterator.hasNext()) {
-				Integer id = iterator.next();
-				if(id == curriculumID) {
-					iterator.remove();
-					break;
+			if(Majorizer.getUser().isUserIsStudent()) {
+				if(!Majorizer.checkIfRequestExists(curriculumID, false)) {
+					Majorizer.addRequest(curriculumID, false);
+					addCurriculumRequest(c, false);
 				}
+			} else {
+				ArrayList<Integer> curriculums = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
+				Iterator<Integer> iterator = curriculums.iterator();
+				while(iterator.hasNext()) {
+					Integer id = iterator.next();
+					if(id == curriculumID) {
+						iterator.remove();
+						break;
+					}
+				}
+				nodes.remove(cLabel);
+				nodes.remove(removeCurriculumButton);
 			}
-			nodes.remove(cLabel);
-			nodes.remove(removeCurriculumButton);
 		});
 	}
 	
@@ -582,21 +681,7 @@ public class UserInterface extends Application{
 			currentCurriculumsPane.add(addCurriculumButton, 1, 0);
 			currentCurriculumsPane.add(curriculumScroll, 0, 1);
 			
-			ArrayList<Integer> curriculae = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
-			for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
-				int curriculumID = curriculae.get(curriculumIdx);
-				Curriculum curriculum = DatabaseManager.getCurriculum(curriculumID);
-				addCurriculum(curriculum);
-			}
-			
-			if(Majorizer.getUser().isUserIsStudent()) {
-				ArrayList<Request> curriculumRequest = Majorizer.getStudentRequests();
-				for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
-					Request request = curriculumRequest.get(curriculumIdx);
-					Curriculum curriculum = DatabaseManager.getCurriculum(request.getCurriculumID());
-					addCurriculumRequest(curriculum, request.isAdding());
-				}
-			}
+			populateMajors();
 			
 			actionPane.add(currentCurriculumsPane, 0, 0);
 			
@@ -736,15 +821,13 @@ public class UserInterface extends Application{
 				if(studentCurrentCurriculumload != null) {
 					while(checkIter.hasNext()) {
 						Curriculum checkCurriculum = checkIter.next();
-						if(studentCurrentCurriculumload.contains(checkCurriculum.getCurriculumID()))
+						if(studentCurrentCurriculumload.contains(checkCurriculum.getCurriculumID())) {
 							checkIter.remove();
+						} else {
+							if(Majorizer.checkIfRequestExists(checkCurriculum.getCurriculumID(), true))
+								checkIter.remove();
+						}
 					}
-				}
-				if(Majorizer.getUser().isUserIsStudent()) {
-					
-					
-				} else {
-					
 				}
 				// End of search
 				
@@ -756,23 +839,31 @@ public class UserInterface extends Application{
 					addCurriculumsTab.getChildren().clear();
 					for(int searchIndex = 0; searchIndex < searchedCurriculums.size(); ++searchIndex)	{
 						final Curriculum searchedCurriculum = searchedCurriculums.get(searchIndex);
+						final int curriculumID = searchedCurriculum.getCurriculumID();
 						Label searchedLabel = new Label(searchedCurriculum.getName());
 						addCurriculumsTab.add(searchedLabel, 0, searchIndex);
 						
 						Button addSearchButton = newAddButton();
 						addSearchButton.setOnMouseClicked((me) -> {
-							Iterator<Curriculum> iterator = searchedCurriculums.iterator();
-							while(iterator.hasNext()) {
-								Curriculum currentCurriculum = iterator.next();
-								if(currentCurriculum.getCurriculumID() == searchedCurriculum.getCurriculumID()) {
-									studentCurrentCurriculumload.add(searchedCurriculum.getCurriculumID());
-									iterator.remove();
-									break;
+							if(Majorizer.getUser().isUserIsStudent()) {
+								if(!Majorizer.checkIfRequestExists(curriculumID, true)) {
+									Majorizer.addRequest(curriculumID, true);
+									addCurriculumRequest(searchedCurriculum, true);
 								}
+							} else {
+								Iterator<Curriculum> iterator = searchedCurriculums.iterator();
+								while(iterator.hasNext()) {
+									Curriculum currentCurriculum = iterator.next();
+									if(currentCurriculum.getCurriculumID() == searchedCurriculum.getCurriculumID()) {
+										studentCurrentCurriculumload.add(searchedCurriculum.getCurriculumID());
+										iterator.remove();
+										break;
+									}
+								}
+								addCurriculum(searchedCurriculum);
 							}
 							addCurriculumsTab.getChildren().remove(searchedLabel);
 							addCurriculumsTab.getChildren().remove(addSearchButton);
-							addCurriculum(searchedCurriculum);
 						});
 						addCurriculumsTab.add(addSearchButton, 1, searchIndex);
 					}
@@ -982,12 +1073,12 @@ public class UserInterface extends Application{
 		Label requestsHeader = newStyledLabel("List of Requests", "fontmed");
 		
 		//Tab for requestsList
-		GridPane requestsTab = newActionGrid();
+		requestsTab = newActionGrid();
 		
 		//Scroll for studentList
 		ScrollPane requestsScroll = newActionScroll();
 		requestsScroll.setContent(requestsTab);
-		requestsScroll.setMinViewportWidth(200);
+		requestsScroll.setMinViewportWidth(300);
 		
 		requestsPane.add(requestsHeader, 0, 0);
 		requestsPane.add(requestsScroll, 0, 1);
@@ -995,26 +1086,7 @@ public class UserInterface extends Application{
 		ArrayList<Request> requests = Majorizer.getRequests();
 		for(int requestIdx = 0; requestIdx < requests.size(); ++requestIdx) {
 			Request request = requests.get(requestIdx);
-			Student studentName = request.getStudent();
-			Curriculum requestMessage = request.getCurriculum();
-			
-			String firstName = studentName.getFirstName();
-			String lastName = studentName.getLastName();
-			String fullName = firstName + ' ' + lastName;
-			
-			String msg = requestMessage.getName();
-			
-			String fullAddMessage = fullName + " - Add " + msg;
-			String fullRemoveMessage = fullName + " - Remove " + msg;
-			
-			Label studentRequests;
-			if(request.isAdding() == true) {
-				studentRequests = new Label(fullAddMessage);
-			} else {
-				studentRequests = new Label(fullRemoveMessage);
-			}
-			
-			requestsTab.add(studentRequests, 0, requestIdx);
+			addRequest(request);
 		}
 		
 		orgPane.add(name, 0, 0);

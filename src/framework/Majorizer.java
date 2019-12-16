@@ -44,19 +44,46 @@ public class Majorizer {
 		requestsToRemove.clear();
 	}
 	
-	public static Iterable<Request> getStudentRequestsIterable() {
+	public static Iterable<Request> getStudentSaveRequestsIterable() {
 		return new ArrayIterable<Request>(requests);
 	}
 	
+	public static synchronized void addRequest(int curriculumID, boolean isAdding) {
+		addRequest(new Request(student.getUserID(), isAdding, curriculumID));
+	}
+	
+	public static synchronized void removeRequest(int curriculumID, boolean isAdding) {
+		removeRequest(new Request(student.getUserID(), isAdding, curriculumID));
+	}
+	
 	public static synchronized void addRequest(Request request) {
-		if(checkIfRequestExists(request.getCurriculumID(), request.isAdding())) {
-//			
-		}
-		
+		if(!checkIfRequestExists(request.getCurriculumID(), request.isAdding()))
+			requestsToAdd.add(request);
 		Iterator<Request> iterator = requestsToRemove.iterator();
 		while(iterator.hasNext()) {
 			Request currentRequest = iterator.next();
 			if(areRequestsSame(currentRequest, request))
+				iterator.remove();
+		}
+	}
+	
+	public static synchronized void hardRemoveRequest(Request request) {
+		Iterator<Request> iterator = requests.iterator();
+		while(iterator.hasNext()) {
+			Request current = iterator.next();
+			if(areRequestsSame(current, request))
+				iterator.remove();
+		}
+		iterator = requestsToAdd.iterator();
+		while(iterator.hasNext()) {
+			Request current = iterator.next();
+			if(areRequestsSame(current, request))
+				iterator.remove();
+		}
+		iterator = requestsToRemove.iterator();
+		while(iterator.hasNext()) {
+			Request current = iterator.next();
+			if(areRequestsSame(current, request))
 				iterator.remove();
 		}
 	}
@@ -111,8 +138,6 @@ public class Majorizer {
 	
 	
 	public static void saveCurrentStudent() {
-		scheduleForStudent();
-		
 		for(Request request : requestsToAdd)
 			DatabaseManager.saveRequest(request);
 		for(Request request : requestsToRemove)
@@ -120,8 +145,21 @@ public class Majorizer {
 		
 		requestsToAdd.clear();
 		requestsToRemove.clear();
+		saveStudent(student);
+		requests = DatabaseManager.getStudentRequests(student.getUserID());
+	}
+	
+	public static void saveStudent(Student student) {
+		scheduleForStudent(student);
 		DatabaseManager.saveStudent(student);
 	}
+	
+	public static boolean checkIfCurrentStudent(int studentID) {
+		if(student == null)
+			return false;
+		return student.getUserID() == studentID;
+	}
+	
 	
 	public static User getUser()	{
 		return user;
@@ -155,6 +193,10 @@ public class Majorizer {
 	}
 
 	public static int getStudentCurrentSemesterIndex()	{
+		return getStudentCurrentSemesterIndex(student);
+	}
+	
+	public static int getStudentCurrentSemesterIndex(Student student)	{
 		if(student == null)
 			return 0;
 		else {
@@ -201,6 +243,10 @@ public class Majorizer {
 	
 	
 	public static String getStudentCurrentSemesterString(int sem)	{
+		return getStudentCurrentSemesterString(student, sem);
+	}
+	
+	public static String getStudentCurrentSemesterString(Student student, int sem)	{
 		String startSemester[] = student.getAcademicPlan().getStartSemester().split(" ");
 		int startSeason = ((startSemester[0].equals(S)) ? 0 : 1);
 		int semNum = startSeason + sem;
@@ -218,17 +264,17 @@ public class Majorizer {
 	}
 	
 	
-	private static void scheduleForStudent() {
+	private static void scheduleForStudent(Student student) {
 		SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
 		
 		ArrayList<SchedulerCourse> takenCourses = new ArrayList<>();
 		ArrayList<SchedulerCourse> addedCourses = new ArrayList<>();
 		
 		Map<String, ArrayList<Integer>> studentCoursesMap = student.getAcademicPlan().getSelectedCourseIDs();
-		int currentSemester = getStudentCurrentSemesterIndex();
+		int currentSemester = getStudentCurrentSemesterIndex(student);
 		
 		for (int i = 0; i < 8; i++) {
-			String currentSemesterString = getStudentCurrentSemesterString(i);
+			String currentSemesterString = getStudentCurrentSemesterString(student, i);
 			ArrayList<Integer> courses = studentCoursesMap.get(currentSemesterString);
 			for(int courseID : courses) {
 				Course c = DatabaseManager.getCourse(courseID);
