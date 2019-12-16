@@ -24,7 +24,6 @@ public class Main {
 				+ "create_database : string, optional. If equal to 'create' a new database will be created");
 		
 		// Initialize the database based on the args
-		if(args.length >= 1) {
 			DatabaseManager.connect(args[0]);
 			if(args.length >= 2) {
 				if(args[1].equals("create")) {
@@ -39,10 +38,10 @@ public class Main {
 					SchedulerGraph graph = testSchedulerGraph();
 					testScheduler(graph);
 				}
+			
+			} else {
+				throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
 			}
-		} else {
-			throw new RuntimeException("[ERROR] Can not procede -- please specify a uri to the database as the first command line argument.");	
-		}
 	}
 	
 	public static void loadSampleData() {
@@ -112,19 +111,8 @@ public class Main {
 		System.out.println(graph.root.getName());
 		scheduler.setNumCourses(5);
 		scheduler.setNumSemesters(15);
-		ArrayList<String> takenCoursesList = new ArrayList<String>();
-		takenCoursesList.add("CM131");
-		takenCoursesList.add("ES100");
-		takenCoursesList.add("MA131");
-		takenCoursesList.add("PH131");
-		for (String courseID: takenCoursesList) {
-			Course c = DatabaseManager.getCourse(courseID);
-			SchedulerCourse schedulerCourse = new SchedulerCourse(c);
-			schedulerCourse.addTakenSemester(0);
-			taken.add(schedulerCourse);
-		}
 		try{
-			System.out.println(scheduler.schedule(graph, added, dropped, taken, 1));
+			System.out.println(scheduler.schedule(graph, added, dropped, taken, 0));
 			System.out.print("Finished Schedule");
 		} catch (Exception e) {
 			System.out.println("Failed to create schedule because" + e);
@@ -144,19 +132,19 @@ public class Main {
 		SchedulerGraph MathematicsRequirementsGraph = new SchedulerGraph(math_minor.getRequiredCourses());
 		System.out.println(MathematicsRequirementsGraph.getAsGraphVis());
 		System.out.println("Math Minor (Press any key to continue)");
-		i = sc.next();
+		//i = sc.next();
 		
 		Curriculum ee_minor = DatabaseManager.getCurriculum("Electrical Engineering Minor");
 		SchedulerGraph EEMinorRequirementsGraph = new SchedulerGraph(ee_minor.getRequiredCourses());
 		System.out.println(EEMinorRequirementsGraph.getAsGraphVis());
 		System.out.println("EE Minor (Press any key to continue)");
-		i = sc.next();
+		//i = sc.next();
 		
 		Curriculum cs_minor = DatabaseManager.getCurriculum("Computer Science Minor");
 		SchedulerGraph CSMinorRequirementsGraph = new SchedulerGraph(cs_minor.getRequiredCourses());
 		System.out.println(CSMinorRequirementsGraph.getAsGraphVis());
 		System.out.println("CS Minor (Press any key to continue)");
-		i = sc.next();
+		//i = sc.next();
 		//CERequirementsGraph.mergeGraphs(CSRequirementsGraph);
 		CSRequirementsGraph.mergeGraphs(CERequirementsGraph);
 		//Curriculum science = DatabaseManager.getCurriculum("Test Science Major");

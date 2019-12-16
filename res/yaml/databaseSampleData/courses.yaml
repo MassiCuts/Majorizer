@@ -79,7 +79,7 @@
      -
         requirements:
           - MA211
-          - MA141
+          - MA131
         amtReq: 1
    amtReq: 2
 -
@@ -462,6 +462,26 @@
      - MA132
    amtReq: 1
 -
+   courseCode: STAT381
+   courseName: Statistics
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements:
+     - MA132
+   amtReq: 1
+-
    courseCode: EE211
    courseName: ECE Laboratory I
    timesOffered:
@@ -480,6 +500,27 @@
      - Spring 2026
    requirements: [] # Corequisites: EE221 and EE264.
    amtReq: 0
+-
+   courseCode: EE262
+   courseName: Intro to Object-Oriented Programming and Software Design
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements:
+     - CS141
+   amtReq: 1
+
 -
    courseCode: EE264
    courseName: Intro to Digital Design
@@ -715,6 +756,73 @@
    requirements:
      - EE264
    amtReq: 1
+
+-
+   courseCode: CS443
+   courseName: Parallel Programming
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements:
+     - CS142 # It has no listed prerecs, this is assumed
+   amtReq: 1
+-
+   courseCode: CS442
+   courseName: Computational Complexity
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements:
+     - CS142 # It has no listed prerecs, this is assumed
+   amtReq: 1
 -
    courseCode: CS445
    courseName: Compiler Construction
@@ -738,6 +846,132 @@
      - CS241
      - CS341
    amtReq: 4
+-
+   courseCode: CS447
+   courseName: Computer Algorithms
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements:
+     - CS344 # It has no listed prerecs, this is assumed
+     - MA221
+   amtReq: 2
+-
+   courseCode: CS452
+   courseName: Computer Graphics
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements:
+     - CS142 # It has no listed prerecs, this is assumed
+     - MA232 # or MA239
+   amtReq: 2
+-
+   courseCode: CS455
+   courseName: Computer Networks
+   timesOffered:
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements:
+     - CS141 # It has no listed prerecs, this is assumed
+   amtReq: 1
+-
+   courseCode: CS456
+   courseName: Cryptography
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements:
+     - CS142 # It has no listed prerecs, this is assumed
+     - MA211
+   amtReq: 2
+-
+   courseCode: CS458
+   courseName: Formal Methods
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements:
+     - CS344 # It has no listed prerecs, this is assumed
+     - MA211
+   amtReq: 2
+-
+   courseCode: CS45
+   courseName: Computer Networks and Security
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+   requirements:
+     - CS142 # It has no listed prerecs, this is assumed
+   amtReq: 1
+
+
 -
    courseCode: CS469
    courseName: Quantum Info & Computation
@@ -821,6 +1055,38 @@
    requirements:
      - EE261 # or 142
    amtReq: 1
+-
+   courseCode: EE261
+   courseName: Introduction to Programing and Software Design
+   timesOffered:
+     - Spring 2014
+     - Spring 2015
+     - Spring 2016
+     - Spring 2017
+     - Spring 2018
+     - Spring 2019
+     - Spring 2020
+     - Spring 2021
+     - Spring 2022
+     - Spring 2023
+     - Spring 2024
+     - Spring 2025
+     - Spring 2026
+     - Fall 2014
+     - Fall 2015
+     - Fall 2016
+     - Fall 2017
+     - Fall 2018
+     - Fall 2019
+     - Fall 2020
+     - Fall 2021
+     - Fall 2022
+     - Fall 2023
+     - Fall 2024
+     - Fall 2025
+     - Fall 2026
+   requirements: []
+   amtReq: 0
 -
    courseCode: CS350
    courseName: Software Design & Developement
