@@ -50,6 +50,24 @@ public class Course {
 		return timesOffered;
 	}
 	
+	public boolean isOfferedSemester(int whichSemester) {
+		String r;
+		if(whichSemester == 0) {
+			r = "Fall.*[02468]";
+		}else if(whichSemester == 1){
+			r = "Spring.*[02468]";
+		}else if(whichSemester == 2){
+			r = "Fall.*[13579]";
+		}else {
+			r = "Spring.*[13579]";
+		}
+		for(String s : getTimesOffered()) {
+			if(s.matches(r))
+				return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Course)
