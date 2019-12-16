@@ -150,8 +150,21 @@ public class Majorizer {
 	}
 	
 	public static void saveStudent(Student student) {
-		scheduleForStudent(student);
+		ArrayList<ArrayList<String>> courseCodes = scheduleForStudent(student);
+		
+		Map<String, ArrayList<Integer>> takenCourses = student.getAcademicPlan().getSelectedCourseIDs();
+		if(courseCodes != null) {
+			for(int i = 0; i < 8; i ++) {
+				ArrayList<String> newCurrentCourses = courseCodes.get(i);
+				String currentSemesterString = getStudentCurrentSemesterString(student, i);
+				ArrayList<Integer> courseIDs = DatabaseManager.getCourseIDs(newCurrentCourses);
+				takenCourses.put(currentSemesterString, courseIDs);
+			}
+		}
+		
 		DatabaseManager.saveStudent(student);
+		
+		
 	}
 	
 	public static boolean checkIfCurrentStudent(int studentID) {
@@ -264,7 +277,7 @@ public class Majorizer {
 	}
 	
 	
-	private static void scheduleForStudent(Student student) {
+	private static ArrayList<ArrayList<String>> scheduleForStudent(Student student) {
 		SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
 		
 		ArrayList<SchedulerCourse> takenCourses = new ArrayList<>();
@@ -290,11 +303,10 @@ public class Majorizer {
 		}
 		
 		
-		ArrayList<ArrayList<String>> updatedCourses;
 		try {
-			updatedCourses = scheduler.schedule(curriculumGraph, addedCourses, new ArrayList<>(), takenCourses, currentSemester);
+			return scheduler.schedule(curriculumGraph, addedCourses, new ArrayList<>(), takenCourses, currentSemester);
 		} catch (Exception e) {
-			return;
+			return null;
 		}
 		
 //		printInfo(updatedCourses, curriculumGraph);

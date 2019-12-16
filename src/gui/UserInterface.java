@@ -182,7 +182,6 @@ public class UserInterface extends Application{
 		}
 		
 		selectedSemester = semesterNumber;
-		currentSelectedSemesterTab.getChildren().clear();
 		for(int semester = 0; semester <= 7; ++semester)	{
 			if(semester == semesterNumber)	{
 				this.semesters[semester].setStyle("-fx-border-color: yellow; -fx-border-width: 3px; outline: solid;");
@@ -262,6 +261,7 @@ public class UserInterface extends Application{
 					}
 				}
 				populateMajors();
+				populateCurrentSemester();
 			}
 		});
 		removeButton.setOnAction((ae) -> {
@@ -279,6 +279,12 @@ public class UserInterface extends Application{
 		requestsTab.add(vbox, 0, requestSize);
 	}
 	
+	public void populateCurrentSemester() {
+		if(currentSelectedSemesterTab.isVisible() && selectedSemester != -1)
+			populateSemesterShown(selectedSemester);
+	}
+	
+	
 	public void populateMajors() {
 		curriculumTab.getChildren().clear();
 		ArrayList<Integer> curriculae = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
@@ -294,6 +300,7 @@ public class UserInterface extends Application{
 	}
 	
 	public void populateSemesterShown(int semester)	{
+		currentSelectedSemesterTab.getChildren().clear();
 		ArrayList<Integer> currentSemCourses = getCurrentSemesterCourses();
 		
 		for(int courseIdx = 0; courseIdx < currentSemCourses.size(); ++courseIdx)	{
@@ -741,6 +748,7 @@ public class UserInterface extends Application{
 			
 			checkButton.setOnMouseClicked((me) -> {
 				Majorizer.saveCurrentStudent();
+				populateCurrentSemester();
 			});
 			
 			VBox checkButtonBox = new VBox();

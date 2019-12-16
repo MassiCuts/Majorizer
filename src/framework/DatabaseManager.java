@@ -776,6 +776,35 @@ public class DatabaseManager {
 	}
 	
 	
+	public static ArrayList<Integer> getCourseIDs (ArrayList<String> courseCodes) {
+		Iterator<String> iterator = courseCodes.iterator();
+		while (iterator.hasNext()) {
+			String courseCode = iterator.next();
+			if(courseCode.equals(NULL_ENTRY_STRING))
+				iterator.remove();
+		}
+		
+		if(courseCodes.isEmpty())
+			return new ArrayList<>();
+		
+		ArrayList<Map<String, Object>> entries = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
+			Iterator<String> iter = courseCodes.iterator();
+			while (iter.hasNext()) {
+				String courseCode = iter.next();
+				if(m.get("courseCode").equals(courseCode)) {
+					iter.remove();
+					return true;
+				}
+			}
+			return false;
+		});
+		
+		ArrayList<Integer> courseIDs = new ArrayList<>();
+		for(Map<String, Object> map : entries)
+			courseIDs.add((int) map.get("courseID"));
+		return courseIDs;
+	}
+	
 	
 	
 	
