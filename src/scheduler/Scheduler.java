@@ -78,7 +78,9 @@ public class Scheduler {
 								++attempt;
 								next_node = graph.root;
 								if (attempt > MAX_ATTEMPTS) {
-									if (i < this.num_semesters-1) {break;}	//If cannot schedule a class this semester, but still have more semesters left, just don't fill this semester
+									if (i < this.num_semesters-1) {
+										System.out.println("Lierally cannot schedule another class this semester. For example " + course.name + "has availability " + course.courseinfo.get(CourseInfo.AVAILABILITY));
+										break;}	//If cannot schedule a class this semester, but still have more semesters left, just don't fill this semester
 									else {	//If there are no semesters left, then a feasible schedule cannot be made
 										throw new RuntimeException("Cannot find a feasible schedule");
 									}
