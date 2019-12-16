@@ -22,6 +22,7 @@ public class SchedulerCourse extends SchedulerNode {
 		this.children = node.children;
 		this.parents = node.parents;
 	}
+		
 	
 	public SchedulerCourse(Course c) {
 		this.name = c.getCourseCode();// Not all courses have names if the class info sheet isn't filled out
@@ -30,7 +31,17 @@ public class SchedulerCourse extends SchedulerNode {
 			System.out.println("chilldren are null");
 		}
 		this.parents  = new ArrayList<SchedulerNode>();
-		availability = 0b1111;
+		ArrayList<String> timesOffered = c.getTimesOffered();
+		availability = 0;
+		if(c.isOfferedSemester(0))
+			availability += 1;
+		if(c.isOfferedSemester(1))
+			availability += 2;
+		if(c.isOfferedSemester(2))
+			availability += 4;
+		if(c.isOfferedSemester(3))
+			availability += 8;
+		//System.out.println(availability);
 		taken = -1;
 		scheduled = -1;
 		added = -1;
