@@ -8,7 +8,7 @@ import framework.Course;
 //availability: Bit 0: Odd Fall, Bit 1: Even Spring, Bit 2: Even Fall, Bit 3: Even Spring
 
 public class SchedulerCourse extends SchedulerNode {
-	protected int availability, taken, scheduled, added, dropped;
+	protected int availability, scheduled, added, dropped, taken;
 	public SchedulerCourse(SchedulerNode node) {
 		this.name = node.name;
 		if (node.courseinfo.isEmpty()) {

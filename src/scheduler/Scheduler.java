@@ -36,9 +36,11 @@ public class Scheduler {
 			if (i < current_semester) {
 				//TODO: Add all the classes taken during this semester then skip
 				for(SchedulerCourse c: taken_courses) {
-					if(c.taken == i) {
+					System.out.println(c.name + "was taken semester " + c.courseinfo.get(CourseInfo.TAKEN));
+					if(c.courseinfo.get(CourseInfo.TAKEN) == i) {
 						graph.setCourseAttribute(c.name, CourseInfo.TAKEN, i);
 						sched.get(i).add(c.name);
+						System.out.println("Already taken course" + c.name + " in semester " + i);
 					}
 				}
 				continue;
@@ -103,7 +105,6 @@ public class Scheduler {
 		}
 		if (!graph.root.isSatisfied(this.num_semesters)) {
 			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
-
 		}
 		System.out.println("Scheduling Complete!");
 		return sched;

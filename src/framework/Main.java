@@ -112,8 +112,19 @@ public class Main {
 		System.out.println(graph.root.getName());
 		scheduler.setNumCourses(5);
 		scheduler.setNumSemesters(15);
+		ArrayList<String> takenCoursesList = new ArrayList<String>();
+		takenCoursesList.add("CM131");
+		takenCoursesList.add("ES100");
+		takenCoursesList.add("MA131");
+		takenCoursesList.add("PH131");
+		for (String courseID: takenCoursesList) {
+			Course c = DatabaseManager.getCourse(courseID);
+			SchedulerCourse schedulerCourse = new SchedulerCourse(c);
+			schedulerCourse.addTakenSemester(0);
+			taken.add(schedulerCourse);
+		}
 		try{
-			System.out.println(scheduler.schedule(graph, added, dropped, taken, 0));
+			System.out.println(scheduler.schedule(graph, added, dropped, taken, 1));
 			System.out.print("Finished Schedule");
 		} catch (Exception e) {
 			System.out.println("Failed to create schedule because" + e);
