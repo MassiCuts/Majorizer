@@ -41,6 +41,9 @@ public class SchedulerCourse extends SchedulerNode {
 			availability += 4;
 		if(c.isOfferedSemester(3))
 			availability += 8;
+		if(availability == 0) {
+			availability = 15; // If it's never available assume that this is in error and that it's always available
+		}
 		//System.out.println(availability);
 		taken = -1;
 		scheduled = -1;

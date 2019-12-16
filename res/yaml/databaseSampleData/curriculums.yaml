@@ -64,9 +64,9 @@
     -  name: electives II
        amtReq: 2
        requirements:
-         - COMM440
-         - COMM442
-         - COMM444
+         #- COMM440
+         #- COMM442
+         #- COMM444 Not real
          - CS442
          - CS443
          - CS445
