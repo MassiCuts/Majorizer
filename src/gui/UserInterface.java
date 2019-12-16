@@ -886,6 +886,7 @@ public class UserInterface extends Application{
 		SplitPane splitStudentAdvisor = new SplitPane(advisorSide, studentSide);
 		
 		advisorSide.getStyleClass().add("lightgraytheme");
+		advisorSide.setPadding(new Insets(20));
 		
 		ColumnConstraints constraints = new ColumnConstraints();
 		constraints.setHgrow(Priority.ALWAYS);
