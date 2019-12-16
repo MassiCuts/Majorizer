@@ -243,6 +243,8 @@ public class DatabaseManager {
 	
 	
 	
+	
+	
 	// database authenticate function
 	
 	public static User authenticate(String username, String password) {
@@ -467,6 +469,21 @@ public class DatabaseManager {
 		
 		Map<String, Object> userMap = userResults.get(0);
 		return mapToStudent(userMap);
+	}
+	
+	public static ArrayList<Request> getStudentRequests(int studentID) {
+		ArrayList<Map<String, Object>> requestResults = DATABASE.queryEntry(REQUESTS_TABLE, (m) -> {
+			if(m.get("studentID").equals(studentID))
+				return true;
+			return false;
+		});
+		
+		ArrayList<Request> requests = new ArrayList<>();
+		for(Map<String, Object> requestMap : requestResults) {
+			Request request = mapToRequest(requestMap);
+			requests.add(request);
+		}
+		return requests;
 	}
 	
 	
@@ -1601,6 +1618,20 @@ public class DatabaseManager {
 			throw new RuntimeException("DATABASE FULL");
 		
 		return ids;
+	}
+	
+	public static ArrayList<Course> getAllNullNamedCourses() {
+		ArrayList<Map<String, Object>> results;
+		results = DATABASE.queryEntry(COURSES_TABLE, (m) -> {
+			if (m.get("courseName").equals(NULL_ENTRY_STRING))
+				return true;
+			return false;
+		});
+		
+		ArrayList<Course> courses = new ArrayList<>();
+		for(Map<String, Object> map : results)
+			courses.add(mapToCourse(map));
+		return courses;
 	}
 	
 	

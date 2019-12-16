@@ -18,7 +18,6 @@ import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -37,6 +36,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -75,6 +75,7 @@ public class UserInterface extends Application{
 	
 	private final GridPane currentSelectedSemesterTab = newActionGrid();
 	private GridPane currentSelectedSemesterPane = new GridPane();
+	private GridPane curriculumTab = new GridPane();
 	private GridPane currentCurriculumsPane = new GridPane();
 	private Dimension screenSize;
 	boolean isAuthenticated = false;
@@ -120,10 +121,6 @@ public class UserInterface extends Application{
 
 	public String getStudentID()	{
 		return Majorizer.getStudent().getUniversityID();
-	}
-
-	public void loginPressed(ActionEvent action) {
-		System.out.println("Here");
 	}
 	
 	public void setFadeIn(Node node, int timeMili) {
@@ -206,21 +203,54 @@ public class UserInterface extends Application{
 		}
 	}
 	
-	private synchronized void addCurriculumToCurrentSemester(Curriculum c) {
-		if(selectedSemester == NO_SEMESTER_SELECTED)
-			return;
+	private synchronized void addCurriculumRequest(Curriculum c, boolean adding) {
+		String curriculumName = c.getName();
+		final int curriculumID = c.getCurriculumID();
+
+		final Label cLabel = new Label(curriculumName);
+		final Label rLabel;
+		if(adding) {
+			rLabel = new Label("[REQUEST ADD]");
+			rLabel.setTextFill(Color.DARKGREEN);
+		} else {
+			rLabel = new Label("[REQUEST REMOVE]");
+			rLabel.setTextFill(Color.DARKRED);
+		}
 		
+		final HBox box = new HBox(cLabel, rLabel);
+		
+		final ObservableList<Node> nodes = curriculumTab.getChildren();
+		int numElements = nodes.size() / 2;
+		curriculumTab.add(cLabel, 0, numElements);
+		final Button removeCurriculumButton = newRemoveButton();
+		curriculumTab.add(removeCurriculumButton, 1, numElements);
+
+		removeCurriculumButton.setOnMouseClicked((me) -> {
+			ArrayList<Integer> curriculums = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
+			Iterator<Integer> iterator = curriculums.iterator();
+			while(iterator.hasNext()) {
+				Integer id = iterator.next();
+				if(id == curriculumID) {
+					iterator.remove();
+					break;
+				}
+			}
+			nodes.remove(box);
+			nodes.remove(removeCurriculumButton);
+		});
+	}
+	
+	private synchronized void addCurriculum(Curriculum c) {
 		String curriculumName = c.getName();
 		final int curriculumID = c.getCurriculumID();
 
 		final Label cLabel = new Label(curriculumName);
 		
-		final ObservableList<Node> nodes = currentCurriculumsPane.getChildren();
-		
+		final ObservableList<Node> nodes = curriculumTab.getChildren();
 		int numElements = nodes.size() / 2;
-		currentCurriculumsPane.add(cLabel, 0, numElements);
+		curriculumTab.add(cLabel, 0, numElements);
 		final Button removeCurriculumButton = newRemoveButton();
-		currentCurriculumsPane.add(removeCurriculumButton, 1, numElements);
+		curriculumTab.add(removeCurriculumButton, 1, numElements);
 
 		removeCurriculumButton.setOnMouseClicked((me) -> {
 			ArrayList<Integer> curriculums = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
@@ -236,7 +266,7 @@ public class UserInterface extends Application{
 			nodes.remove(removeCurriculumButton);
 		});
 	}
-			
+	
 	
 	private synchronized void addCourseToCurrentSemester(Course c) {
 		if(selectedSemester == NO_SEMESTER_SELECTED)
@@ -407,9 +437,8 @@ public class UserInterface extends Application{
 		
 			
 	    	 Platform.runLater(() -> {
-	    	        if (!username.isFocused()) {
+	    	        if (!username.isFocused())
 	    	            username.requestFocus();
-	    	        }
 	    	    });
 	    	 
 	    	
@@ -443,10 +472,14 @@ public class UserInterface extends Application{
 		return loginScreen;
 	}
 	
-	public BorderPane studentView()	{
-
+	public Parent studentView()	{
 		
 		BorderPane studentScreen = new BorderPane();
+		ScrollPane root = new ScrollPane();
+		root.setContent(studentScreen);
+		root.setFitToHeight(true);
+		root.setFitToWidth(true);
+		
 		try	{
 			studentScreen.getStyleClass().add("lightgraytheme");
 			
@@ -472,6 +505,7 @@ public class UserInterface extends Application{
 			Button logoutButton = newLogButton("Log Out");
 			logoutButton.setOnAction((ae) -> {
 				Platform.exit();
+				System.exit(0);
 			});
 			
 			VBox logoutButtonBox = new VBox();
@@ -539,7 +573,7 @@ public class UserInterface extends Application{
 				isSeachingCurriculumsVisible = true;
 			});
 			
-			GridPane curriculumTab = newActionGrid();
+			curriculumTab = newActionGrid();
 			ScrollPane curriculumScroll = newActionScroll();
 			curriculumScroll.setContent(curriculumTab);
 			curriculumScroll.setMinViewportWidth(curriculumTab.getWidth());
@@ -550,29 +584,19 @@ public class UserInterface extends Application{
 			
 			ArrayList<Integer> curriculae = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
 			for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
-				final int curriculumID = curriculae.get(curriculumIdx);
-				String curriculumName = DatabaseManager.getCurriculum(curriculumID).getName();
-				
-				Label cLabel = new Label(curriculumName);
-				curriculumTab.add(cLabel, 0, curriculumIdx);
-
-				Button removeMajorButton = newRemoveButton();
-				curriculumTab.add(removeMajorButton, 1, curriculumIdx);
-
-				removeMajorButton.setOnMouseClicked((me) -> {
-					Iterator<Integer> iterator = curriculae.iterator();
-					while(iterator.hasNext()) {
-						Integer id = iterator.next();
-						if(id == curriculumID) {
-							iterator.remove();
-							break;
-						}
-					}
-					curriculumTab.getChildren().remove(cLabel);
-					curriculumTab.getChildren().remove(removeMajorButton);
-				});
+				int curriculumID = curriculae.get(curriculumIdx);
+				Curriculum curriculum = DatabaseManager.getCurriculum(curriculumID);
+				addCurriculum(curriculum);
 			}
 			
+			if(Majorizer.getUser().isUserIsStudent()) {
+				ArrayList<Request> curriculumRequest = Majorizer.getStudentRequests();
+				for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
+					Request request = curriculumRequest.get(curriculumIdx);
+					Curriculum curriculum = DatabaseManager.getCurriculum(request.getCurriculumID());
+					addCurriculumRequest(curriculum, request.isAdding());
+				}
+			}
 			
 			actionPane.add(currentCurriculumsPane, 0, 0);
 			
@@ -631,8 +655,7 @@ public class UserInterface extends Application{
 			checkButton.setAlignment(Pos.BOTTOM_RIGHT);
 			
 			checkButton.setOnMouseClicked((me) -> {
-				Majorizer.scheduleForStudent();
-				DatabaseManager.saveStudent(Majorizer.getStudent());
+				Majorizer.saveCurrentStudent();
 			});
 			
 			VBox checkButtonBox = new VBox();
@@ -668,7 +691,7 @@ public class UserInterface extends Application{
 			e.printStackTrace();
 		}
 		
-		return studentScreen;
+		return root;
 	}
 
 	
@@ -717,6 +740,12 @@ public class UserInterface extends Application{
 							checkIter.remove();
 					}
 				}
+				if(Majorizer.getUser().isUserIsStudent()) {
+					
+					
+				} else {
+					
+				}
 				// End of search
 				
 				// GUI changes must be on main thread
@@ -743,7 +772,7 @@ public class UserInterface extends Application{
 							}
 							addCurriculumsTab.getChildren().remove(searchedLabel);
 							addCurriculumsTab.getChildren().remove(addSearchButton);
-							addCurriculumToCurrentSemester(searchedCurriculum);
+							addCurriculum(searchedCurriculum);
 						});
 						addCurriculumsTab.add(addSearchButton, 1, searchIndex);
 					}
@@ -879,11 +908,18 @@ public class UserInterface extends Application{
 		return searchCoursesPane;
 	}
 	
-	public SplitPane advisorView()	{
+	public Parent advisorView()	{
+		
 		
 		BorderPane advisorSide = new BorderPane();
 		BorderPane studentSide = new BorderPane();
 		SplitPane splitStudentAdvisor = new SplitPane(advisorSide, studentSide);
+		splitStudentAdvisor.setDividerPositions(.2f);
+		ScrollPane root = new ScrollPane();
+		root.setContent(splitStudentAdvisor);
+		root.setFitToHeight(true);
+		root.setFitToWidth(true);
+		
 		
 		advisorSide.getStyleClass().add("lightgraytheme");
 		advisorSide.setPadding(new Insets(20));
@@ -987,7 +1023,7 @@ public class UserInterface extends Application{
 		
 		advisorSide.setCenter(orgPane);
 		
-		return splitStudentAdvisor;
+		return root;
 	}
 
 	
@@ -1046,7 +1082,6 @@ public class UserInterface extends Application{
 			searchThread = new SearchThread();
 			searchThread.setPriority(1);
 			searchThread.start();   // thread will be running in the background waiting for search requests
-			
 			primaryStage.setOnCloseRequest((e) -> {
 				windowOpen = false; // used to exit out of while loop of search thread
 			});

@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Map;
 
 import scheduler.Scheduler;
 import scheduler.SchedulerCourse;
 import scheduler.SchedulerGraph;
+import utils.ArrayIterable;
 import utils.Pair;
 
 public class Majorizer {
@@ -21,19 +23,104 @@ public class Majorizer {
 	private static Student student = null;
 	
 	private static Scheduler scheduler = new Scheduler();
+	private static ArrayList<Request> requests = new ArrayList<>();
+	private static ArrayList<Request> requestsToAdd = new ArrayList<>();
+	private static ArrayList<Request> requestsToRemove = new ArrayList<>();
 	
 	public static void setUser(User user)	{
 		Majorizer.user = user;
 		if(user == null)
 			return;
 		if(user.isUserIsStudent())
-			student = (Student) user;
+			setStudent((Student) user);
 		else
 			advisor = (Advisor) user;
 	}
 	
 	public static void setStudent(Student student) {
 		Majorizer.student = student;
+		requests = DatabaseManager.getStudentRequests(student.getUserID());
+		requestsToAdd.clear();
+		requestsToRemove.clear();
+	}
+	
+	public static Iterable<Request> getStudentRequestsIterable() {
+		return new ArrayIterable<Request>(requests);
+	}
+	
+	public static synchronized void addRequest(Request request) {
+		if(checkIfRequestExists(request.getCurriculumID(), request.isAdding())) {
+//			
+		}
+		
+		Iterator<Request> iterator = requestsToRemove.iterator();
+		while(iterator.hasNext()) {
+			Request currentRequest = iterator.next();
+			if(areRequestsSame(currentRequest, request))
+				iterator.remove();
+		}
+	}
+	
+	public static synchronized void removeRequest(Request request) {
+		for(Request currentRequest : requests) {
+			if(areRequestsSame(currentRequest, request)) {
+				boolean containsRemovedRequest = false;
+				for(Request removeRequest : requestsToRemove) {
+					if(areRequestsSame(currentRequest, removeRequest)) {
+						containsRemovedRequest = true;
+						break;
+					}
+				}
+				if(!containsRemovedRequest)
+					requestsToRemove.add(currentRequest);
+			}
+		}
+		Iterator<Request> iterator = requestsToAdd.iterator();
+		while(iterator.hasNext()) {
+			Request currentRequest = iterator.next();
+			if(areRequestsSame(currentRequest, request))
+				iterator.remove();
+		}
+	}
+	
+	
+	
+	public static synchronized boolean checkIfRequestExists(int curriculumID, boolean isAdding) {
+		for(Request request : requestsToAdd)
+			if(request.getCurriculumID() == curriculumID && request.isAdding() == isAdding)
+				return true;
+		for(Request request : requests) {
+			if(request.getCurriculumID() == curriculumID && request.isAdding() == isAdding) {
+				boolean containsRemoveRequest = false;
+				for(Request currentRequest : requestsToRemove) {
+					if(areRequestsSame(currentRequest, request)) {
+						containsRemoveRequest = true;
+						break;
+					}
+				}
+				if(!containsRemoveRequest)
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private static boolean areRequestsSame(Request first, Request second) {
+		return first.getCurriculumID() == second.getCurriculumID() && first.isAdding() == second.isAdding();
+	}
+	
+	
+	public static void saveCurrentStudent() {
+		scheduleForStudent();
+		
+		for(Request request : requestsToAdd)
+			DatabaseManager.saveRequest(request);
+		for(Request request : requestsToRemove)
+			DatabaseManager.removeRequest(request);
+		
+		requestsToAdd.clear();
+		requestsToRemove.clear();
+		DatabaseManager.saveStudent(student);
 	}
 	
 	public static User getUser()	{
@@ -131,7 +218,7 @@ public class Majorizer {
 	}
 	
 	
-	public static void scheduleForStudent() {
+	private static void scheduleForStudent() {
 		SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
 		
 		ArrayList<SchedulerCourse> takenCourses = new ArrayList<>();
@@ -191,9 +278,6 @@ public class Majorizer {
 		}
 		
 	}
-	
-	
-	
 	
 	
 }
