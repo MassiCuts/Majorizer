@@ -14,6 +14,7 @@ import framework.Majorizer;
 import framework.Request;
 import framework.Student;
 import framework.User;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -42,6 +43,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import utils.ResourceLoader;
 import utils.Single;
 
@@ -67,9 +69,14 @@ public class UserInterface extends Application{
 	private Scene scene = null;
 	private final GridPane semesters[] = new GridPane[8];
 	private int selectedSemester;
+	private BorderPane searchBorderPane;
+	private boolean isSeachingCurriculumsVisible = false;
+	private Button addCourseToSemesterButton;
 	
 	private final GridPane currentSelectedSemesterTab = newActionGrid();
-	Dimension screenSize;
+	private GridPane currentSelectedSemesterPane = new GridPane();
+	private GridPane currentCurriculumsPane = new GridPane();
+	private Dimension screenSize;
 	boolean isAuthenticated = false;
 	
 	
@@ -119,18 +126,63 @@ public class UserInterface extends Application{
 		System.out.println("Here");
 	}
 	
+	public void setFadeIn(Node node, int timeMili) {
+		setFadeIn(node, 0, timeMili);
+	}
+	
+	public void setFadeIn(Node node, double startOpacity, int timeMili) {
+		if (!node.isVisible()) {
+			FadeTransition fadeIn = new FadeTransition(Duration.millis(timeMili));
+			fadeIn.setNode(node);
+			fadeIn.setFromValue(startOpacity);
+			fadeIn.setToValue(1.0);
+			fadeIn.setCycleCount(1);
+			fadeIn.setAutoReverse(false);
+			node.setVisible(true);
+	        fadeIn.playFromStart();
+	    }
+	}
+	
+	public void setFadeOut(Node node, int timeMili) {
+		if (node.isVisible()) {
+			FadeTransition fadeIn = new FadeTransition(Duration.millis(timeMili));
+			fadeIn.setNode(node);
+			fadeIn.setFromValue(1.0);
+			fadeIn.setToValue(0);
+			fadeIn.setCycleCount(1);
+			fadeIn.setAutoReverse(false);
+			node.setVisible(true);
+	        fadeIn.playFromStart();
+	    }
+	}
+	
 	public void newSemester(final int semesterNumber, final String css)	{
 		GridPane semester = new GridPane();
 		semester.setMinSize((screenSize.getWidth()*(2/3.0))/8.0, screenSize.getHeight()/5.0);
 		semester.getStyleClass().add(css);
 		semester.setStyle("-fx-border-color: black; -fx-border-width: 1px; outline: solid;");
-		semester.setOnMouseClicked((me) -> { 
+		semester.setOnMouseClicked((me) -> {
+			setFadeIn(currentSelectedSemesterPane, 300);
 			selectSemester(semesterNumber);
 		});
 		this.semesters[semesterNumber] = semester;
 	}
 	
 	public void selectSemester(int semesterNumber)	{
+		if(!searchBorderPane.getChildren().isEmpty() && !isSeachingCurriculumsVisible) {
+			Node current = searchBorderPane.getCenter();
+			setFadeOut(current, 150);
+			searchBorderPane.getChildren().remove(0);
+		}
+		int currentSemester = Majorizer.getStudentCurrentSemesterIndex();
+		if(semesterNumber >= currentSemester) {
+			addCourseToSemesterButton.setVisible(true);
+			addCourseToSemesterButton.setManaged(true);
+		} else {
+			addCourseToSemesterButton.setVisible(false);
+			addCourseToSemesterButton.setManaged(false);
+		}
+		
 		selectedSemester = semesterNumber;
 		currentSelectedSemesterTab.getChildren().clear();
 		for(int semester = 0; semester <= 7; ++semester)	{
@@ -138,9 +190,8 @@ public class UserInterface extends Application{
 				this.semesters[semester].setStyle("-fx-border-color: yellow; -fx-border-width: 3px; outline: solid;");
 				populateSemesterShown(semester);
 			}
-			else	{
+			else {
 				this.semesters[semester].setStyle("-fx-border-color: black; -fx-border-width: 1px; outline: solid;");
-				
 			}
 		}
 	}
@@ -154,6 +205,38 @@ public class UserInterface extends Application{
 			addCourseToCurrentSemester(course);
 		}
 	}
+	
+	private synchronized void addCurriculumToCurrentSemester(Curriculum c) {
+		if(selectedSemester == NO_SEMESTER_SELECTED)
+			return;
+		
+		String curriculumName = c.getName();
+		final int curriculumID = c.getCurriculumID();
+
+		final Label cLabel = new Label(curriculumName);
+		
+		final ObservableList<Node> nodes = currentCurriculumsPane.getChildren();
+		
+		int numElements = nodes.size() / 2;
+		currentCurriculumsPane.add(cLabel, 0, numElements);
+		final Button removeCurriculumButton = newRemoveButton();
+		currentCurriculumsPane.add(removeCurriculumButton, 1, numElements);
+
+		removeCurriculumButton.setOnMouseClicked((me) -> {
+			ArrayList<Integer> curriculums = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
+			Iterator<Integer> iterator = curriculums.iterator();
+			while(iterator.hasNext()) {
+				Integer id = iterator.next();
+				if(id == curriculumID) {
+					iterator.remove();
+					break;
+				}
+			}
+			nodes.remove(cLabel);
+			nodes.remove(removeCurriculumButton);
+		});
+	}
+			
 	
 	private synchronized void addCourseToCurrentSemester(Course c) {
 		if(selectedSemester == NO_SEMESTER_SELECTED)
@@ -332,7 +415,7 @@ public class UserInterface extends Application{
 	    	
 	    	loginButton.setOnAction((ae) -> {
 	    		User user = Majorizer.authenticate(username.getText(), password.getText());
-	    		Majorizer.setUser(Majorizer.authenticate(username.getText(), password.getText()));
+	    		Majorizer.setUser(user);
 	    		if(Majorizer.getUser() != null)
 	    			this.isAuthenticated = true;
 	    		this.updateUI();
@@ -430,24 +513,40 @@ public class UserInterface extends Application{
 //			actionPane.getColumnConstraints().add(constraints);
 			
 			//Majors and Minors Pane
-			GridPane curriculumPane = new GridPane();
-			curriculumPane.setMaxWidth(screenSize.getWidth()*(2/3.0)*tabWidth-50.0);
-			curriculumPane.setMinWidth(screenSize.getWidth()*(2/3.0)*tabWidth-50.0);
+			currentCurriculumsPane = new GridPane();
+			currentCurriculumsPane.setMaxWidth(screenSize.getWidth()*(2/3.0)*tabWidth-50.0);
+			currentCurriculumsPane.setMinWidth(screenSize.getWidth()*(2/3.0)*tabWidth-50.0);
 			
 			//Header label for Majors and Minors
 			Label curriculumHeader = newStyledLabel("Majors and Minors", "fontmed");
 			
 			//Green Plus Button for Majors and Minors
 			Button addCurriculumButton = newAddButton();
+			addCurriculumButton.setOnAction((ae) -> {
+				if(searchBorderPane.getChildren().isEmpty()) {
+					Node current = mkAddCurriculumsPane(constraints);
+					searchBorderPane.setCenter(current);
+					setFadeIn(current, 150);
+				} else {
+					if(!isSeachingCurriculumsVisible) {
+						Node prev = searchBorderPane.getCenter();
+						setFadeOut(prev, 150);
+						Node current = mkAddCurriculumsPane(constraints);
+						searchBorderPane.setCenter(current);
+						setFadeIn(current, .8f, 150);
+					}
+				}
+				isSeachingCurriculumsVisible = true;
+			});
 			
 			GridPane curriculumTab = newActionGrid();
 			ScrollPane curriculumScroll = newActionScroll();
 			curriculumScroll.setContent(curriculumTab);
 			curriculumScroll.setMinViewportWidth(curriculumTab.getWidth());
 			
-			curriculumPane.add(curriculumHeader, 0, 0);
-			curriculumPane.add(addCurriculumButton, 1, 0);
-			curriculumPane.add(curriculumScroll, 0, 1);
+			currentCurriculumsPane.add(curriculumHeader, 0, 0);
+			currentCurriculumsPane.add(addCurriculumButton, 1, 0);
+			currentCurriculumsPane.add(curriculumScroll, 0, 1);
 			
 			ArrayList<Integer> curriculae = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
 			for(int curriculumIdx = 0; curriculumIdx < curriculae.size(); ++curriculumIdx)	{
@@ -471,15 +570,14 @@ public class UserInterface extends Application{
 					}
 					curriculumTab.getChildren().remove(cLabel);
 					curriculumTab.getChildren().remove(removeMajorButton);
-					
 				});
 			}
 			
 			
-			actionPane.add(curriculumPane, 0, 0);
+			actionPane.add(currentCurriculumsPane, 0, 0);
 			
 			//Current Selected Semester Pane
-			GridPane currentSelectedSemesterPane = new GridPane();
+			currentSelectedSemesterPane = new GridPane();
 			currentSelectedSemesterPane.setMaxWidth(actionPane.getPrefWidth()*(2/3.0)*tabWidth);
 			currentSelectedSemesterPane.setMinWidth(actionPane.getPrefWidth()*(2/3.0)*tabWidth);
 			
@@ -487,7 +585,23 @@ public class UserInterface extends Application{
 			Label headerForCurrentSelectedSemester = newStyledLabel("Current Selected Semester", "fontmed");
 			
 			//Green Plus Button for Current Selected Semester
-			Button addCourseButton = newAddButton();
+			addCourseToSemesterButton = newAddButton();
+			addCourseToSemesterButton.setOnAction((ae) -> {
+				if(searchBorderPane.getChildren().isEmpty()) {
+					Node current = mkAddCoursesPane(constraints);
+					searchBorderPane.setCenter(current);
+					setFadeIn(current, 150);
+				} else {
+					if(isSeachingCurriculumsVisible) {
+						Node prev = searchBorderPane.getCenter();
+						setFadeOut(prev, 150);
+						Node current = mkAddCoursesPane(constraints);
+						searchBorderPane.setCenter(current);
+						setFadeIn(current, 150);
+					}
+				}
+				isSeachingCurriculumsVisible = false;
+			});
 			
 			ScrollPane currentSelectedSemesterScroll = newActionScroll();
 			currentSelectedSemesterScroll.setContent(currentSelectedSemesterTab);
@@ -496,107 +610,15 @@ public class UserInterface extends Application{
 			currentSelectedSemesterScroll.setMinWidth(actionPane.getPrefWidth()*tabWidth);
 
 			currentSelectedSemesterPane.add(headerForCurrentSelectedSemester, 0, 0);
-			currentSelectedSemesterPane.add(addCourseButton, 1, 0);
+			currentSelectedSemesterPane.add(addCourseToSemesterButton, 1, 0);
 			currentSelectedSemesterPane.add(currentSelectedSemesterScroll, 0, 1);
+			currentSelectedSemesterPane.setVisible(false);
 			
 			actionPane.add(currentSelectedSemesterPane, 1, 0);
 			actionPane.setHgap(10);
 			
-
 			
-			
-			GridPane addCoursesTab = newActionGrid();
-			ScrollPane addCoursesScroll = newActionScroll();
-			
-			//Search Header Pane
-			GridPane searchHeaderPane = new GridPane();
-			searchHeaderPane.getColumnConstraints().add(constraints);
-			
-			//Search Header
-			Label headerForAddCourses = newStyledLabel("Add Courses", "fontmed");
-			
-			//Search Field
-			TextField searchField = new TextField();
-			searchField.setPromptText("search");
-			searchField.getStyleClass().add("windows");
-			searchField.setAlignment(Pos.CENTER_RIGHT);
-			
-			searchField.setOnKeyTyped((ke) -> {
-				
-				// set request to another thread "searchThread"
-				searchThread.setSearchRequest(()-> {
-					if(searchField.getText().equals(null) || searchField.getText().equals(""))	{
-						// nothing to search, clear previous search results from addCoursesTab
-						
-						// GUI changes must be on main thread
-						final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
-						Platform.runLater(() -> {
-							addCoursesTab.getChildren().clear();
-							waitUntilDoneFlag.single = true;
-						});
-						waitUntilDone(waitUntilDoneFlag);
-						
-						return; // no need to do anything further, end lambda functionality here
-					}
-					
-					// Search (Takes forever)
-					String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
-					final ArrayList<Course> searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
-					Iterator<Course> checkIter = searchedCourses.iterator();
-					ArrayList<Integer> studentCurrentCourseload = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
-					if(studentCurrentCourseload != null) {
-						while(checkIter.hasNext()) {
-							Course checkCourse = checkIter.next();
-							if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
-								checkIter.remove();
-						}
-					}
-					// End of search
-					
-					// GUI changes must be on main thread
-
-					final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
-					Platform.setImplicitExit(false);
-					Platform.runLater(() -> {
-						addCoursesTab.getChildren().clear();
-						for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
-							final Course searchedCourse = searchedCourses.get(searchIndex);
-							Label searchedLabel = new Label(searchedCourse.getCourseCode() + '\t' + searchedCourse.getCourseName());
-							addCoursesTab.add(searchedLabel, 0, searchIndex);
-							
-							Button addSearchButton = newAddButton();
-							addSearchButton.setOnMouseClicked((me) -> {
-								Iterator<Course> iterator = searchedCourses.iterator();
-								while(iterator.hasNext()) {
-									Course currentCourse = iterator.next();
-									if(currentCourse.getCourseID() == searchedCourse.getCourseID()) {
-										studentCurrentCourseload.add(searchedCourse.getCourseID());
-										iterator.remove();
-										break;
-									}
-								}
-								addCoursesTab.getChildren().remove(searchedLabel);
-								addCoursesTab.getChildren().remove(addSearchButton);
-								addCourseToCurrentSemester(searchedCourse);
-							});
-							addCoursesTab.add(addSearchButton, 1, searchIndex);
-						}
-						waitUntilDoneFlag.single = true;
-					});
-					waitUntilDone(waitUntilDoneFlag);
-				});
-			});
-			
-			final double tabWidthTwo = 3/4.0;
-			addCoursesTab.getStyleClass().add("windows");
-			addCoursesTab.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
-			addCoursesTab.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
-			addCoursesScroll.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
-			addCoursesScroll.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
-			addCoursesScroll.setContent(addCoursesTab);
-			
-			
-			
+			searchBorderPane = new BorderPane();			
 			
 			//Check Button
 			Button checkButton = new Button();
@@ -618,21 +640,15 @@ public class UserInterface extends Application{
 			checkButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
 			checkButtonBox.setPadding(new Insets(5));
 
-			
-			searchHeaderPane.add(headerForAddCourses, 0, 0);
-			searchHeaderPane.add(searchField, 1, 0);
-			
 			searchPane.setAlignment(Pos.BOTTOM_CENTER);
 			searchPane.setVgap(5);
 			searchPane.setHgap(20);
 			
-			searchPane.add(searchHeaderPane, 0, 0);
-			searchPane.add(addCoursesScroll, 0, 1);
-			searchPane.add(checkButtonBox, 1, 1);
+			searchPane.add(searchBorderPane, 0, 0);
+			searchPane.add(checkButtonBox, 1, 0);
 			
 			boolean gridLinesOn = false;
 			if(gridLinesOn)	{
-				searchHeaderPane.setGridLinesVisible(true);
 				actionPane.setGridLinesVisible(true);
 				searchPane.setGridLinesVisible(true);
 				orgPane.setGridLinesVisible(true);
@@ -653,6 +669,214 @@ public class UserInterface extends Application{
 		}
 		
 		return studentScreen;
+	}
+
+	
+	public GridPane mkAddCurriculumsPane(ColumnConstraints constraints) {
+		GridPane addCurriculumsTab = newActionGrid();
+		ScrollPane addCurriculumsScroll = newActionScroll();
+		
+		//Search Header Pane
+		GridPane searchHeaderPane = new GridPane();
+		searchHeaderPane.getColumnConstraints().add(constraints);
+		
+		//Search Header
+		Label headerForAddCurriculums = newStyledLabel("Add Curriculums", "fontmed");
+		
+		//Search Field
+		TextField searchField = new TextField();
+		searchField.setPromptText("search");
+		searchField.getStyleClass().add("windows");
+		searchField.setAlignment(Pos.CENTER_RIGHT);
+		
+		searchField.setOnKeyTyped((ke) -> {
+			
+			// set request to another thread "searchThread"
+			searchThread.setSearchRequest(()-> {
+				if(searchField.getText().equals(null) || searchField.getText().equals(""))	{
+					// nothing to search, clear previous search results from addCoursesTab
+					
+					// GUI changes must be on main thread
+					final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
+					Platform.runLater(() -> {
+						addCurriculumsTab.getChildren().clear();
+						waitUntilDoneFlag.single = true;
+					});
+					waitUntilDone(waitUntilDoneFlag);
+					
+					return; // no need to do anything further, end lambda functionality here
+				}
+				
+				final ArrayList<Curriculum> searchedCurriculums = DatabaseManager.searchCurriculum(searchField.getText());
+				Iterator<Curriculum> checkIter = searchedCurriculums.iterator();
+				ArrayList<Integer> studentCurrentCurriculumload = Majorizer.getStudent().getAcademicPlan().getDegreeIDs();
+				if(studentCurrentCurriculumload != null) {
+					while(checkIter.hasNext()) {
+						Curriculum checkCurriculum = checkIter.next();
+						if(studentCurrentCurriculumload.contains(checkCurriculum.getCurriculumID()))
+							checkIter.remove();
+					}
+				}
+				// End of search
+				
+				// GUI changes must be on main thread
+
+				final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
+				Platform.setImplicitExit(false);
+				Platform.runLater(() -> {
+					addCurriculumsTab.getChildren().clear();
+					for(int searchIndex = 0; searchIndex < searchedCurriculums.size(); ++searchIndex)	{
+						final Curriculum searchedCurriculum = searchedCurriculums.get(searchIndex);
+						Label searchedLabel = new Label(searchedCurriculum.getName());
+						addCurriculumsTab.add(searchedLabel, 0, searchIndex);
+						
+						Button addSearchButton = newAddButton();
+						addSearchButton.setOnMouseClicked((me) -> {
+							Iterator<Curriculum> iterator = searchedCurriculums.iterator();
+							while(iterator.hasNext()) {
+								Curriculum currentCurriculum = iterator.next();
+								if(currentCurriculum.getCurriculumID() == searchedCurriculum.getCurriculumID()) {
+									studentCurrentCurriculumload.add(searchedCurriculum.getCurriculumID());
+									iterator.remove();
+									break;
+								}
+							}
+							addCurriculumsTab.getChildren().remove(searchedLabel);
+							addCurriculumsTab.getChildren().remove(addSearchButton);
+							addCurriculumToCurrentSemester(searchedCurriculum);
+						});
+						addCurriculumsTab.add(addSearchButton, 1, searchIndex);
+					}
+					waitUntilDoneFlag.single = true;
+				});
+				waitUntilDone(waitUntilDoneFlag);
+			});
+		});
+		
+		final double tabWidthTwo = 3/4.0;
+		addCurriculumsTab.getStyleClass().add("windows");
+		addCurriculumsTab.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCurriculumsTab.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCurriculumsScroll.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCurriculumsScroll.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCurriculumsScroll.setContent(addCurriculumsTab);
+		
+		
+		searchHeaderPane.add(headerForAddCurriculums, 0, 0);
+		searchHeaderPane.add(searchField, 1, 0);
+		
+		GridPane searchCoursesPane = new GridPane();
+		
+		searchCoursesPane.add(searchHeaderPane, 0, 0);
+		searchCoursesPane.add(addCurriculumsScroll, 0, 1);
+		searchCoursesPane.setVisible(false);
+		
+		return searchCoursesPane;
+	}
+	
+	
+	public GridPane mkAddCoursesPane(ColumnConstraints constraints) {
+		GridPane addCoursesTab = newActionGrid();
+		ScrollPane addCoursesScroll = newActionScroll();
+		
+		//Search Header Pane
+		GridPane searchHeaderPane = new GridPane();
+		searchHeaderPane.getColumnConstraints().add(constraints);
+		
+		//Search Header
+		Label headerForAddCourses = newStyledLabel("Add Courses", "fontmed");
+		
+		//Search Field
+		TextField searchField = new TextField();
+		searchField.setPromptText("search");
+		searchField.getStyleClass().add("windows");
+		searchField.setAlignment(Pos.CENTER_RIGHT);
+		
+		searchField.setOnKeyTyped((ke) -> {
+			
+			// set request to another thread "searchThread"
+			searchThread.setSearchRequest(()-> {
+				if(searchField.getText().equals(null) || searchField.getText().equals(""))	{
+					// nothing to search, clear previous search results from addCoursesTab
+					
+					// GUI changes must be on main thread
+					final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
+					Platform.runLater(() -> {
+						addCoursesTab.getChildren().clear();
+						waitUntilDoneFlag.single = true;
+					});
+					waitUntilDone(waitUntilDoneFlag);
+					
+					return; // no need to do anything further, end lambda functionality here
+				}
+				
+				// Search (Takes forever)
+				String searchSemester = Majorizer.getStudentCurrentSemesterString(selectedSemester);
+				final ArrayList<Course> searchedCourses = DatabaseManager.searchCourse(searchField.getText(), searchSemester);
+				Iterator<Course> checkIter = searchedCourses.iterator();
+				ArrayList<Integer> studentCurrentCourseload = Majorizer.getStudent().getAcademicPlan().getSelectedCourseIDs().get(searchSemester);
+				if(studentCurrentCourseload != null) {
+					while(checkIter.hasNext()) {
+						Course checkCourse = checkIter.next();
+						if(studentCurrentCourseload.contains(checkCourse.getCourseID()))
+							checkIter.remove();
+					}
+				}
+				// End of search
+				
+				// GUI changes must be on main thread
+
+				final Single<Boolean> waitUntilDoneFlag = new Single<>(false);
+				Platform.setImplicitExit(false);
+				Platform.runLater(() -> {
+					addCoursesTab.getChildren().clear();
+					for(int searchIndex = 0; searchIndex < searchedCourses.size(); ++searchIndex)	{
+						final Course searchedCourse = searchedCourses.get(searchIndex);
+						Label searchedLabel = new Label(searchedCourse.getCourseCode() + '\t' + searchedCourse.getCourseName());
+						addCoursesTab.add(searchedLabel, 0, searchIndex);
+						
+						Button addSearchButton = newAddButton();
+						addSearchButton.setOnMouseClicked((me) -> {
+							Iterator<Course> iterator = searchedCourses.iterator();
+							while(iterator.hasNext()) {
+								Course currentCourse = iterator.next();
+								if(currentCourse.getCourseID() == searchedCourse.getCourseID()) {
+									studentCurrentCourseload.add(searchedCourse.getCourseID());
+									iterator.remove();
+									break;
+								}
+							}
+							addCoursesTab.getChildren().remove(searchedLabel);
+							addCoursesTab.getChildren().remove(addSearchButton);
+							addCourseToCurrentSemester(searchedCourse);
+						});
+						addCoursesTab.add(addSearchButton, 1, searchIndex);
+					}
+					waitUntilDoneFlag.single = true;
+				});
+				waitUntilDone(waitUntilDoneFlag);
+			});
+		});
+		
+		final double tabWidthTwo = 3/4.0;
+		addCoursesTab.getStyleClass().add("windows");
+		addCoursesTab.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCoursesTab.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCoursesScroll.setMinSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCoursesScroll.setMaxSize(screenSize.getWidth()*(2/3.0)*tabWidthTwo, screenSize.getHeight()*(1/5.0));
+		addCoursesScroll.setContent(addCoursesTab);
+		
+		
+		searchHeaderPane.add(headerForAddCourses, 0, 0);
+		searchHeaderPane.add(searchField, 1, 0);
+		
+		GridPane searchCoursesPane = new GridPane();
+		
+		searchCoursesPane.add(searchHeaderPane, 0, 0);
+		searchCoursesPane.add(addCoursesScroll, 0, 1);
+		searchCoursesPane.setVisible(false);
+		
+		return searchCoursesPane;
 	}
 	
 	public SplitPane advisorView()	{
@@ -706,7 +930,10 @@ public class UserInterface extends Application{
 			
 			studentNames.setOnMousePressed((me) -> {
 				Majorizer.setStudent(student);
-				studentSide.setCenter(studentView());
+				Node studentView = studentView();
+				studentView.setVisible(false);
+				studentSide.setCenter(studentView);
+				setFadeIn(studentView, 300);
 			});
 		}
 		
