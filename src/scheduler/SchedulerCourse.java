@@ -59,7 +59,7 @@ public class SchedulerCourse extends SchedulerNode {
 	
 	public boolean isAvailable(int semester_num) {
 		semester_num %= 4;
-		boolean available = ((this.availability >> semester_num) & 1) == 1;
+		boolean available = ((this.courseinfo.get(CourseInfo.AVAILABILITY) >> semester_num) & 1) == 1;
 		return available;
 	}
 	

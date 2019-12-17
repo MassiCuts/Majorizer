@@ -6,7 +6,6 @@ import java.util.Random;
 public class SchedulerNode {
 	protected ArrayList<SchedulerNode> children;
 	protected ArrayList<SchedulerNode> parents;
-	protected int depth;
 	protected boolean isgate;
 	protected boolean root = false;
 	protected String name = null;

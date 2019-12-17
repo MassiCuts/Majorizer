@@ -308,6 +308,7 @@ public class Majorizer {
 		try {
 			return scheduler.schedule(curriculumGraph, addedCourses, new ArrayList<>(), takenCourses, currentSemester);
 		} catch (Exception e) {
+			System.out.println(e);
 			return null;
 		}
 		

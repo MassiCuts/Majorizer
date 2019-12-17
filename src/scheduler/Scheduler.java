@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Scheduler {
 	
-	private int num_courses=6;
+	private int num_courses=8;
 	private int num_semesters=8;
 	//private int current_semester=0;
 	static int MAX_ATTEMPTS = 1000;
@@ -14,6 +14,7 @@ public class Scheduler {
 	
 	public void setNumSemesters(int num_semesters) {this.num_semesters = num_semesters;}
 	public void setNumCourses(int num_courses) {this.num_courses = num_courses;}
+	
 	public ArrayList<ArrayList<String>> makeList(String [][] templist)
 	{
 		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
@@ -36,13 +37,18 @@ public class Scheduler {
 			if (i < current_semester) {
 				//TODO: Add all the classes taken during this semester then skip
 				for(SchedulerCourse c: taken_courses) {
-					System.out.println(c.name + "was taken semester " + c.courseinfo.get(CourseInfo.TAKEN));
+					System.out.println(c.name + "was taken semester " + c.courseinfo.get(CourseInfo.TAKEN) + " (scheduling semester " + i + ") (current semester is " + current_semester + ")");
 					if(c.courseinfo.get(CourseInfo.TAKEN) == i) {
-						graph.setCourseAttribute(c.name, CourseInfo.TAKEN, i);
+						try{
+							graph.setCourseAttribute(c.name, CourseInfo.TAKEN, i);
+						} catch (Exception e) {
+							System.out.print("Course " + c.name + "is not a required course but was taken anyway");
+						}
 						sched.get(i).add(c.name);
 						System.out.println("Already taken course" + c.name + " in semester " + i);
 					}
 				}
+				System.out.println(sched);
 				continue;
 			}
 			int added_this_semester=0;
@@ -79,7 +85,7 @@ public class Scheduler {
 								next_node = graph.root;
 								if (attempt > MAX_ATTEMPTS) {
 									if (i < this.num_semesters-1) {
-										System.out.println("Lierally cannot schedule another class this semester. For example " + course.name + "has availability " + course.courseinfo.get(CourseInfo.AVAILABILITY));
+										if(!course.isAvailable(i)) System.out.println("Literally cannot schedule another class this semester (" + i + " ). For example " + course.name + "has availability " + course.courseinfo.get(CourseInfo.AVAILABILITY));
 										break;}	//If cannot schedule a class this semester, but still have more semesters left, just don't fill this semester
 									else {	//If there are no semesters left, then a feasible schedule cannot be made
 										throw new RuntimeException("Cannot find a feasible schedule");
