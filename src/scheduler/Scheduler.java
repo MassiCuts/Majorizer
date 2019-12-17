@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Scheduler {
 	
-	private int num_courses=7;
+	private int num_courses=6;
 	private int num_semesters=8;
 	//private int current_semester=0;
 	static int MAX_ATTEMPTS = 1000;
@@ -30,7 +30,7 @@ public class Scheduler {
 	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops, ArrayList<SchedulerCourse> taken_courses, int current_semester) throws Exception {
 		// TODO make sure you don't add courses to a past semester
 		//return makeList(new String[][] /{new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
-		System.out.println(requested_adds);System.out.println(requested_drops);
+		System.out.println("Requested Adds" + requested_adds);System.out.println("Requested Drops" + requested_drops);
 		SchedulerCourse course = null;
 		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
@@ -54,7 +54,7 @@ public class Scheduler {
 			}
 			int added_this_semester=0;
 			for(SchedulerCourse c : requested_adds) {
-				if (c.added == i) {
+				if (c.courseinfo.get(CourseInfo.ADDED) == i) {
 					if(!c.isAvailable(i)) {throw new Exception("this course isn't available for the semester it was added to");}
 					sched.get(i).add(c.name);
 					graph.setCourseAttribute(c.name, CourseInfo.SCHEDULED, i);
