@@ -276,41 +276,45 @@ public class Majorizer {
 	
 	
 	private static ArrayList<ArrayList<String>> scheduleForStudent(Student student) {
-		SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
+		int num_courses = 5;
+		while (num_courses < 9) {
+			SchedulerGraph curriculumGraph = student.getAcademicPlan().getCurriculumSchedulerGraph();
 		
-		ArrayList<SchedulerCourse> takenCourses = new ArrayList<>();
-		ArrayList<SchedulerCourse> addedCourses = new ArrayList<>();
 		
-		Map<String, ArrayList<Integer>> studentCoursesMap = student.getAcademicPlan().getSelectedCourseIDs();
-		int currentSemester = getStudentCurrentSemesterIndex(student);
-		
-		for (int i = 0; i < 8; i++) {
-			String currentSemesterString = getStudentCurrentSemesterString(student, i);
-			ArrayList<Integer> courses = studentCoursesMap.get(currentSemesterString);
-			if(courses == null) {
-				courses = new ArrayList<>();
-				studentCoursesMap.put(currentSemesterString, courses);
-			}
-			for(int courseID : courses) {
-				Course c = DatabaseManager.getCourse(courseID);
-				SchedulerCourse schedulerCourse = new SchedulerCourse(c);
-				if(i < currentSemester) {
-					schedulerCourse.addTakenSemester(i);
-					takenCourses.add(schedulerCourse);
-				} else {
-					schedulerCourse.addToSemester(i);
-					addedCourses.add(schedulerCourse);
+			ArrayList<SchedulerCourse> takenCourses = new ArrayList<>();
+			ArrayList<SchedulerCourse> addedCourses = new ArrayList<>();
+			
+			Map<String, ArrayList<Integer>> studentCoursesMap = student.getAcademicPlan().getSelectedCourseIDs();
+			int currentSemester = getStudentCurrentSemesterIndex(student);
+			
+			for (int i = 0; i < 8; i++) {
+				String currentSemesterString = getStudentCurrentSemesterString(student, i);
+				ArrayList<Integer> courses = studentCoursesMap.get(currentSemesterString);
+				if(courses == null) {
+					courses = new ArrayList<>();
+					studentCoursesMap.put(currentSemesterString, courses);
+				}
+				for(int courseID : courses) {
+					Course c = DatabaseManager.getCourse(courseID);
+					SchedulerCourse schedulerCourse = new SchedulerCourse(c);
+					if(i < currentSemester) {
+						schedulerCourse.addTakenSemester(i);
+						takenCourses.add(schedulerCourse);
+					} else {
+						schedulerCourse.addToSemester(i);
+						addedCourses.add(schedulerCourse);
+					}
 				}
 			}
+			scheduler.setNumCourses(num_courses);
+			try {
+				return scheduler.schedule(curriculumGraph, addedCourses, new ArrayList<>(), takenCourses, currentSemester);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+			num_courses++;
 		}
-		
-		
-		try {
-			return scheduler.schedule(curriculumGraph, addedCourses, new ArrayList<>(), takenCourses, currentSemester);
-		} catch (Exception e) {
-			System.out.println(e);
-			return null;
-		}
+		return null;
 		
 //		printInfo(updatedCourses, curriculumGraph);
 	}

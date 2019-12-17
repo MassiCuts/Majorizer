@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Scheduler {
 	
-	private int num_courses=8;
+	private int num_courses=7;
 	private int num_semesters=8;
 	//private int current_semester=0;
 	static int MAX_ATTEMPTS = 1000;
@@ -30,6 +30,7 @@ public class Scheduler {
 	public ArrayList<ArrayList<String>> schedule(SchedulerGraph graph, ArrayList<SchedulerCourse> requested_adds, ArrayList<SchedulerCourse> requested_drops, ArrayList<SchedulerCourse> taken_courses, int current_semester) throws Exception {
 		// TODO make sure you don't add courses to a past semester
 		//return makeList(new String[][] /{new String[] {"CS141","MA131","PH131"}, new String[] {"CS142","MA132","CM131"}});
+		System.out.println(requested_adds);System.out.println(requested_drops);
 		SchedulerCourse course = null;
 		ArrayList<ArrayList<String>> sched = new ArrayList<ArrayList<String>>();
 		for (int i = 0; i < this.num_semesters; ++i) {
@@ -114,7 +115,10 @@ public class Scheduler {
 		if (!graph.root.isSatisfied(this.num_semesters)) {
 			throw new Exception("could not graduate in the required semester and credit hours per semester restraints");
 		}
-		System.out.println("Scheduling Complete!");
+		while(sched.size() < this.num_semesters) {
+			sched.add(new ArrayList<String>());
+		}
+		System.out.println("Scheduling Complete!" + sched);
 		return sched;
 	}
 	
