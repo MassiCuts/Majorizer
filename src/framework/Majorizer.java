@@ -161,7 +161,6 @@ public class Majorizer {
 				takenCourses.put(currentSemesterString, courseIDs);
 			}
 		}
-		
 		DatabaseManager.saveStudent(student);
 	}
 	
@@ -170,7 +169,6 @@ public class Majorizer {
 			return false;
 		return student.getUserID() == studentID;
 	}
-	
 	
 	public static User getUser()	{
 		return user;
